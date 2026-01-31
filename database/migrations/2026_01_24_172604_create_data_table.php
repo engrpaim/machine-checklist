@@ -30,37 +30,9 @@ return new class extends Migration
             $table->string('operator')->nullable();
             $table->string('checker')->nullable();
             $table->string('staff_eng')->nullable();
-            $table->string('time_1')->nullable();
-            $table->string('time_2')->nullable();
-            $table->string('time_3')->nullable();
-
-            $table->string('rotation_1')->nullable();
-            $table->string('rotation_2')->nullable();
-            $table->string('rotation_3')->nullable();
-
-            $table->string('timetotal_1')->nullable();
-            $table->string('timetotal_2')->nullable();
-            $table->string('timetotal_3')->nullable();
-
-            $table->string('rotationtotal_1')->nullable();
-            $table->string('rotationtotal_2')->nullable();
-            $table->string('rotationtotal_3')->nullable();
-
-            $table->string('machine_no')->nullable();
-
-            $table->string('machinesample_1')->nullable();
-            $table->string('machinesample_2')->nullable();
-            $table->string('machinesample_3')->nullable();
-            $table->string('machinesample_4')->nullable();
-            $table->string('machinesample_5')->nullable();
-
-            $table->string('machinejudgement_1')->nullable();
-            $table->string('machinejudgement_2')->nullable();
-            $table->string('machinejudgement_3')->nullable();
-            $table->string('machinejudgement_4')->nullable();
-            $table->string('machinejudgement_5')->nullable();
-            $table->json('magnet_thickness')->nullable();
+            $table->json('barrelling')->nullable();
             $table->json('pt_data')->nullable();
+            $table->json('timer')->nullable();
             $table->string('remarks')->nullable();
             $table->timestamps();
         });

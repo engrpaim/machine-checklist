@@ -1,8 +1,38 @@
 import '../../css/app.css'
-import { useEffect, useState} from 'react';
-import { useForm , router } from '@inertiajs/react';
-
+import { useEffect, useState , useRef} from 'react';
+import { useForm , router, usePage } from '@inertiajs/react';
+import { CrossIcon } from '../Icons/SVG';
 export default function Home({ message }) {
+
+    const { flash ,LotData,detailsLot} = usePage().props;
+    const sampleCheck =  [1, 2, 3, 4, 5];
+    const timeRotation = [1,2,3];
+    const modelDetails = {
+        'maximum':1.7,
+        'minimum':1.0,
+        'target':1.5
+    }
+
+   const [notificationMessage, setNotificationMessage] = useState(null);
+   const [modelIsExist , setModelIsExist] = useState(LotData);
+   console.log(modelIsExist);
+    useEffect(()=>{
+        console.log("response",flash,LotData);
+        if (!flash) return;
+        Object.entries(flash).map(([key, value]) => {
+
+            setNotificationMessage({
+                title: key,
+                message: value,
+            });
+
+            setTimeout(()=>{
+                setNotificationMessage(null);
+            },2000);
+
+        });
+
+    },[flash]);
 
     const {data,setData,post, processing, errors} = useForm({
         model:'',
@@ -23,177 +53,177 @@ export default function Home({ message }) {
         operator:'',
         checker:'',
         staff_eng:'',
-        time_1:'',
-        rotation_1:'',
-        timetotal_1:'',
-        rotationtotal_1:'',
-        time_2:'',
-        rotation_2:'',
-        timetotal_2:'',
-        rotationtotal_2:'',
-        time_3:'',
-        rotation_3:'',
-        timetotal_3:'',
-        rotationtotal_3:'',
-        machine_no:'',
+    });
+
+    const { data: StatusData, setData: setStatusData} = useForm({
+        staffDetails: 0,
+        barrellingProcss:0,
+        pointsDetails:0,
+        timerDetails:0
+    });
+    const { data: LotContainer , setData: setLotContainer}  = useForm({
+        lot:'',
+    });
+    const {data: timerData , setData: setTimerData } = useForm({
+        time_1:0,
+        rotation_1:0,
+        time_2:0,
+        rotation_2:0,
+        time_3:0,
+        rotation_3:0,
+        addtime_1:0,
+        addrotation_1:0,
+        addtime_2:0,
+        addrotation_2:0,
+        addtime_3:0,
+        addrotation_3:0,
+    });
+    const {data:barrellingProcss ,setData:setBarrelingProcess} = useForm({
         machinesample_1:'',
         machinesample_2:'',
         machinesample_3:'',
         machinesample_4:'',
-        machinesample_5:'',
-        machinejudgement_1:'',
-        machinejudgement_2:'',
-        machinejudgement_3:'',
-        machinejudgement_4:'',
-        machinejudgement_5:'',
-        remarks:'',
+        machinesample_5:''
     });
-    const { data: thickness, setData: setThickness} = useForm({
-        magnethickness1_1:'',
-        magnethickness1_2:'',
-        magnethickness1_3:'',
-        magnethickness1_4:'',
-        magnethickness1_5:'',
-        magnethickness2_1:'',
-        magnethickness2_2:'',
-        magnethickness2_3:'',
-        magnethickness2_4:'',
-        magnethickness2_5:'',
-        magnethickness3_1:'',
-        magnethickness3_2:'',
-        magnethickness3_3:'',
-        magnethickness3_4:'',
-        magnethickness3_5:'',
-        magnethickness4_1:'',
-        magnethickness4_2:'',
-        magnethickness4_3:'',
-        magnethickness4_4:'',
-        magnethickness4_5:'',
-        magnethickness5_1:'',
-        magnethickness5_2:'',
-        magnethickness5_3:'',
-        magnethickness5_4:'',
-        magnethickness5_5:'',
-        magnethickness6_1:'',
-        magnethickness6_2:'',
-        magnethickness6_3:'',
-        magnethickness6_4:'',
-        magnethickness6_5:'',
-        magnethickness7_1:'',
-        magnethickness7_2:'',
-        magnethickness7_3:'',
-        magnethickness7_4:'',
-        magnethickness7_5:'',
-        magnethickness8_1:'',
-        magnethickness8_2:'',
-        magnethickness8_3:'',
-        magnethickness8_4:'',
-        magnethickness8_5:'',
-        magnethickness9_1:'',
-        magnethickness9_2:'',
-        magnethickness9_3:'',
-        magnethickness9_4:'',
-        magnethickness9_5:'',
-        magnethickness10_1:'',
-        magnethickness10_2:'',
-        magnethickness10_3:'',
-        magnethickness10_4:'',
-        magnethickness10_5:'',
-    });
-
-    const {data: points_pt, setData: setPoints}=useForm({
+    const {data: points_pt, setData: setPoints}=useForm(
+    {
         pt1_1:'',
         pt1_2:'',
         pt1_3:'',
         pt1_4:'',
         pt1_5:'',
-        max_1:'',
-        min_1:'',
-        worst_1:'',
-        maximum_1:'',
-        minimum_1:'',
-        max_diff1:'',
-        min_diff1:'',
-        average_1:'',
         pt2_1:'',
         pt2_2:'',
         pt2_3:'',
         pt2_4:'',
         pt2_5:'',
-        max_2:'',
-        min_2:'',
-        worst_2:'',
-        maximum_2:'',
-        minimum_2:'',
-        max_diff2:'',
-        min_diff2:'',
-        average_2:'',
         pt3_1:'',
         pt3_2:'',
         pt3_3:'',
         pt3_4:'',
         pt3_5:'',
-        max_3:'',
-        min_3:'',
-        worst_3:'',
-        maximum_3:'',
-        minimum_3:'',
-        max_diff3:'',
-        min_diff3:'',
-        average_3:'',
         pt4_1:'',
         pt4_2:'',
         pt4_3:'',
         pt4_4:'',
         pt4_5:'',
-        max_4:'',
-        min_4:'',
-        worst_4:'',
-        maximum_4:'',
-        minimum_4:'',
-        max_diff4:'',
-        min_diff4:'',
-        average_4:'',
         pt5_1:'',
         pt5_2:'',
         pt5_3:'',
         pt5_4:'',
         pt5_5:'',
-        max_5:'',
-        min_5:'',
-        worst_5:'',
-        maximum_5:'',
-        minimum_5:'',
-        max_diff5:'',
-        min_diff5:'',
-        average_5:'',
     });
-    const today = new Date();
 
+    const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
     const day = String(today.getDate()).padStart(2, '0');
 
     const currentDate = `${year}-${month}-${day}`;
+
     useEffect(()=>{
         setData('date',currentDate);
     },[currentDate]);
+    useEffect(()=>{
+
+        if(!LotContainer) return;
+        const handler = setTimeout(() => {
+            router.post('/machining-checklist', {
+                lot:LotContainer.lot,
+                model:data.model
+            },{preserveScroll:true});
+        }, 2000); // 2 seconds
+
+        return () => clearTimeout(handler)
+    },[LotContainer]);
+    useEffect(()=>{
+        const countEmptyData=  Object.values(data).filter(value => value === '').length;
+        const countEmptyBarrelingProcess =  Object.values(barrellingProcss).filter(value => value === '').length;
+        const countEmptyPoints =  Object.values(points_pt).filter(value => value === '').length;
+        const countEmptyTimer=  Object.entries(timerData).reduce(
+                                                    (acc, [key, value]) =>
+                                                        value === 0 && !key.includes("add") ? acc + 1 : acc,
+                                                    0
+                                                );
+        setStatusData('staffDetails',countEmptyData);
+        setStatusData('barrellingProcss' , countEmptyBarrelingProcess);
+        setStatusData('pointsDetails' , countEmptyPoints);
+        setStatusData('timerDetails' , countEmptyTimer);
+    },[data , barrellingProcss,points_pt,timerData]);
+
+    useEffect(()=>{
+        setModelIsExist(LotData);
+    },[LotData]);
+
     const [display , setDisplay] = useState(null);
+    const handleClose=()=>{
+    setModelIsExist(false);
+       setData('lot','');
+       setLotContainer('lot','');
+    }
     const handleSave = () => {
         // Convert Proxy objects to plain JS objects
-        router.post('/machining-checklist', {
 
+        router.post('/machining-checklist', {
             ...data,
-            magnet_thickness:thickness,
-            pt_data:points_pt
-        });
+            pt_data:points_pt,
+            barrelling:barrellingProcss,
+            timer:timerData,
+
+        },{preserveScroll:true});
 
     };
 
+    const desicionStatus =(value)=>{
+        //return status and color
+        const numberConvert = Number(value);
+
+        if (numberConvert > modelDetails.minimum && numberConvert < modelDetails.maximum){
+            return { color:'green' , status:'GOOD'}
+        }
+         return { color:'red' , status:'NG'}
+    }
+
+    const goToNextInput = (pointData,name,data,e) => {
 
 
+
+        if(pointData === 'point'){
+            setPoints(name,data);
+        }else if(pointData === 'sample'){
+            setBarrelingProcess(name,data);
+        }
+        else{
+            setData(name,data);
+        }
+
+        setTimeout(() => {
+            const inputs = Array.from(
+                    document.querySelectorAll("input, select, textarea, button")
+                ).filter(el => !el.disabled && el.tabIndex !== -1);
+            const index = inputs.indexOf(e.target);
+            inputs[index + 1]?.focus();
+        }, 300);
+
+    };
     return (
         <div className='main-container'>
+            {
+                modelIsExist &&
+                <div className='pic-password'>
+                   <div className='enter-password'>
+                    <button onClick={(e)=>handleClose()}><CrossIcon color={'red'}/></button>
+                     <h4>NOTICE</h4>
+                     <p>{detailsLot.model}&nbsp;Lot No.&nbsp;{detailsLot.lot}&nbsp;already&nbsp;exist&nbsp;update data!</p>
+                     <input  placeholder='Enter password' className='admin-pic'></input>
+                   </div>
+                </div>
+            }
+            {notificationMessage && <div className='notif-container' style={{ background:notificationMessage.title === 'success-container' ? 'green':'red' }}>
+                <div className="notification-message">
+                    <p>{notificationMessage.message}</p>
+                </div>
+            </div>}
             <div className='machine-selector'>
                 <h1>Machining Checklist</h1>
                 <div className='selector-container'>
@@ -201,7 +231,7 @@ export default function Home({ message }) {
                         <label>Model:</label>
                         <select  value={data.model} onChange={(e)=>setData('model',e.target.value)}>
                             <option value=""></option>
-                            <option value="ROB">ROB0A70G</option>
+                            <option value="ROB0A70G">ROB0A70G</option>
                         </select>
                     </div>
                     <div className='selector-data'>
@@ -216,67 +246,74 @@ export default function Home({ message }) {
             {
                 data.model && data.process === 'inprocess' &&
                     <div className='inprocess-container'>
-                        <div>
+                        <div className='inprocess-details'>
                             <h1>IN-PROCESS INSPECTION SHEET</h1>
-                            <div>
+                            <div className='mode-container'>
                                 <h3>MODEL:</h3>
                                 <p>{data.model}</p>
                             </div>
                             <div className='selector-container'>
                                 <div className='data-container'>
                                     <div className='data-input'>
-                                        <label>Lot No:</label>
-                                        <input  onChange={(e)=>setData('lot',e.target.value)}></input>
+                                        <label>Lot&nbsp;No:</label>
+                                        <input  value={data.lot ?? null}  onChange=
+                                            {
+                                                (e)=>
+                                                {
+                                                    setData('lot',e.target.value);
+                                                    setLotContainer('lot',e.target.value);
+                                                }
+                                            } disabled={modelIsExist} ></input>
+                                    </div>
+                                    <div className='data-input' >
+                                        <label>Total&nbsp;Batch/Lot:</label>
+                                        <input type="number" onChange={(e)=>setData('total_lot',e.target.value)} disabled={LotData && !LotData.model && !LotData.model} ></input>
                                     </div>
                                     <div className='data-input'>
-                                        <label>Total Batch/Lot:</label>
-                                        <input type="number" onChange={(e)=>setData('total_lot',e.target.value)}></input>
+                                        <label>Total&nbsp;Qty/Lot:</label>
+                                        <input type="number" onChange={(e)=>setData('qty_lot',e.target.value)} disabled={LotData && !LotData.model} ></input>
                                     </div>
                                     <div className='data-input'>
-                                        <label>Total Qty/Lot:</label>
-                                        <input type="number" onChange={(e)=>setData('qty_lot',e.target.value)}></input>
+                                        <label>Total&nbsp;Wt./Lot:</label>
+                                        <input type="number" onChange={(e)=>setData('wt_lot',e.target.value)} disabled={LotData && !LotData.model} ></input>
                                     </div>
                                     <div className='data-input'>
-                                        <label>Total Wt./Lot:</label>
-                                        <input type="number" onChange={(e)=>setData('wt_lot',e.target.value)}></input>
+                                        <label>Media&nbsp;Size:</label>
+                                        <input onChange={(e)=>setData('media_size',e.target.value)} disabled={LotData && !LotData.model} ></input>
                                     </div>
                                     <div className='data-input'>
-                                        <label>Media Size:</label>
-                                        <input onChange={(e)=>setData('media_size',e.target.value)}></input>
+                                        <label>Media&nbsp;Weight:</label>
+                                        <input onChange={(e)=>setData('media_weight',e.target.value)} disabled={LotData && !LotData.model}></input>
                                     </div>
                                     <div className='data-input'>
-                                        <label>Media Weight:</label>
-                                        <input onChange={(e)=>setData('media_weight',e.target.value)}></input>
+                                        <label>Coolant&nbsp;Level:</label>
+                                        <input onChange={(e)=>setData('coolant',e.target.value)} disabled={LotData && !LotData.model}></input>
                                     </div>
                                     <div className='data-input'>
-                                        <label>Coolant Level:</label>
-                                        <input onChange={(e)=>setData('coolant',e.target.value)}></input>
+                                        <label>Styrene&nbsp;Powder:</label>
+                                        <input onChange={(e)=>setData('styrenre',e.target.value)} disabled={LotData && !LotData.model}></input>
                                     </div>
                                     <div className='data-input'>
-                                        <label>Styrene Powder:</label>
-                                        <input onChange={(e)=>setData('styrenre',e.target.value)}></input>
+                                        <label>GC&nbsp;Powder:</label>
+                                        <input onChange={(e)=>setData('gc_powder',e.target.value)} disabled={LotData && !LotData.model}></input>
                                     </div>
                                     <div className='data-input'>
-                                        <label>GC Powder:</label>
-                                        <input onChange={(e)=>setData('gc_powder',e.target.value)}></input>
+                                        <label>Magnet&nbsp;wt/pc.:</label>
+                                        <input onChange={(e)=>setData('magnet_wt',e.target.value)} disabled={LotData && !LotData.model}></input>
                                     </div>
                                     <div className='data-input'>
-                                        <label>Magnet wt/pc.:</label>
-                                        <input onChange={(e)=>setData('magnet_wt',e.target.value)}></input>
-                                    </div>
-                                    <div className='data-input'>
-                                        <label>Chamfer Type</label>
-                                        <input onChange={(e)=>setData('chamfer_type',e.target.value)}></input>
+                                        <label>Chamfer&nbsp;Type:</label>
+                                        <input onChange={(e)=>setData('chamfer_type',e.target.value)} disabled={LotData && !LotData.model}></input>
                                     </div>
                                 </div>
                                 <div className='data-container'>
                                     <div className='data-input'>
                                         <label>Date:</label>
-                                       <input value={currentDate} readOnly />
+                                       <input value={currentDate} disabled={true} />
                                     </div>
                                     <div className='data-input'>
                                         <label>Shift:</label>
-                                        <select value={data.shift} onChange={(e)=>setData('shift',e.target.value)}>
+                                        <select value={data.shift} onChange={(e)=>setData('shift',e.target.value)} disabled={LotData && !LotData.model}>
                                             <option value=""></option>
                                             <option value="E">E</option>
                                             <option value="F">F</option>
@@ -284,142 +321,218 @@ export default function Home({ message }) {
                                     </div>
                                     <div className='data-input'>
                                         <label>Operator:</label>
-                                        <input onChange={(e)=>setData('operator',e.target.value)}></input>
+                                        <input onChange={(e)=>setData('operator',e.target.value)} disabled={LotData && !LotData.model}></input>
                                     </div>
                                     <div className='data-input'>
                                         <label>Checker:</label>
-                                        <input onChange={(e)=>setData('checker',e.target.value)}></input>
+                                        <input onChange={(e)=>setData('checker',e.target.value)} disabled={LotData && !LotData.model}></input>
                                     </div>
                                     <div className='data-input'>
                                         <label>Staff/Engr:</label>
-                                        <input onChange={(e)=>setData('staff_eng',e.target.value)}></input>
+                                        <input onChange={(e)=>setData('staff_eng',e.target.value)} disabled={LotData && !LotData.model}></input>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='data-table'>
+                            <div className='title-center'>
+                                <h1>BARRELING MAGNET DATA TABLE</h1>
+                            </div>
+                             <div className='specs-table'>
+                                <div>
+                                    <div className='specs-details'>
+                                        <h2>SPECS</h2>
+                                        <div className='specs-max-data'>
+                                            <h2>Maximum:</h2>
+                                            <p>{modelDetails.maximum}</p>
+                                        </div>
+                                        <div className='specs-target-data'>
+                                            <h2>Target:</h2>
+                                            <p>{modelDetails.target}</p>
+                                        </div>
+                                        <div className='specs-min-data'>
+                                            <h2>Minimum:</h2>
+                                            <p>{modelDetails.minimum}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <table className='barreling-table' border={1}>
+                                            <thead>
+                                                <tr>
+                                                    <th  colSpan={5}>Barreling Time:</th>
+
+                                                </tr>
+                                                <tr>
+                                                    <th  colSpan={3}>Setting:</th>
+                                                    <th colSpan={2}>Total/Final</th>
+
+                                                </tr>
+                                                <tr>
+                                                    <th  colSpan={3}></th>
+                                                    <th>Actual</th>
+                                                    <th >Additional</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    timeRotation.map((i)=>{
+                                                        return(
+                                                            <tr>
+                                                                <td>T{i}</td>
+                                                                <td>
+                                                                    <div className='input-container'>
+                                                                        <p><strong>Time</strong></p>
+                                                                        <p><strong>Rotation</strong></p>
+                                                                    </div>
+                                                                </td>
+                                                                 <td>
+                                                                    <div className='input-container'>
+                                                                        <input type="number" className='time-data'  onChange={(e)=>setTimerData(`time_${i}`,Number(e.target.value))}/>
+                                                                        <input type="number"  className='rotation-data' onChange={(e)=>setTimerData(`rotation_${i}`,Number(e.target.value))}/>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div className='input-container'>
+                                                                        <p ><strong>{timerData[`time_${i}`] && Number(timerData[`time_${i}`]) + Number(timerData[`addtime_${i}`]) +" hr/s"}</strong></p>
+                                                                        <p ><strong>{timerData[`rotation_${i}`] && Number(timerData[`rotation_${i}`])+Number(timerData[`addrotation_${i}`])+" RPM"}</strong></p>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div className='input-container'>
+                                                                        <input type="number"  className='time-data'  onChange={(e)=>setTimerData(`addtime_${i}`,Number(e.target.value))}/>
+                                                                        <input type="number"  className='rotation-data' onChange={(e)=>setTimerData(`addrotation_${i}`,Number(e.target.value))}/>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+
+                                                        );
+                                                    })
+                                                }
+
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                                 <div>
-                                    <table className='barreling-table' border={1}>
+                                    <table className='barreling-process' border={1}>
                                         <thead>
                                             <tr>
-                                                <th  colSpan={3}>Barreling Time:</th>
+                                                <th colSpan={12} className='titletables'> BARRELING PROCESS</th>
                                             </tr>
                                             <tr>
-                                                <th  colSpan={3}>Setting:</th>
-                                                <th>Total/Final</th>
+                                                <th colSpan={7} className='titlesubtables'>MAGNET SAMPLES</th>
+                                                <th colSpan={5} className='titlesubtables'>JUDGEMENT PER PIECE</th>
+                                            </tr>
+                                            <tr>
+                                                <th></th>
+                                                <th>No.</th>
+                                                <th>Magnet 1</th>
+                                                <th>Magnet 2</th>
+                                                <th>Magnet 3</th>
+                                                <th>Magnet 4</th>
+                                                <th>Magnet 5</th>
+                                                <th>Magnet 1</th>
+                                                <th>Magnet 2</th>
+                                                <th>Magnet 3</th>
+                                                <th>Magnet 4</th>
+                                                <th>Magnet 5</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>T1</td>
-                                                <td>
-                                                    <div className='input-container'>
-                                                        <p><strong>Time</strong></p>
-                                                        <p><strong>Rotation</strong></p>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className='input-container'>
-                                                        <input className='time-data'  onChange={(e)=>setData('time_1',e.target.value)}/>
-                                                        <input className='rotation-data' onChange={(e)=>setData('rotation_1',e.target.value)}/>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className='input-container'>
-                                                        <input className='time-data'  onChange={(e)=>setData('timetotal_1',e.target.value)}/>
-                                                        <input className='rotation-data' onChange={(e)=>setData('rotationtotal_1',e.target.value)}/>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>T2</td>
-                                                <td>
-                                                    <div className='input-container'>
-                                                        <p><strong>Time</strong></p>
-                                                        <p><strong>Rotation</strong></p>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className='input-container'>
-                                                        <input className='time-data'  onChange={(e)=>setData('time_2',e.target.value)}/>
-                                                        <input className='rotation-data' onChange={(e)=>setData('rotation_2',e.target.value)}/>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className='input-container'>
-                                                        <input className='time-data'  onChange={(e)=>setData('timetotal_2',e.target.value)}/>
-                                                        <input className='rotation-data' onChange={(e)=>setData('rotationtotal_2',e.target.value)}/>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>T3</td>
-                                                <td>
-                                                    <div className='input-container'>
-                                                        <p><strong>Time</strong></p>
-                                                        <p><strong>Rotation</strong></p>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className='input-container'>
-                                                         <input className='time-data'  onChange={(e)=>setData('time_3',e.target.value)}/>
-                                                        <input className='rotation-data' onChange={(e)=>setData('rotation_3',e.target.value)}/>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className='input-container'>
-                                                         <input className='time-data'  onChange={(e)=>setData('timetotal_3',e.target.value)}/>
-                                                        <input className='rotation-data' onChange={(e)=>setData('rotationtotal_3',e.target.value)}/>
-                                                    </div>
-                                                </td>
+                                                <th>Machine</th>
+                                                <td><input  onChange={(e)=>setData('machine_no',e.target.value)} className='specs-input'/></td>
+                                                <td><input  type='number' onChange={(e)=>goToNextInput('sample','machinesample_1',e.target.value,e)} className='specs-input'/></td>
+                                                <td><input  type='number'  onChange={(e)=>goToNextInput('sample','machinesample_2',e.target.value,e)}  className='specs-input'/></td>
+                                                <td><input  type='number'  onChange={(e)=>goToNextInput('sample','machinesample_3',e.target.value,e)} className='specs-input'/></td>
+                                                <td><input  type='number'  onChange={(e)=>goToNextInput('sample','machinesample_4',e.target.value,e)}  className='specs-input'/></td>
+                                                <td><input  type='number'  onChange={(e)=>goToNextInput('sample','machinesample_5',e.target.value,e)}  className='specs-input'/></td>
+
+                                                {
+                                                    //return Judgement Barreling process
+                                                   sampleCheck.map((i) => {
+                                                        const sample = barrellingProcss[`machinesample_${i}`];
+                                                        if (!sample) {
+                                                            return <td key={i} style={{ background:'#F09189' , color:'white'}}>No data</td>;
+                                                        }
+                                                        const result = desicionStatus(sample);
+                                                        return (
+                                                            <td
+                                                            key={i}
+                                                            style={{ color: "white", background: result.color }}
+                                                            >
+                                                            {result.status}
+                                                            </td>
+                                                        );
+                                                    })
+                                                }
+
+
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                        </div>
-                        <div className='specs-table'>
-                            <div>
-                                <table className='barreling-process' border={1}>
-                                    <thead>
-                                        <tr>
-                                            <th colSpan={12}> BARRELING PROCESS</th>
-                                        </tr>
-                                        <tr>
-                                            <th colSpan={7}>MAGNET SAMPLES</th>
-                                            <th colSpan={5}>JUDGEMENT PER PIECE</th>
-                                        </tr>
-                                        <tr>
-                                            <th></th>
-                                            <th>No.</th>
-                                            <th>Machine 1</th>
-                                            <th>Machine 2</th>
-                                            <th>Machine 3</th>
-                                            <th>Machine 4</th>
-                                            <th>Machine 5</th>
-                                            <th>Machine 1</th>
-                                            <th>Machine 2</th>
-                                            <th>Machine 3</th>
-                                            <th>Machine 4</th>
-                                            <th>Machine 5</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th>Machine</th>
-                                            <td><input  onChange={(e)=>setData('machine_no',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinesample_1',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinesample_2',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinesample_3',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinesample_4',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinesample_5',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinejudgement_1',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinejudgement_2',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinejudgement_3',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinejudgement_4',e.target.value)} className='specs-input'/></td>
-                                            <td><input  onChange={(e)=>setData('machinejudgement_5',e.target.value)} className='specs-input'/></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className='specs-dual'>
+                            <div className='specs-table'>
+                                <div>
+                                     <table className='barreling-process' border={1}>
+                                        <thead>
+                                            <tr>
+                                                <th colSpan={15} className='titletables'>ACTUAL DIMENSION</th>
+                                            </tr>
+                                            <tr>
+                                                <th>No</th>
+                                                <th className='pt-color'>Pt. 1</th>
+                                                <th className='pt-color'>Pt. 2</th>
+                                                <th className='pt-color'>Pt. 3</th>
+                                                <th className='pt-color'>Pt. 4</th>
+                                                <th className='pt-color'>Pt. 5</th>
+                                                <th className='max-color'>Max</th>
+                                                <th className='max-color'>Min</th>
+                                                <th className='worst-color'>Worst</th>
+                                                <th>Maximum</th>
+                                                <th>Minimum</th>
+                                                <th className='worst-color'>Target</th>
+                                                <th>Max Diff</th>
+                                                <th>Min Diff</th>
+                                                <th>Average</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                {
+                                                    sampleCheck.map((i)=>{
+                                                        let maxShow = 0;
+                                                        let minShow = 10 ;
+                                                        sampleCheck.map((j)=>{
+                                                            maxShow  = j > 0 &  Number(points_pt[`pt${i}_${j}`]) > maxShow ? Number(points_pt[`pt${i}_${j}`]) :  maxShow;
+                                                            minShow  = j > 0 &  Number(points_pt[`pt${i}_${j}`]) < minShow ? Number(points_pt[`pt${i}_${j}`]) :   Number(points_pt[`pt${i}_${j}`]);
+                                                        });
+
+
+                                                        return(
+                                                                <tr>
+                                                                    <td>{i}</td>
+                                                                    <td><input  id={`pt${i}_1`} onChange={(e)=>goToNextInput('point',`pt${i}_1`,e.target.value,e)} className='specs-input'/></td>
+                                                                    <td><input  id={`pt${i}_2`} onChange={(e)=>goToNextInput('point',`pt${i}_2`,e.target.value,e)} className='specs-input'/></td>
+                                                                    <td><input  id={`pt${i}_3`} onChange={(e)=>goToNextInput('point',`pt${i}_3`,e.target.value,e)} className='specs-input'/></td>
+                                                                    <td><input  id={`pt${i}_4`} onChange={(e)=>goToNextInput('point',`pt${i}_4`,e.target.value,e)} className='specs-input'/></td>
+                                                                    <td><input  id={`pt${i}_5`} onChange={(e)=>goToNextInput('point',`pt${i}_5`,e.target.value,e)} className='specs-input'/></td>
+                                                                    <td>{maxShow > 0 && maxShow}</td>
+                                                                    <td>{minShow > 0 && minShow}</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                    <td>5.600</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                        );
+                                                    })
+                                                }
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <div>
                                     <table className='barreling-process' border={1}>
                                         <thead>
@@ -438,83 +551,83 @@ export default function Home({ message }) {
                                             </tr>
                                             <tr>
                                                 <td>5.570 - 5.575</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness1_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness1_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness1_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness1_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness1_5',e.target.value)} className='specs-input'/></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>5.576 - 5.581</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness2_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness2_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness2_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness2_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness2_5',e.target.value)} className='specs-input'/></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>5.582 - 5.587</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness3_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness3_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness3_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness3_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness3_5',e.target.value)} className='specs-input'/></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>5.588 - 5.593</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness4_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness4_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness4_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness4_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness4_5',e.target.value)} className='specs-input'/></td>
+                                               <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>5.594 - 5.599</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness5_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness5_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness5_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness5_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness5_5',e.target.value)} className='specs-input'/></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>5.600 - 5.605</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness6_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness6_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness6_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness6_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness6_5',e.target.value)} className='specs-input'/></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>5.606 - 5.611</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness7_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness7_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness7_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness7_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness7_5',e.target.value)} className='specs-input'/></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>5.612 - 5.617</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness8_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness8_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness8_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness8_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness8_5',e.target.value)} className='specs-input'/></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>5.618 - 5.623</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness9_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness9_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness9_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness9_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness9_5',e.target.value)} className='specs-input'/></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>5.624 - 5.630</td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness10_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness10_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness10_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness10_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input onChange={(e)=>setThickness('magnethickness10_5',e.target.value)} className='specs-input'/></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td colSpan={6}>HT</td>
@@ -523,125 +636,39 @@ export default function Home({ message }) {
                                     </table>
                                 </div>
                             </div>
-                            <div>
-                                    <table className='barreling-process' border={1}>
-                                        <thead>
-                                            <tr>
-                                                <th colSpan={15}>ACTUAL DIMENSION</th>
-                                            </tr>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Pt. 1</th>
-                                                <th>Pt. 2</th>
-                                                <th>Pt. 3</th>
-                                                <th>Pt. 4</th>
-                                                <th>Pt. 5</th>
-                                                <th>Max</th>
-                                                <th>Min</th>
-                                                <th>Worst</th>
-                                                <th>Maximum</th>
-                                                <th>Minimum</th>
-                                                <th>Target</th>
-                                                <th>Max Diff</th>
-                                                <th>Min Diff</th>
-                                                <th>Average</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td><input  onChange={(e)=>setPoints('pt1_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt1_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt1_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt1_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt1_5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('max_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('worst_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('maximum_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('minimum_1',e.target.value)} className='specs-input'/></td>
-                                                <td>5.600</td>
-                                                <td><input  onChange={(e)=>setPoints('max_diff1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_diff1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('average_1',e.target.value)} className='specs-input'/></td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td><input  onChange={(e)=>setPoints('pt2_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt2_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt2_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt2_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt2_5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('max_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('worst_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('maximum_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('minimum_2',e.target.value)} className='specs-input'/></td>
-                                                <td>5.600</td>
-                                                <td><input  onChange={(e)=>setPoints('max_diff2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_diff2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('average_2',e.target.value)} className='specs-input'/></td>
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td><input  onChange={(e)=>setPoints('pt3_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt3_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt3_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt3_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt3_5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('max_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('worst_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('maximum_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('minimum_3',e.target.value)} className='specs-input'/></td>
-                                                <td>5.600</td>
-                                                <td><input  onChange={(e)=>setPoints('max_diff3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_diff3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('average_3',e.target.value)} className='specs-input'/></td>
-                                            </tr>
-                                            <tr>
-                                                <td>4</td>
-                                                <td><input  onChange={(e)=>setPoints('pt4_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt4_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt4_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt4_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt4_5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('max_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('worst_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('maximum_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('minimum_4',e.target.value)} className='specs-input'/></td>
-                                                <td>5.600</td>
-                                                <td><input  onChange={(e)=>setPoints('max_diff4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_diff4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('average_4',e.target.value)} className='specs-input'/></td>
-                                            </tr>
-                                            <tr>
-                                                <td>5</td>
-                                                <td><input  onChange={(e)=>setPoints('pt5_1',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt5_2',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt5_3',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt5_4',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('pt5_5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('max_5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('worst_5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('maximum_5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('minimum_5',e.target.value)} className='specs-input'/></td>
-                                                <td>5.600</td>
-                                                <td><input  onChange={(e)=>setPoints('max_diff5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('min_diff5',e.target.value)} className='specs-input'/></td>
-                                                <td><input  onChange={(e)=>setPoints('average_5',e.target.value)} className='specs-input'/></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div className='specs-remarks'>
-                                        <label>REMARKS:</label><input onChange={(e)=>setData('remarks',e.target.value)}  className='specs-remarks'/>
-                                    </div>
-                                    <div className='specs-remarks'>
-                                        <button onClick={()=>handleSave()}>SAVE</button>
-                                    </div>
+                        </div>
+                        <div className='specs-bottom'>
+                            <div className='specs-remarks'>
+                                <div className='specs-remarks-container'>
+                                    {StatusData.staffDetails > 1?
+                                        <div  className="specs-requirements">
+                                            <p className='error-theme'><strong>- Please Complete Details!</strong></p>
+                                            <CrossIcon color="red"/>
+                                        </div>:<p className='success-theme'><strong>- All Lot Details Compelted!</strong></p>}
+                                    {StatusData.barrellingProcss > 0 ?
+                                        <div className="specs-requirements">
+                                            <p className='error-theme'><strong>- Measure Samples!</strong></p>
+                                            <CrossIcon color="red"/>
+                                        </div>:<p className='success-theme'><strong>- Read All Judgement!</strong></p>}
+                                    {StatusData.pointsDetails > 0 ?
+                                        <div className="specs-requirements">
+                                            <p className='error-theme'><strong>- Measure Actual Samples!</strong></p>
+                                            <CrossIcon color="red"/>
+                                        </div>:<p className='success-theme'><strong>- Check All Points!</strong></p>}
+                                    {StatusData.timerDetails > 0 ?
+                                        <div className="specs-requirements">
+                                            <p className='error-theme'><strong>- Input Timer & Rotation!</strong></p>
+                                            <CrossIcon color="red"/>
+                                        </div>:<p className='success-theme'><strong>- Check All Timer , Rotation and Additional!</strong></p>}
                                 </div>
+                                <label>REMARKS:</label><input onChange={(e)=>setData('remarks',e.target.value)}  className='specs-remarks' />
+                            </div>
+                            {
+                                StatusData.staffDetails <= 1 && StatusData.barrellingProcss === 0 && StatusData.pointsDetails === 0 &&
+                                <div className='specs-remarks'>
+                                    <button onClick={()=>handleSave()} disabled={!(StatusData.staffDetails <= 1 && StatusData.barrellingProcss <= 0 )}>SAVE</button>
+                                </div>
+                            }
                         </div>
                     </div>
             }
