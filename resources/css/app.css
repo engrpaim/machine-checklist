@@ -77,8 +77,9 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 20rem;
+    width: 25rem;
 }
+
 .data-input input,
 .data-input select {
     border: 1px solid #6f8faf;
@@ -400,4 +401,110 @@ h1 {
 }
 .password-container button:hover {
     background: #00b2ff;
+}
+.cgh-table {
+    border-collapse: collapse;
+}
+
+.cgh-table input {
+    width: 3rem;
+    border: none;
+    text-align: center;
+    padding: 0.3rem;
+}
+.cgh-table td {
+    width: 3rem;
+    padding: 0.2rem;
+    text-align: center;
+}
+
+.cgh-table th {
+    font-size: 12px;
+    padding: 0.5rem;
+}
+
+.tally-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 15rem;
+    padding: 0.5rem;
+    height: fit-content;
+    max-height: fit-content;
+    box-shadow:
+        rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border-radius: 1rem;
+
+    padding: 1rem;
+}
+.tally-group {
+    display: flex;
+    justify-content: center;
+}
+.tally-group h3 {
+    font-size: 15px;
+}
+
+.tally-data {
+    font-size: 12px;
+    text-align: center;
+    width: 7rem;
+    padding: 0.1rem;
+    background: #e6fcfe;
+    border: 1px solid #0393a0;
+    margin: 0.1rem;
+}
+.tally-main {
+    display: flex;
+    flex-direction: row;
+    margin: 3rem;
+    gap: 1rem;
+}
+.input-data-box input {
+    background: #fff4b8;
+    border: 1px solid #a38b00;
+}
+.green-theme {
+    background: #168d48;
+    color: white;
+    border: 1px solid #03160b;
+}
+
+.gray-theme {
+    background: #1e2939;
+    color: white;
+    border: 1px solid #03160b;
+}
+.orange-theme {
+    background: #fe9a37;
+    color: white;
+    border: 1px solid #753b01;
+}
+.light-gray-theme {
+    background: #d0d9e6;
+    color: white;
+    border: 1px solid #03160b;
+}
+.light-green-theme {
+    background: #4ae38a;
+    color: #03160b;
+    border: 1px solid #03160b;
+}
+.light-yellow-theme {
+    background: #ffe72e;
+    color: #1a1700;
+    border: 1px solid #1a1700;
+}
+
+.light-blue-theme {
+    background: #90cff9;
+    color: #010f18;
+    border: 1px solid #010f18;
+}
+
+.light-orange-theme {
+    background: #ffc88a;
+    color: #1a0e00;
+    border: 1px solid #1a0e00;
 }

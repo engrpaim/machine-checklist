@@ -6,6 +6,7 @@ import Notification from '../Layouts/Notification';
 import PasswordPrompts  from '../Layouts/PasswordPrompts';
 import ModelSelector from '../Layouts/ModelSelector';
 import InProcessDisplay from '../Layouts/InProcessDisplay';
+import CGHL from '../Layouts/Cghl';
 export default function Home({ message }) {
 
     const { flash ,LotData,detailsLot} = usePage().props;
@@ -20,7 +21,7 @@ export default function Home({ message }) {
    const [notificationMessage, setNotificationMessage] = useState(null);
    const [modelIsExist , setModelIsExist] = useState(LotData);
    const [updateData ,setUpdate] = useState(null);
-   console.log(modelIsExist ,updateData);
+
     useEffect(()=>{
 
         if (!flash) return;
@@ -231,6 +232,7 @@ export default function Home({ message }) {
 
     const handleUpdate=()=>{
         if(data && !data.lot) return;
+
         router.post('/machining-checklist/update', {
             ...data,
             pt_data:points_pt,
@@ -240,32 +242,36 @@ export default function Home({ message }) {
         },{preserveScroll:true,
 
               onSuccess: ()=>{
-
-                      router.get('/machining-checklist', {}, { preserveScroll:true, preserveState:true });
-                      clearAllInput()
+                    clearAllInput();
+                    setUpdate(true);
+                    setModelIsExist(false);
+                    router.get('/machining-checklist', {}, { preserveScroll:true, preserveState:true });
                 }
         });
     }
 
     const handlePICAllow =(keydown)=>{
+
         if(!keydown) return;
+
         setUpdate(false);
         setModelIsExist(true);
         if(passwordContainer.password === 'improvement'){
-              setUpdate(true);
-              setModelIsExist(false);
-              setPasswordContainer('password','');
-              dataClear.forEach((items)=>{
+            setUpdate(true);
+            setModelIsExist(false);
+            setPasswordContainer('password','');
+
+            dataClear.forEach((items)=>{
                 Object.entries(formState[items]).map(([key,value])=>{
                     if(items === 'data'){
                         setData( key,detailsLot[key]);
                     }
                 });
-              });
+                });
 
-              const convertToJSON = ["timer","barrelling","pt_data"];
+                const convertToJSON = ["timer","barrelling","pt_data"];
 
-              convertToJSON.forEach((toJson)=>{
+                convertToJSON.forEach((toJson)=>{
                 if(!detailsLot[toJson])return;
                 Object.entries(detailsLot[toJson]).map(([key,value])=>{
                     if(toJson === 'timer'){
@@ -276,7 +282,7 @@ export default function Home({ message }) {
                         setPoints(key,value);
                     }
                 })
-              });
+            });
 
         }else{
             setPasswordContainer('isCorrect', 'Wrong password contact PIC!');
@@ -317,7 +323,7 @@ export default function Home({ message }) {
         }, 300);
 
     };
-
+    console.log('Status',StatusData);
     return (
         <div className='main-container'>
             {
@@ -338,27 +344,31 @@ export default function Home({ message }) {
             }
             <ModelSelector data={data} setData={setData}/>
             {
-                data && data.process === 'inprocess' ?
-                    <InProcessDisplay
-                        data={data}
-                        modelIsExist={modelIsExist}
-                        setData={setData}
-                        setLotContainer={setLotContainer}
-                        currentDate={currentDate}
-                        modelDetails={modelDetails}
-                        timerData={timerData}
-                        setTimerData={setTimerData}
-                        goToNextInput={goToNextInput}
-                        sampleCheck={sampleCheck}
-                        StatusData={StatusData}
-                        updateData={updateData}
-                        handleUpdate={handleUpdate}
-                        handleSave={handleSave}
-                        timeRotation={timeRotation}
-                        barrellingProcss={barrellingProcss}
-                        points_pt ={points_pt}
-                        desicionStatus ={desicionStatus}
-                    />:null
+                    data && data.model  && data.process === 'inprocess' ?
+                        <InProcessDisplay
+                            data={data}
+                            modelIsExist={modelIsExist}
+                            setData={setData}
+                            setLotContainer={setLotContainer}
+                            currentDate={currentDate}
+                            modelDetails={modelDetails}
+                            timerData={timerData}
+                            setTimerData={setTimerData}
+                            goToNextInput={goToNextInput}
+                            sampleCheck={sampleCheck}
+                            StatusData={StatusData}
+                            updateData={updateData}
+                            handleUpdate={handleUpdate}
+                            handleSave={handleSave}
+                            timeRotation={timeRotation}
+                            barrellingProcss={barrellingProcss}
+                            points_pt ={points_pt}
+                            desicionStatus ={desicionStatus}
+                        />
+                    :data && data.model && data.process === 'cghl' ?
+                        <CGHL
+                            data={data}
+                        />:null
             }
         </div>
     );

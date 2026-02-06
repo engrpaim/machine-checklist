@@ -15,6 +15,7 @@ export default function ModelSelector({data,setData}){
                     <select value={data.process} onChange={(e)=>setData('process',e.target.value)}>
                         <option value=""></option>
                         <option value="inprocess">IN-PROCESS INSPECTION SHEET</option>
+                        <option value="cghl">CGH (L) DIMENSION MONITORING</option>
                     </select>
                 </div>
             </div>

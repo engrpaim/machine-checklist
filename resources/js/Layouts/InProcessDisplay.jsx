@@ -10,7 +10,7 @@ export default function InProcessDisplay({
                 data.model && data.process === 'inprocess' &&
                     <div className='inprocess-container'>
                         <div className='inprocess-details'>
-                            <h1>IN-PROCESS INSPECTION SHEET</h1>
+                            <h1>{data.model} IN-PROCESS INSPECTION SHEET</h1>
                             <div className='mode-container'>
                                 <h3>MODEL:</h3>
                                 <p>{data.model}</p>
@@ -439,6 +439,7 @@ export default function InProcessDisplay({
                                 </div>
                             }
                         </div>
+
                     </div>
             }
         </>
