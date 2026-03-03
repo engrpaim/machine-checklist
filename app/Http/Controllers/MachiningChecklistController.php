@@ -7,12 +7,69 @@ use App\Models\Data;
 use Exception;
 use Inertia\Inertia;
 use App\Models\Users;
+use App\Models\Datalist;
 use App\Models\models;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Facades\Validator;
 class MachiningChecklistController extends Controller
 {
     public $finalModel;
+
+    public function store(Request $request)
+    {
+        //array for value exist checking
+        $preparedItems = [];
+        $ip = $request->ip();
+        $toBecheked = [
+            'measure' => ['lot_number'=>'required|string','process'=>'required|string'],
+        ];
+
+        $classBank =[
+            'measure' => Datalist::class
+        ];
+        //check if valid page
+        $page = $request->input('page')??null;
+        if(!$page) return redirect()->back()->with('error', 'Page does not exist!');
+
+        //check & validate required data
+        $toValidate = $toBecheked[$page] ?? null;
+
+        if(!$toValidate) return redirect()->back()->with('error', 'Invalid page!');
+
+        $isExist = Validator::make($request->all(),$toValidate);
+        if($isExist->fails())  return redirect()->back()->with('error', 'Please complete data!');
+
+        $isTableExist =  $classBank[$page] ?? null;
+        if(!$isTableExist) return redirect()->back()->with('error', 'Table not exist!');
+
+        // Saving data
+        if( $page === 'measure'){
+            $lotNumber = $request->input('lot_number');
+            $shift = $request->input('shift');
+            $process = $request->input('process');
+            $preparedItems[$process]=$request->all();
+            $preparing = json_encode($preparedItems);
+
+            $isLotExist = $isTableExist::where('lot_number',$lotNumber)->first();
+
+            if($isLotExist) return redirect()->back()->with('check',"".$lotNumber." already exist!");
+
+            try{
+
+                $isSaved = $isTableExist::create([
+                    'lot_number' => $lotNumber,
+                    'shift' => $shift,
+                    'preparing' =>$preparing,
+                    'ip_address' =>$ip
+                ]);
+                if($isSaved) return redirect()->back()->with('success', 'Saved Successfully!');
+            }catch(Exception $e){
+                 return redirect()->back()->with('error', `Failed:`.$e->getMessage());
+            }
+        }
+        return redirect()->back()->with('error', 'No Saving function yet!');
+    }
+
     public function loadModels()
     {
         $models = models::all('*');
@@ -27,7 +84,6 @@ class MachiningChecklistController extends Controller
         }
         $this->finalModel = json_encode($modified);
     }
-
 
     public function inprocess(Request $request)
     {
