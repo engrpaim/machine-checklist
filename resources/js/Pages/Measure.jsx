@@ -5,19 +5,21 @@ import MainLayout from "../Layouts/MainLayout";
 import SelectorModels from "../Layouts/SelectorModels";
 import CommonDetails from "../Components/CommonDetails"
 import BarellingDetails from "../Components/BarellingDetails";
+import TriBlockModal from "../Components/TriBlockModal";
 import { emptyCount } from "../utils/UtilityFunctions";
 export default function Measure(){
     /**
      * return machining sheet
      * Details Selector return components based on sheet
      * **/
-    const {modelsList,flash} = usePage().props;
-    console.log('falssjj' , flash);
+    const {modelsList,flash,modal} = usePage().props;
+    console.log('falssjj' , flash,modal);
     const [modelState, setModelState] = useState(null);
     const [processState , setProcessState]= useState(null);
     const [measureButton , setMeasureButton] = useState(null);
     const [areaState , setAreaState] = useState(null);
     const [statusCheck , setStatusCheck] =useState(null);
+    const [triModal,setTriModal] = useState(null);
     const {data,setData,post, processing, errors} = useForm({
         lot_number:'',
         date:'',
@@ -33,7 +35,16 @@ export default function Measure(){
 
     //useform for details
     //form for common details
+    const handleCloseModal=()=>{
+        console.log('back to home');
+        setTriModal(false);
+    }
 
+    const handleCheck =()=>{
+        console.log('Set Status Check!');
+        setStatusCheck(processState.process);
+        setTriModal(false);
+    }
     const handleStore = () => {
         const checkEmpty = emptyCount(data);
         console.log('clicked',checkEmpty,data);
@@ -51,46 +62,57 @@ export default function Measure(){
         return;
 
     },[flash])
+
+    useEffect(()=>{
+        if(!modal) return;
+        setTriModal(modal);
+    },[modal,flash])
     console.log(modelState , processState,measureButton,data);
     return(
-        <section>
-            <div>
-                <h1>Machining Checklist Data</h1>
-            </div>
-            {/*Details Selector*/}
-            <div className="container-row">
-                  <SelectorModels
-                        model={modelsList}
-                        setProcessState={setProcessState}
-                        setModelState={setModelState}
-                        setMeasureButton={setMeasureButton}
-                        modelState = {modelState}
-                        processState ={processState}
-                    />
-                    {
-                        modelState && processState &&
-                        <div className="process-group">
-                            <div className="process-result">
-                                <h1 style={{ color:"currentColor" }}>{processState.process.toUpperCase()}</h1>
-                                <p>{modelState}&nbsp;{processState.value}</p>
+        <>
+            {
+               triModal && <TriBlockModal message={triModal} handleCloseModal={handleCloseModal} handleCheck={handleCheck}/>
+            }
+            <section>
+
+                <div>
+                    <h1>Machining Checklist Data</h1>
+                </div>
+                {/*Details Selector*/}
+                <div className="container-row">
+                    <SelectorModels
+                            model={modelsList}
+                            setProcessState={setProcessState}
+                            setModelState={setModelState}
+                            setMeasureButton={setMeasureButton}
+                            modelState = {modelState}
+                            processState ={processState}
+                        />
+                        {
+                            modelState && processState &&
+                            <div className="process-group">
+                                <div className="process-result">
+                                    <h1 style={{ color:"currentColor" }}>{processState.process.toUpperCase()}</h1>
+                                    <p>{modelState}&nbsp;{processState.value}</p>
+                                </div>
+                                <div className="process-result2">
+                                    <h1 style={{ color:"currentColor" }}>PLANT AREA</h1>
+                                    <p>{areaState ?? 'Not registered! Contact PIC!'}</p>
+                                </div>
                             </div>
-                            <div className="process-result2">
-                                <h1 style={{ color:"currentColor" }}>PLANT AREA</h1>
-                                <p>{areaState ?? 'Not registered! Contact PIC!'}</p>
-                            </div>
-                        </div>
-                    }
+                        }
+                        {
+                            measureButton && <CommonDetails data={data} setData={setData} handleStore={handleStore} processing={processing} />
+                        }
+                </div>
+                <div className="container-row">
                     {
-                        measureButton && <CommonDetails data={data} setData={setData} handleStore={handleStore} processing={processing} />
+                        statusCheck && processState && processState.process === 'barelling' ?
+                        <BarellingDetails/>:null
                     }
-            </div>
-            <div>
-                {
-                    statusCheck && processState && processState.process === 'barelling' ?
-                    <BarellingDetails/>:null
-                }
-            </div>
-        </section>
+                </div>
+            </section>
+        </>
     )
 }
 

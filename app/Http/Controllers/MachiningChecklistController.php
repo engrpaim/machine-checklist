@@ -52,7 +52,7 @@ class MachiningChecklistController extends Controller
 
             $isLotExist = $isTableExist::where('lot_number',$lotNumber)->first();
 
-            if($isLotExist) return redirect()->back()->with('check',"".$lotNumber." already exist!");
+            if($isLotExist) return redirect()->back()->with('modal',$lotNumber . ' already exist!');
 
             try{
 

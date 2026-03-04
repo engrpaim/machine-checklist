@@ -153,4 +153,20 @@ const InfoIcon = ({ size = 24, color = "currentColor" }) => {
     </svg>
   );
 };
-export { CrossIcon ,SettingsIcon ,SettingsIconMinimal,UserIcon,HomeIcon,BarChartIcon,BuildingIcon,InfoIcon};
+
+const ArrowCircleIcon = ({ width = 800, height = 800, fill = "currentColor" }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill={fill}
+      width={width}
+      height={height}
+      viewBox="-1 0 19 19"
+      className="cf-icon-svg"
+    >
+      <path d="M16.416 9.579A7.917 7.917 0 1 1 8.5 1.662a7.916 7.916 0 0 1 7.916 7.917zm-2.753.005a.792.792 0 0 0-.232-.56l-3.287-3.287a.792.792 0 0 0-1.12 1.12l1.936 1.935H4.128a.792.792 0 0 0 0 1.583h6.832l-1.935 1.936a.792.792 0 0 0 1.12 1.12l3.286-3.288a.792.792 0 0 0 .232-.56z" />
+    </svg>
+  );
+};
+
+export { CrossIcon ,SettingsIcon ,SettingsIconMinimal,UserIcon,HomeIcon,BarChartIcon,BuildingIcon,InfoIcon,ArrowCircleIcon};
