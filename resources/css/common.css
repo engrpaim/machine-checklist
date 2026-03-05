@@ -1,4 +1,5 @@
 .details-container-gray input {
+    width: 6rem;
     border: none;
     border-radius: 1rem;
     box-shadow:
@@ -36,7 +37,7 @@
 .details-container-inner {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     justify-content: space-between;
     flex-direction: row;
     color: #2b2e2e;
@@ -50,10 +51,95 @@
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    width: 21rem;
+    width: 17rem;
 }
 
 .details-data input {
     padding: 0.3rem;
     text-align: center;
+}
+
+.details-container-sky h1 {
+    color: #2b2e2e;
+}
+
+.details-container-sky {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: 13.5rem;
+    min-height: fit-content;
+    padding: 1rem 2rem;
+    background: #d7fefa;
+    gap: 1rem;
+    border-radius: 1.2rem;
+    color: #2b2e2e;
+}
+
+.time-container {
+    display: flex;
+    flex-direction: column;
+}
+.timer-setting {
+    display: flex;
+    flex-direction: row;
+    align-items: Center;
+    gap: 1rem;
+}
+.timer-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 4.2rem;
+    gap: 0.5rem;
+}
+
+.timer-data input {
+    padding: 0.3rem;
+    width: 100%;
+    border-radius: 1rem;
+    border: none;
+    text-align: center;
+    box-shadow:
+        rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.timer-data input:focus {
+    outline: 1px solid #ffa81c;
+    background: #fbffed;
+}
+.timer-data button {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.add-timer:hover {
+    color: #ffb93b;
+}
+.add-timer {
+    color: #472e00;
+}
+
+.cancel-container {
+    display: flex;
+    justify-content: end;
+    width: 100%;
+}
+.cancel-btn {
+    border: none;
+    padding: 0.5rem;
+    width: 5em;
+    background: #f05f57;
+    color: white;
+    cursor: pointer;
+    border-radius: 1rem;
+    align-self: flex-end;
+}
+
+.cancel-btn:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }

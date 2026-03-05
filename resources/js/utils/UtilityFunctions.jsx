@@ -16,4 +16,24 @@ const emptyCount =(data)=>{
     return currentEmpty;
 }
 
-export {removeUnwanted,emptyCount}
+const handleKeyDown = (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+
+    const inputs = document.querySelectorAll("input");
+    const arr = Array.from(inputs);
+    let index = arr.indexOf(e.target);
+
+    let next = index + 1;
+
+    while (arr[next] && arr[next].disabled) {
+      next++;
+    }
+
+    if (arr[next]) {
+      arr[next].focus();
+    }
+  }
+};
+
+export {removeUnwanted,emptyCount,handleKeyDown}
