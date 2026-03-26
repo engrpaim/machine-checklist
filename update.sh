@@ -17,7 +17,7 @@ php artisan optimize:clear
 echo "Optimize Laravel"
 php artisan optimize
 
-echo "Optimize js/pages"
+echo "Optimize js/pages.."
 npm run build
 
 echo "Update Completed!"
