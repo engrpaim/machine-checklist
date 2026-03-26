@@ -213,11 +213,11 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
     };
     console.log(magnetPoints);
     return (
-        <div className='measuring-main'>
+        <>
             <div>
-                <h1>Processing</h1>
+                <h1>Barelling Thickness</h1>
             </div>
-            <div className='measuring-graph'>
+            <div className='measuring-main'>
                 <div className='measuring-points'>
                     <table className='measuring-process' border={1} style={{ border: '#072940' }}>
                         <thead>
@@ -358,10 +358,10 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                         </tbody>
                     </table>
                 </div>
-                <div style={{ backgroundColor: '#f5f5f5', width: '35rem', height: '19.5rem', padding: '1rem' }}>
+                <div className='measuring-points-graph' style={{ backgroundColor: '#f5f5f5' }}>
                     <Scatter data={data} options={options} />
                 </div>
             </div>
-        </div>
+        </>
     )
 }
