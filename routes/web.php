@@ -51,32 +51,42 @@ use App\Models\models;
 // });
 
 // New routing
+
+
 Route::get('/', function () {
     return redirect('/machining-checklist/home');
 });
-Route::get('/machining-checklist/home' , function (){
+Route::get('/machining-checklist/home', function () {
     return Inertia::render('Dashboard');
 });
 
-Route::get('/machining-checklist/settings' , function (){
+Route::get('/machining-checklist/settings', function () {
     return Inertia::render('Settings');
 });
 
-Route::get('/machining-checklist/measure',function(){
+Route::get('/machining-checklist/measure', function () {
 
-        $models = models::all('*');
-        $modified =[];
-        foreach($models as  $key => $values){
-            $data = $values->toArray();
-            $modified[$data["model"]] =    $data;
-        }
+    $models = models::all('*');
+    $modified = [];
+    foreach ($models as  $key => $values) {
+        $data = $values->toArray();
+        $modified[$data["model"]] =    $data;
+    }
 
-        $finalModel = json_encode($modified);
+    $finalModel = json_encode($modified);
 
-        return Inertia::render('Measure', [
-            'message' => 'Hello from Laravel!',
-            'modelsList' =>  $finalModel
-        ]);
+    return Inertia::render('Measure', [
+        'message' => 'Hello from Laravel!',
+        'modelsList' =>  $finalModel
+    ]);
 });
 
-Route::post('/machining-checklist/measure/store',[MachiningChecklistController::class, 'store']);
+
+
+Route::post('/machining-checklist/measure/store', [MachiningChecklistController::class, 'store']);
+Route::post('/machining-checklist/measure/batching', [MachiningChecklistController::class, 'lotBatching']);
+Route::post('/machining-checklist/measure/get-details', [MachiningChecklistController::class, 'getDetails']);
+Route::post('/machining-checklist/measure/autosave', [MachiningChecklistController::class, 'autosave']);
+Route::post('/machining-checklist/measure/finalize', [MachiningChecklistController::class, 'finalizeProcess']);
+Route::post('/machining-checklist/measure/proceed', [MachiningChecklistController::class, 'proceedToNext']);
+Route::post('/machining-checklist/measure/update', [MachiningChecklistController::class, 'updateData']);

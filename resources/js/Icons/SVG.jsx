@@ -1,4 +1,4 @@
-const CrossIcon = ({ size = 24, color = "#000" }) => {
+const CrossIcon = ({ size = 24, color = "currentColor" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -1,11 +1,20 @@
-import { useState } from "react";
-import { InfoIcon , AddBoxIcon } from "../Icons/SVG"
-export default function BarellingDetails({handleKeyDown,barellingDetail,setBarellingDetails,setTimerDetails ,timerDetails}){
-    const firstPart = ['Total Batch/Lot' , 'Total Qty/Lot', 'Total Wt./Lot' ,'Media Size' ]
-    const timeRotation = [1,2,3];
-    console.log(barellingDetail,timerDetails);
-    const [addButton , setAddButton] = useState(null);
-    return(
+import { useState, useEffect } from "react";
+import { InfoIcon, AddBoxIcon, CrossIcon } from "../Icons/SVG"
+export default function BarellingDetails({ handleKeyDown, barellingDetails, setBarellingDetails, setTimerDetails, timerDetails, handleAutoSave, barellProcessing, chamfertype, edit }) {
+    const firstPart = ['Total Batch/Lot', 'Total Qty/Lot', 'Total Wt./Lot', 'Media Size']
+    const timeRotation = [1, 2, 3];
+    console.log('BARELLLIINNG PAGEE', barellingDetails, timerDetails,);
+
+    const [addButton, setAddButton] = useState(null);
+    const [currentStatus, setCurrentStatus] = useState(null);
+    const toDisabled = ['prepared', 'measured', 'approved']
+    useEffect(() => {
+        const status = barellingDetails.status
+        const allowed = toDisabled.includes(status) ? true : false
+        setCurrentStatus(allowed);
+
+    }, [barellingDetails]);
+    return (
         <>
             <div className="details-container-gray">
                 <h1>Barelling Details</h1>
@@ -13,54 +22,64 @@ export default function BarellingDetails({handleKeyDown,barellingDetail,setBarel
                     <div className="details-part">
                         <div className="details-data">
                             <label>Batch Number:</label>
-                            <input onChange={(e)=>setBarellingDetails('batch_number',e.target.value)} disabled={true}/>
+                            <input value={barellingDetails.batch_number} disabled={true} />
                         </div>
                         <div className="details-data">
                             <label>Total Batch/Lot:</label>
-                            <input onChange={(e)=>setBarellingDetails('total_batch_lot',e.target.value)}  onKeyDown={(e) => handleKeyDown(e)}/>
+                            <input type="number" onChange={(e) =>
+                                setBarellingDetails('total_batch_number', e.target.value)
+                            } value={barellingDetails.total_batch_number} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
                         <div className="details-data">
                             <label>Total Qty/Lot:</label>
-                            <input onChange={(e)=>setBarellingDetails('total_qty_lot',e.target.value)}  onKeyDown={(e) => handleKeyDown(e)}/>
+                            <input type="number" onChange={(e) => setBarellingDetails('total_qty_lot', e.target.value)} value={barellingDetails.total_qty_lot} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
                     </div>
                     <div className="details-part">
                         <div className="details-data">
                             <label>Media Size:</label>
-                            <input onChange={(e)=>setBarellingDetails('media_size',e.target.value)}    onKeyDown={(e) => handleKeyDown(e)}/>
+                            <input onChange={(e) => setBarellingDetails('media_size', e.target.value)} value={barellingDetails.media_size} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
                         <div className="details-data">
                             <label>Media Weight:</label>
-                            <input onChange={(e)=>setBarellingDetails('media_weight',e.target.value)}    onKeyDown={(e) => handleKeyDown(e)}/>
+                            <input onChange={(e) => setBarellingDetails('media_weight', e.target.value)} value={barellingDetails.media_weight} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
                         <div className="details-data">
                             <label>Coolant Level:</label>
-                            <input onChange={(e)=>setBarellingDetails('coolant_level',e.target.value)}    onKeyDown={(e) => handleKeyDown(e)}/>
+                            <input onChange={(e) =>
+                                setBarellingDetails('coolant_level', e.target.value)
+                            }
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleAutoSave('details', 'coolant_level', e.target.value, e)
+                                    }
+                                }}
+                                value={barellingDetails.coolant_level} disabled={currentStatus && !(edit)} />
                         </div>
                     </div>
                     <div className="details-part">
                         <div className="details-data">
                             <label>Styrene Powder:</label>
-                            <input onChange={(e)=>setBarellingDetails('sytrene_powder',e.target.value)}    onKeyDown={(e) => handleKeyDown(e)}/>
+                            <input onChange={(e) => setBarellingDetails('styrene_powder', e.target.value)} value={barellingDetails.styrene_powder} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
                         <div className="details-data">
                             <label>GC Powder:</label>
-                            <input onChange={(e)=>setBarellingDetails('gc_powder',e.target.value)}    onKeyDown={(e) => handleKeyDown(e)}/>
+                            <input onChange={(e) => setBarellingDetails('gc_powder', e.target.value)} value={barellingDetails.gc_powder} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
                         <div className="details-data">
                             <label>Magnet wt/pc.:</label>
-                            <input onChange={(e)=>setBarellingDetails('magnet_wt_pc_',e.target.value)}    onKeyDown={(e) => handleKeyDown(e)}/>
+                            <input onChange={(e) => setBarellingDetails('magnet_wt_pc_', e.target.value)} value={barellingDetails.magnet_wt_pc_} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
                     </div>
                     <div className="details-part">
                         <div className="details-data">
                             <label>Chamfertype:</label>
-                            <input onChange={(e)=>setBarellingDetails('chamfertype',e.target.value)}    onKeyDown={(e) => handleKeyDown(e)}/>
+                            <input disabled={true} value={chamfertype ?? null} />
                         </div>
                     </div>
                 </div>
                 <div className="information">
-                    <InfoIcon size={15}/>
+                    <InfoIcon size={15} />
                     <p><i>Automatic Saving feature.</i></p>
                 </div>
             </div>
@@ -68,10 +87,10 @@ export default function BarellingDetails({handleKeyDown,barellingDetail,setBarel
                 <h1>Barreling Time</h1>
                 <div className="time-container">
 
-                        {
-                           timeRotation.map((number)=>
-                           <>
-                                <div className="timer-setting">
+                    {
+                        timeRotation.map((number, index) =>
+                            <>
+                                <div key={index} className="timer-setting">
                                     <div className="timer-data">
                                         <h1>T{number}</h1>
                                     </div>
@@ -80,41 +99,46 @@ export default function BarellingDetails({handleKeyDown,barellingDetail,setBarel
                                         <label>Rotation:</label>
                                     </div>
                                     <div className="timer-data">
-                                        <input  onChange={(e)=>setTimerDetails('timer_'+number,e.target.value)}   onKeyDown={(e) => handleKeyDown(e)}/>
-                                        <input  onChange={(e)=>setTimerDetails('rotation_'+number,e.target.value)}   onKeyDown={(e) => handleKeyDown(e)}/>
+                                        <input type="number" onChange={(e) => setTimerDetails('timer_' + number, e.target.value)} value={timerDetails['timer_' + number] ? timerDetails['timer_' + number] : ''} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
+                                        <input type="number" onChange={(e) =>
+                                            setTimerDetails('rotation_' + number, e.target.value)
+
+                                        } value={timerDetails['rotation_' + number] ? timerDetails['rotation_' + number] : ''} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                                     </div>
                                     <div className="timer-data">
-                                        <p></p>
-                                        <p></p>
+                                        <p>{Number(timerDetails['timer_' + number]) + Number(timerDetails['addition_timer_' + number])}&nbsp;hr/s</p>
+                                        <p>{Number(timerDetails['rotation_' + number]) + Number(timerDetails['addition_rotation_' + number])}&nbsp;RPM</p>
                                     </div>
                                     <div className="timer-data">
                                         {
-                                            addButton === number  ?
-                                            <>
-                                                <input onChange={(e)=>setTimerDetails('addition_timer_'+number,e.target.value)}   onKeyDown={(e) => handleKeyDown(e)}/>
-                                                <input onChange={(e)=>setTimerDetails('addition_rotation_'+number,e.target.value)}   onKeyDown={(e) => handleKeyDown(e)}/>
-                                            </>:
-                                            <button className="add-timer" onClick={(e)=>setAddButton(number)}><AddBoxIcon/></button>
+                                            addButton === number ?
+                                                <div className="addtion-container">
+                                                    <div className="timer-data">
+                                                        <input type="number" onChange={(e) => setTimerDetails('addition_timer_' + number, e.target.value)} value={timerDetails['addition_timer_' + number] ? timerDetails['addition_timer_' + number] : 0} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
+                                                        <input type="number" onChange={(e) =>
+                                                            setTimerDetails('addition_rotation_' + number, e.target.value)} value={timerDetails['addition_rotation_' + number] ? timerDetails['addition_rotation_' + number] : 0} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
+                                                    </div>
+                                                    <button className="close-btn" onClick={(e) => setAddButton(false)}><CrossIcon size={18} /></button>
+                                                </div> :
+                                                <button className="add-timer" onClick={(e) => setAddButton(number)}><AddBoxIcon /></button>
 
                                         }
                                     </div>
                                 </div>
-                                <hr  style={{
-                                        border: 'none',
-                                        borderTop: '1px solid #ddd',
-                                        width: '100%',
-                                    }}/>
-                           </>
-                           )
-                        }
-                        <div className="cancel-container">
-                            <button className="cancel-btn" onClick={(e)=>setAddButton(false)}>Cancel</button>
-                        </div>
+                                <hr style={{
+                                    border: 'none',
+                                    borderTop: '1px solid #ddd',
+                                    width: '100%',
+                                }} />
+                            </>
+                        )
+                    }
+
 
                 </div>
 
                 <div className="information">
-                    <InfoIcon size={15}/>
+                    <InfoIcon size={15} />
                     <p><i>Automatic Saving feature.</i></p>
                 </div>
             </div>

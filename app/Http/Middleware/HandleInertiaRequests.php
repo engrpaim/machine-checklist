@@ -37,11 +37,15 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'flash' => [
-                'success' => fn () => $request->session()->get('success'),
-                'error' => fn () => $request->session()->get('error'),
-                'check' => fn () => $request->session()->get('check'),
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
+                'check' => fn() => $request->session()->get('check'),
             ],
             'modal' => fn() => $request->session()->get('modal'),
+            'current_lot' => fn() => $request->session()->get('current_lot'),
+            'batches' => fn() => $request->session()->get('batches'),
+            'existing' => fn() => $request->session()->get('existing'),
+            'model' => fn() => $request->session()->get('model'),
         ]);
     }
 }

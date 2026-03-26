@@ -19,7 +19,7 @@ return new class extends Migration
             $table->json('preparing');
             $table->timestamp('created_at');
             $table->timestamp('updated_at')->nullable();
-            $table->unique(['id','created_at']);
+            $table->unique(['id']);
         });
     }
 
