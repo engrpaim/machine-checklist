@@ -212,8 +212,12 @@ class MachiningChecklistController  extends ProcessController
         $form = $request->input('processForm') ?? null;
         $details = $form['details'];
         $data = $form['data'];
-
+        $magnet = [];
         if (!$details) return redirect()->back()->with('error', 'Details not found! complete all data');
+        if ($form["points"]["chamfer1"] || $form["points"]["chamfer2"]) {
+            $form["points"]["chamfer1"] ? $magnet["chamfer1"] = $form["points"]["chamfer1"] : null;
+            $form["points"]["chamfer2"] ? $magnet["chamfer2"] = $form["points"]["chamfer2"] : null;
+        }
 
         $datalist_id = $details["datalist_id"] ?? null;
         $datalist_lot_number = $details["datalist_lot_number"] ?? null;
@@ -235,6 +239,7 @@ class MachiningChecklistController  extends ProcessController
 
         $db = $this->dataBaseBank($process);
         $databaseProcess = new ProcessController;
+        $details["magnet"] = $magnet;
 
         //Get model data
         $modelDb = $this->dataBaseBank('models');

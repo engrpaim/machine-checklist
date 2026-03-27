@@ -48,6 +48,7 @@ class ProcessController extends Controller
     }
     public function updateQuery($db, $data, $batchNumber, $dataListId)
     {
+
         // Save data
         unset($data['created_at']);
         unset($data['updated_at']);

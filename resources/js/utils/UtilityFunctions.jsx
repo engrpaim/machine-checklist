@@ -6,7 +6,9 @@ const removeUnwanted = (data) => {
 }
 
 const emptyCount = (data) => {
+    console.log('counting data: ' ,data)
     let currentEmpty = 0;
+    if(!data) return 0
     Object.entries(data).map(([key, value]) => {
         if (value === '' || value === null) {
             currentEmpty += 1
