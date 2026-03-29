@@ -120,7 +120,7 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
 
                                     >
                                         <div  className={judegment[1+'m' + items].theme ?? null}>
-                                           A {judegment[1+'m' + items].value !== 0 ? judegment[1+'m' + items].value + ' ' + `(${judegment[1+'m' + items].judegment.toUpperCase()})` : null}
+                                          {judegment[1+'m' + items].value !== 0 ?'A '+ judegment[1+'m' + items].value + ' ' + `(${judegment[1+'m' + items].judegment.toUpperCase()})` : null}
                                         </div>
                                         {
                                             pointIdentifier === 2 ?
