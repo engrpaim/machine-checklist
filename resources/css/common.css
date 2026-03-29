@@ -36,7 +36,8 @@
     display: flex;
     flex-direction: column;
     width: fit-content;
-    height: 13.5rem;
+    min-height: 13.5rem;
+    max-height: fit-content;
     padding: 1rem 2rem;
     background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
     gap: 1rem;
@@ -150,93 +151,95 @@
 .close-btn {
     color: red;
 }
-.status-btn{
-    background:#195D8A;
-    border:none;
-    border-radius:0.2rem;
-    color:white;
-    width:6rem;
-    margin-left:1rem;
-    padding:0.5rem;
-    cursor:pointer;
+.status-btn {
+    background: #195d8a;
+    border: none;
+    border-radius: 0.2rem;
+    color: white;
+    width: 6rem;
+    margin-left: 1rem;
+    padding: 0.5rem;
+    cursor: pointer;
 }
-.status-btn:hover{
-    background:#4EA5DF;
+.status-btn:hover {
+    background: #4ea5df;
 }
 
-.notification{
-    display:flex;
-    justify-content:center;
-    width:100%;
-    height:2rem;
-    font-style:italic;
+.notification {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 2rem;
+    font-style: italic;
 }
 .error-notif-text {
-    display:flex;
-    justify-content:center;
-    align-items:Center;
-    color:#180501;
-    width:80%;
-    background:#FCC6BB;
+    display: flex;
+    justify-content: center;
+    align-items: Center;
+    color: #180501;
+    width: 80%;
+    background: #fcc6bb;
 }
 
-.cancel-btn{
-    padding:0.5rem;
-    background:#FAA18F;
-    color:#180501;
-    border-radius:0.5rem;
-     margin:0.2rem;
+.cancel-btn {
+    padding: 0.5rem;
+    background: #faa18f;
+    color: #180501;
+    border-radius: 0.5rem;
+    margin: 0.2rem;
 }
-.cancel-btn:hover{
-
-    background:#F4320B;
-    color:#FEEBE7;
-
+.cancel-btn:hover {
+    background: #f4320b;
+    color: #feebe7;
 }
 
-.success-btn{
-    padding:0.5rem;
-    background:#9AEFBD;
-    color:#03160B;
-    border-radius:0.5rem;
-     margin:0.2rem;
+.success-btn {
+    padding: 0.5rem;
+    background: #9aefbd;
+    color: #03160b;
+    border-radius: 0.5rem;
+    margin: 0.2rem;
 }
-.success-btn:hover{
-    background:#0D542B;
-    color:#E9FCF1;
+.success-btn:hover {
+    background: #0d542b;
+    color: #e9fcf1;
 }
 
-
-.password-container{
-    display:flex;
-    flex-direction:row;
-    gap:1rem;
+.password-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
 }
 
 .password-container input {
-    background:#E6FCFF;
-    border:1px solid #028FA2;
-    border-radius:1rem;
-    padding:0.5rem;
-    text-align:center;
+    background: #e6fcff;
+    border: 1px solid #028fa2;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    text-align: center;
 }
 .password-container input:focus {
-    background:none;
-    outline:1px solid #028FA2 ;
+    background: none;
+    outline: 1px solid #028fa2;
     box-shadow: rgba(83, 234, 253, 0.24) 0px 3px 8px;
 }
-.batch-container{
-    display:flex;
-    width:100%;
-    justify-content:space-between;
+.batch-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
 }
-.batch-number{
-    display:flex;
-    padding:0.1rem 0.4rem;
-    border-radius:0.5rem;
-    background-image: linear-gradient(to top, #1e3c72 0%, #1e3c72 1%, #2a5298 100%);
+.batch-number {
+    display: flex;
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.5rem;
+    background-image: linear-gradient(
+        to top,
+        #1e3c72 0%,
+        #1e3c72 1%,
+        #2a5298 100%
+    );
 }
 
-.batch-number h1{
-    color:white;
+.batch-number h1 {
+    color: white;
 }

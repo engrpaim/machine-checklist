@@ -539,10 +539,9 @@ export default function Measure() {
                                 <div className="inner-container-row">
                                   {
                                     currentModel && currentModel.chamfer_points  &&  currentModel.chamfer_points === 2  ?
-                                    <>
-                                        <Chamfering pointIdentifier={1} goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} chamfertype={barellingDetails.chamfertype ?? null} handleKeyDown={handleKeyDown} status={processForm.details["status"]} edit={editBatch} />
+
                                         <Chamfering pointIdentifier={2} goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} chamfertype={barellingDetails.chamfertype ?? null} handleKeyDown={handleKeyDown} status={processForm.details["status"]} edit={editBatch} />
-                                    </>:
+                                    :
                                         <Chamfering goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} chamfertype={barellingDetails.chamfertype ?? null} handleKeyDown={handleKeyDown} status={processForm.details["status"]} edit={editBatch} />
                                 }
                                     <div>
@@ -575,10 +574,9 @@ export default function Measure() {
                                 </div>
                                  {
                                     currentModel && currentModel.chamfer_points  &&  currentModel.chamfer_points === 2  ?
-                                    <>
-                                        <Chamfering pointIdentifier={1} goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} chamfertype={barellingDetails.chamfertype ?? null} handleKeyDown={handleKeyDown} status={processForm.details["status"]} edit={editBatch} />
+
                                         <Chamfering pointIdentifier={2} goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} chamfertype={barellingDetails.chamfertype ?? null} handleKeyDown={handleKeyDown} status={processForm.details["status"]} edit={editBatch} />
-                                    </>:
+                                    :
                                         <Chamfering goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} chamfertype={barellingDetails.chamfertype ?? null} handleKeyDown={handleKeyDown} status={processForm.details["status"]} edit={editBatch} />
                                 }
                                 <MeasuringData goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} status={processForm.details["status"]} edit={editBatch} />

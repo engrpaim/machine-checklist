@@ -1,6 +1,7 @@
 export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoints, model, process, chamfertype, handleKeyDown, status, edit ,pointIdentifier = 1}) {
 
     const number = [1, 2, 3, 4, 5]
+    const points = [1 ,2]
     const chamferValue = {
         'R- CHAMFER': 2.415,
         'C - Chamfer': 1.414,
@@ -8,7 +9,7 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
     }
     const specsBank = {
         barelling: {
-            chamfer: {
+            chamfer1: {
                 target: model.chamfer_barelling_target ?? 0, max: model.chamfer_barelling_max ?? 0, min: model.chamfer_barelling_min ?? 0
             },
              chamfer2: {
@@ -18,25 +19,27 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
     };
     const chamferValues = magnetPoints.chamfer
     console.log('CHAMFER VALUE: ', chamfertype);
-    const judegment = { m1: {}, m2: {}, m3: {}, m4: {}, m5: {} }
+    const judegment = { }
+    const pointsJudgement = { chamfer1:{},chamfer2:{}}
+    points.map((count)=>{
+         number.map((items) => {
+            const magnet = magnetPoints['chamfer'+count]['m' + items] !== 0 ? Number(((chamferValue['REF. VAL.'] - magnetPoints['chamfer'+count]['m' + items]) * chamferValue[chamfertype]).toFixed(3)) : 0
 
-    number.map((items) => {
-        const magnet = magnetPoints['chamfer'+pointIdentifier]['m' + items] !== 0 ? Number(((chamferValue['REF. VAL.'] - magnetPoints['chamfer'+pointIdentifier]['m' + items]) * chamferValue[chamfertype]).toFixed(3)) : 0
+            const lowerReject =Number((specsBank[process]["chamfer"+count].min + 0.001).toFixed(3))
 
-        const lowerReject = pointIdentifier === 1 ? Number((specsBank[process]["chamfer"].min + 0.001).toFixed(3)):Number((specsBank[process]["chamfer2"].min + 0.001).toFixed(3))
-
-        if (magnet === 0) return judegment['m' + items] = { judegment: null, value: magnet, theme: null };
-        if (magnet < lowerReject) return judegment['m' + items] = { judegment: 'adjust', value: magnet, theme: 'adjust-theme' };
-        if (pointIdentifier === 1 && magnet > specsBank[process]["chamfer"].max || magnet > specsBank[process]["chamfer2"].max) return judegment['m' + items] = { judegment: 'reject', value: magnet, theme: 'error-theme' };
-        return judegment['m' + items] = { judegment: 'good', value: magnet, theme: 'success-theme' };
+            if (magnet === 0) return judegment[count +'m' + items] = { judegment: null, value: magnet, theme: null };
+            if (magnet < lowerReject) return judegment[count+'m' + items] = { judegment: 'adjust', value: magnet, theme: 'adjust-theme' };
+            if ( magnet > specsBank[process]["chamfer"+count].max ) return judegment[count+'m' + items] = { judegment: 'reject', value: magnet, theme: 'error-theme' };
+            return judegment[count +'m' + items] = { judegment: 'good', value: magnet, theme: 'success-theme' };
+        })
     })
-    console.log('CHAMFER DISPLAY: ', magnetPoints, status);
+
+
+    console.log('CHAMFER DISPLAY: ', magnetPoints, status,judegment);
     return (
         <div className="details-container-gray">
             <div>
-                <h1>{
-                    pointIdentifier === 1 ? 'Point A' : 'Point B'
-                }</h1>
+                <h1>Chamfering</h1>
             </div>
             <div>
                 <table className="measuring-table" >
@@ -46,7 +49,11 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
                             <th colSpan={5}>Judegment Per Piece</th>
                         </tr>
                         <tr className="measuring-box-head">
-                            <th colSpan={11}>Minimum:&nbsp;{pointIdentifier === 1 ? specsBank[process]["chamfer"].min : specsBank[process]["chamfer2"].min}&nbsp;Target:&nbsp;{pointIdentifier === 1 ? specsBank[process]["chamfer"].target :  specsBank[process]["chamfer2"].target}&nbsp;Maximum:&nbsp;{pointIdentifier === 1 ?specsBank[process]["chamfer"].max :specsBank[process]["chamfer2"].max}&nbsp;Chamfer Type:{chamfertype}</th>
+                            <th colSpan={11}>
+                                Minimum:&nbsp;{specsBank[process]["chamfer1"].min.toFixed(3)}&nbsp;Target:&nbsp;{ specsBank[process]["chamfer1"].target.toFixed(3)}&nbsp;Maximum:&nbsp;{specsBank[process]["chamfer1"].max.toFixed(3) }&nbsp;&nbsp;
+                                &nbsp;&nbsp;{pointIdentifier === 2 ? <>Minimum:&nbsp;{specsBank[process]["chamfer2"].min.toFixed(3)}&nbsp;Target:&nbsp;{ specsBank[process]["chamfer2"].target.toFixed(3)}&nbsp;Maximum:&nbsp;{specsBank[process]["chamfer2"].max.toFixed(3) }</>:null}&nbsp;&nbsp;
+                                &nbsp;&nbsp;Chamfer Type:&nbsp;{chamfertype}
+                            </th>
                         </tr>
                         <tr>
                             <th className="measuring-box-title"> Machine  No.</th>
@@ -75,23 +82,53 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
                             {
                                 number.map((items) =>
                                     <td className="measuring-box-data">
-                                        <input
-                                            key={items}
-                                            type="number"
-                                            onChange={(e) => setMagnetPoints(prev => ({ ...prev, ['chamfer'+pointIdentifier]: { ...prev['chamfer'+pointIdentifier], ['m' + items]: Number(e.target.value) } }))}
-                                            onKeyDown={(e) => handleKeyDown(e)} value={magnetPoints['chamfer'+pointIdentifier]['m' + items] ? magnetPoints['chamfer'+pointIdentifier]['m' + items] : ''}
-                                            disabled={(status === 'approved' || status === 'measured') && !(edit)}
-                                        />
+                                        <div>
+                                            Point A
+                                            <input
+                                                key={items}
+                                                type="number" min="0.000" max="100"
+                                                onChange={(e) => setMagnetPoints(prev => ({ ...prev, ['chamfer'+1]: { ...prev['chamfer'+1], ['m' + items]: Number(e.target.value) } }))}
+                                                onKeyDown={(e) => handleKeyDown(e)}
+                                                value={magnetPoints['chamfer'+1]['m' + items]!== undefined?   magnetPoints['chamfer'+1]['m' + items] : ''}
+                                                disabled={(status === 'approved' || status === 'measured') && !(edit)}
+                                            />
+                                        </div>
+                                        {
+                                            pointIdentifier === 2 ?
+                                            <div>
+                                              Point B
+                                              <input
+                                                key={items}
+                                                type="number" min="0.000" max="100"
+                                                onChange={(e) => setMagnetPoints(prev => ({ ...prev, ['chamfer'+pointIdentifier]: { ...prev['chamfer'+pointIdentifier], ['m' + items]: Number(e.target.value) } }))}
+                                                onKeyDown={(e) => handleKeyDown(e)}
+                                                value={magnetPoints['chamfer'+pointIdentifier]['m' + items]!== undefined?   magnetPoints['chamfer'+pointIdentifier]['m' + items] : ''}
+                                                disabled={(status === 'approved' || status === 'measured') && !(edit)}
+                                                />
+                                            </div>
+                                            :null
+                                        }
                                     </td>
                                 )
                             }
                             {
+
                                 number.map((items) =>
                                     <td
                                         key={items}
-                                        className={judegment['m' + items].theme ?? null}
 
-                                    >{judegment['m' + items].value !== 0 ? judegment['m' + items].value + ' ' + `(${judegment['m' + items].judegment.toUpperCase()})` : null}</td>
+
+                                    >
+                                        <div  className={judegment[1+'m' + items].theme ?? null}>
+                                           A {judegment[1+'m' + items].value !== 0 ? judegment[1+'m' + items].value + ' ' + `(${judegment[1+'m' + items].judegment.toUpperCase()})` : null}
+                                        </div>
+                                        {
+                                            pointIdentifier === 2 ?
+                                            <div  className={judegment[2+'m' + items].theme ?? null}>
+                                              {judegment[2+'m' + items].value !== 0 ? 'B ' + judegment[2+'m' + items].value + ' ' + `(${judegment[2+'m' + items].judegment.toUpperCase()})` : null}
+                                            </div> :null
+                                        }
+                                    </td>
                                 )
                             }
                         </tr>

@@ -347,7 +347,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                                                 <td style={{ color: JudgementPoints[items].maximum > specsBank[process]["model"].min && JudgementPoints[items].maximum < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].maximum ?? null}</td>
                                                 <td style={{ color: JudgementPoints[items].minimum > specsBank[process]["model"].min && JudgementPoints[items].minimum < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].minimum ?? null}</td>
                                                 <td style={{ fontWeight: "bold" }}>{specsBank[process]["model"].target}</td>
-                                                <td>{JudgementPoints[items].diffmax ?? null}</td>
+                                                <td>{JudgementPoints[items].diffmax?? null}</td>
                                                 <td>{JudgementPoints[items].diffmin ?? null}</td>
                                                 <td style={{ color: JudgementPoints[items].average > specsBank[process]["model"].min && JudgementPoints[items].average < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].average ?? null}</td>
                                             </tr>
