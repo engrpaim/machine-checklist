@@ -381,7 +381,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                                         console.log(JudgementPoints[items])
                                         const currentData = JudgementPoints[items]
                                         const JudegmentDiplay =
-                                              currentData.maximum > specsBank[process]['model'].max - 0.010 || currentData.minimum  < specsBank[process]["model"].min + 0.010 ? 'Reject':
+                                              currentData.maximum >= specsBank[process]['model'].max - 0.010 || currentData.minimum  <= specsBank[process]["model"].min + 0.010 ? 'Reject':
                                               currentData.maximum >= specsBank[process]['model'].max - 0.015 || currentData.minimum  <= specsBank[process]["model"].min  + 0.015? 'Adjust'
                                               :'Good'
                                         const colorTheme = JudegmentDiplay === 'Reject' ?'#750002': JudegmentDiplay === 'Adjust' ?'#472600':'#02170A';

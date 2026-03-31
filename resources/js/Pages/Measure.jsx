@@ -74,6 +74,7 @@ export default function Measure() {
         gc_powder: '',
         magnet_wt_pc_: '',
         chamfertype: '',
+        model:'',
     });
 
     //timer
@@ -423,6 +424,7 @@ export default function Measure() {
             processForm?.set('batch_number', current_lot.batch_number)
             processForm?.set('datalist_id', current_lot.datalist_id ?? null);//'data_lot_number': current_lot.data_lot_number
             processForm?.set('datalist_lot_number', current_lot.datalist_lot_number ?? null);
+            processForm?.set('model',modelState);
         }
 
         if (modal) {

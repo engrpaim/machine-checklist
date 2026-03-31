@@ -742,6 +742,7 @@ h1 {
     items-center: center;
     border-radius: 1.5rem;
     padding: 1rem 0.5rem;
+    margin: 0.6rem;
     color: #696969;
 }
 .nav-btn {
@@ -1058,7 +1059,12 @@ button:disabled:hover {
     border-radius: 1rem;
     color: #fffbe6;
 }
-
+.side-lower {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 .batch-btn:hover {
     background: #ffd900;
     color: #050814;
@@ -1250,6 +1256,11 @@ td {
     color: #051508;
     height: 100%;
     padding: 0.5rem;
+}
+.error-theme p,
+.success-theme p,
+.adjust-theme p {
+    height: 2rem;
 }
 .inner-container-row {
     display: flex;

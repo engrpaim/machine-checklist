@@ -1,6 +1,6 @@
 import { SettingsIconMinimal,UserIcon,HomeIcon,BarChartIcon } from "../Icons/SVG";
 import { useState } from "react";
-
+import aeImg from '../Icons/AE2.png';
 export default function Navigation(){
     const [isHovered ,setIsHovered] = useState(false);
    return(
