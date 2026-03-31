@@ -82,32 +82,34 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
                             {
                                 number.map((items) =>
                                     <td className="measuring-box-data">
-                                        <div>
-                                            Point A
-                                            <input
-                                                key={items}
-                                                type="number" min="0.000" max="100"
-                                                onChange={(e) => setMagnetPoints(prev => ({ ...prev, ['chamfer'+1]: { ...prev['chamfer'+1], ['m' + items]: Number(e.target.value) } }))}
-                                                onKeyDown={(e) => handleKeyDown(e)}
-                                                value={magnetPoints['chamfer'+1]['m' + items]!== undefined?   magnetPoints['chamfer'+1]['m' + items] : ''}
-                                                disabled={(status === 'approved' || status === 'measured') && !(edit)}
-                                            />
-                                        </div>
-                                        {
-                                            pointIdentifier === 2 ?
-                                            <div>
-                                              Point B
-                                              <input
-                                                key={items}
-                                                type="number" min="0.000" max="100"
-                                                onChange={(e) => setMagnetPoints(prev => ({ ...prev, ['chamfer'+pointIdentifier]: { ...prev['chamfer'+pointIdentifier], ['m' + items]: Number(e.target.value) } }))}
-                                                onKeyDown={(e) => handleKeyDown(e)}
-                                                value={magnetPoints['chamfer'+pointIdentifier]['m' + items]!== undefined?   magnetPoints['chamfer'+pointIdentifier]['m' + items] : ''}
-                                                disabled={(status === 'approved' || status === 'measured') && !(edit)}
+                                        <div className="point-container">
+                                            <div className="point-data">
+                                                <p>Point A</p>
+                                                <input
+                                                    key={items}
+                                                    type="number" min="0.000" max="100"
+                                                    onChange={(e) => setMagnetPoints(prev => ({ ...prev, ['chamfer'+1]: { ...prev['chamfer'+1], ['m' + items]: Number(e.target.value) } }))}
+                                                    onKeyDown={(e) => handleKeyDown(e)}
+                                                    value={magnetPoints['chamfer'+1]['m' + items]!== undefined?   magnetPoints['chamfer'+1]['m' + items] : ''}
+                                                    disabled={(status === 'approved' || status === 'measured') && !(edit)}
                                                 />
                                             </div>
-                                            :null
-                                        }
+                                            {
+                                                pointIdentifier === 2 ?
+                                                <div className="point-data">
+                                                <p>Point B</p>
+                                                <input
+                                                    key={items}
+                                                    type="number" min="0.000" max="100"
+                                                    onChange={(e) => setMagnetPoints(prev => ({ ...prev, ['chamfer'+pointIdentifier]: { ...prev['chamfer'+pointIdentifier], ['m' + items]: Number(e.target.value) } }))}
+                                                    onKeyDown={(e) => handleKeyDown(e)}
+                                                    value={magnetPoints['chamfer'+pointIdentifier]['m' + items]!== undefined?   magnetPoints['chamfer'+pointIdentifier]['m' + items] : ''}
+                                                    disabled={(status === 'approved' || status === 'measured') && !(edit)}
+                                                    />
+                                                </div>
+                                                :null
+                                            }
+                                        </div>
                                     </td>
                                 )
                             }

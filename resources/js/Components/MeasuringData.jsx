@@ -57,8 +57,8 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
         JudgementPoints[items] = {
             p: items,
             average: Number(average.toFixed(3)),
-            maximum: maximum.toFixed(3),
-            minimum: minimum.toFixed(3),
+            maximum: Number(maximum.toFixed(3)),
+            minimum: Number(minimum.toFixed(3)),
             diffmax: Math.abs(Number(diffmax.toFixed(3))),
             diffmin: Math.abs(Number(diffmin.toFixed(3)))
         }
@@ -96,6 +96,8 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
             { x: 'End', y: null }
         ];
     }).flat();
+
+
 
 
     const data = {
@@ -211,7 +213,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
             }
         }
     };
-    console.log(magnetPoints);
+    console.log('BANK: ',specsBank[process]['model']);
     return (
         <>
             <div>
@@ -360,6 +362,44 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                 </div>
                 <div className='measuring-points-graph' style={{ backgroundColor: '#f5f5f5' }}>
                     <Scatter data={data} options={options} />
+                </div>
+                <div>
+                    <div>
+                        <table className='mini-table' >
+                            <thead>
+                                 <tr>
+                                    <th colSpan={2}>JUDGEMENT REMARKS</th>
+                                </tr>
+                                <tr>
+                                    <th>Magnet</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    maxMagnet.map((items)=>{
+                                        console.log(JudgementPoints[items])
+                                        const currentData = JudgementPoints[items]
+                                        const JudegmentDiplay =
+                                              currentData.maximum > specsBank[process]['model'].max - 0.010 || currentData.minimum  < specsBank[process]["model"].min + 0.010 ? 'Reject':
+                                              currentData.maximum >= specsBank[process]['model'].max - 0.015 || currentData.minimum  <= specsBank[process]["model"].min  + 0.015? 'Adjust'
+                                              :'Good'
+                                        const colorTheme = JudegmentDiplay === 'Reject' ?'#750002': JudegmentDiplay === 'Adjust' ?'#472600':'#02170A';
+                                        const backgroundTheme = JudegmentDiplay === 'Reject' ?'#FFB8B9': JudegmentDiplay === 'Adjust' ?'#FFF3E6':'#7BF1A8';
+
+                                        return(
+                                            <tr style={{ background:backgroundTheme }}>
+                                                <td style={{ color:colorTheme}}>Magnet {items}</td>
+                                                <td style={{ color:colorTheme , fontWeight:'bold'}}>
+                                                    <strong>{JudegmentDiplay}</strong>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </>
