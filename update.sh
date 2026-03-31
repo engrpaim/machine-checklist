@@ -15,7 +15,7 @@ elif
 else
     echo "Invalid Input... Please type y or n"
 fi
-echo "Optimizing .........."
+echo "Optimizing ..........."
 
 php artisan optimize:clear
 
