@@ -7,7 +7,7 @@ echo "==========================================================================
 
 read -p "Migrate Database? (y/n): " answer
 
-if [[ "$answer" == "y" ||  "$answer" == "Y"]];then
+if [[ "$answer" == "y" ||  "$answer" == "Y"]] then
     echo "Migrating database......"
     php artisan migrate
 elif
