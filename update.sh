@@ -7,10 +7,10 @@ echo "==========================================================================
 
 read -p "Migrate Database? (y/n): " answer
 
-if [[ "$answer" == "y" ||  "$answer" == "Y"]] then
+if [[ "$answer" == "y" ||  "$answer" == "Y"]] ; then
     echo "Migrating database......"
     php artisan migrate
-elif
+elif [[ "$answer" == "n" ||  "$answer" == "N"]] ; then
     echo "Migration skipped..."
 else
     echo "Invalid Input... Please type y or n"
