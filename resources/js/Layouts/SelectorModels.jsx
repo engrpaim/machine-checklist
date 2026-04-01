@@ -33,13 +33,11 @@ export default function SelectorModels({ model, setProcessState, setModelState, 
                         <select disabled={!modelState} onChange={(e) => setProcessState({ process: e.target.value, value: processValues[e.target.value] })}>
                             <option></option>
                             <option value="barelling" >IN-PROCESS INSPECTION SHEET</option>
-                            <option value="cgh" disabled={true}>CGH (L) DIMENSION MONITORING</option>
+                            <option value="cghl">CGH (L) DIMENSION MONITORING</option>
                             <option value="lapping" disabled={true}>LAPPING (T) DIMENSION MONITORING</option>
                             <option value="slicing" disabled={true}>SLICING (W) MONITORING</option>
                         </select>
                     </div>
-
-
                 </div>
             </div>
             <div className='inside-data-center'>

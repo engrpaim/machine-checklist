@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use App\Models\Users;
 use App\Models\Datalist;
 use App\Models\models;
+use App\Models\cghModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\ProcessController;
@@ -25,6 +26,7 @@ class MachiningChecklistController  extends ProcessController
         $bank = [
             'barelling' => Barelling::class,
             'models' => models::class,
+            'cghl' => cghModel::class
         ];
 
         return $bank[$process];
@@ -47,10 +49,11 @@ class MachiningChecklistController  extends ProcessController
         $toBecheked = [
             'measure' => ['lot_number' => 'required|string', 'process' => 'required|string'],
         ];
-
+        //class bank @return model
         $classBank = [
             'measure' => Datalist::class,
-            'barelling' => Barelling::class
+            'barelling' => Barelling::class,
+            'cghl' => cghModel::class
         ];
         //check if valid page
         $processingDetails = $request->input('page');
@@ -118,6 +121,18 @@ class MachiningChecklistController  extends ProcessController
 
             if (!$getAllBatch) return redirect()->back()->with('error', 'Process database not found!');
             $isGetDetails =  $getAllBatch::where('datalist_id', $checkIfexist->id)->get();
+
+            if (!$isGetDetails->toArray()) {
+                $data = $processingDetails['processing'];
+                $creatBatch = $insertProcessDetails->Batching($process, $checkIfexist->id, $checkIfexist->lot_number, $data);
+                if ($creatBatch) return redirect()->back()->with(
+                    [
+                        'success' => 'Saved Successfully[Datalist-NW]!',
+                        'current_lot' => $creatBatch,
+                        'model' => $convertModel
+                    ]
+                );
+            }
             $allBatchLot = json_encode($isGetDetails->toArray());
             return redirect()->back()->with([
                 'modal' => $lotNumber . ' already exist!',
@@ -214,16 +229,22 @@ class MachiningChecklistController  extends ProcessController
         $data = $form['data'];
         $magnet = [];
         if (!$details) return redirect()->back()->with('error', 'Details not found! complete all data');
-        if ($form["points"]["chamfer1"] || $form["points"]["chamfer2"]) {
-            $form["points"]["chamfer1"] ? $magnet["chamfer1"] = $form["points"]["chamfer1"] : null;
-            $form["points"]["chamfer2"] ? $magnet["chamfer2"] = $form["points"]["chamfer2"] : null;
-        }
+
 
         $datalist_id = $details["datalist_id"] ?? null;
         $datalist_lot_number = $details["datalist_lot_number"] ?? null;
         $batch_number = $details["batch_number"] ?? null;
         $status = $details["status"] ?? 'preparing';
         $process = $data['process'] ?? null;
+
+        $checkPointForm = $form["points"] ?? null;
+        if ($checkPointForm) {
+            if (($form["points"]["chamfer1"] || $form["points"]["chamfer2"]) && $process === 'barelling') {
+                $form["points"]["chamfer1"] ? $magnet["chamfer1"] = $form["points"]["chamfer1"] : null;
+                $form["points"]["chamfer2"] ? $magnet["chamfer2"] = $form["points"]["chamfer2"] : null;
+            }
+        }
+
         if ($status === 'preparing') unset($form["points"]);
         if (!$datalist_id || !$datalist_lot_number || !$batch_number || !$status || !$process) return redirect()->back()->with('error', 'Finalize:Details not found![missing data!]');
 
@@ -239,7 +260,11 @@ class MachiningChecklistController  extends ProcessController
 
         $db = $this->dataBaseBank($process);
         $databaseProcess = new ProcessController;
-        $details["magnet"] = $magnet;
+
+        //measuring points
+        if ($process === 'barelling') {
+            $details["magnet"] = $magnet;
+        }
 
         //Get model data
         $modelDb = $this->dataBaseBank('models');

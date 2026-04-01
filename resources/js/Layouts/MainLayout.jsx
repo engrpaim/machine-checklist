@@ -2,7 +2,7 @@ import Navigation from "../Components/Navigation";
 import '../../css/app.css';
 import "@fontsource/poppins/400.css";
 import { usePage } from "@inertiajs/react";
-
+import aeImg from '../Icons/AE2.png';
 export default function MainLayout({ children }) {
 
     //return date ,time in mainlayout

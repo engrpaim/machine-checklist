@@ -12,6 +12,8 @@ import { emptyCount, handleKeyDown } from "../utils/UtilityFunctions";
 import { all } from "axios";
 import Chamfering from "../Components/Chamfering";
 import PasswordModal from "../Components/PasswordModal";
+import Cghl from "../Components/Cghl";
+import CghMeasuring from "../Components/CghMeasuring";
 export default function Measure() {
     /**
      * return machining sheet
@@ -40,7 +42,8 @@ export default function Measure() {
     const [Notification, setNotification] = useState(false);
     console.log('type chamfer: ', currentModel.chamfer_type);
     const alloweAble = {
-        barelling: { preparing: 8 }
+        barelling: { preparing: 8 },
+        cghl:{preparing:4}
     }
     const toHide = ["prepared", "measured", "approved"];
     const buttonStatus = {
@@ -60,6 +63,7 @@ export default function Measure() {
         process: '',
         page: 'measure'
     });
+    /** Barelling Page **/
     //barelling details
     const { data: barellingDetails, setData: setBarellingDetails, reset: resetBarellingDetails } = useForm({
         datalist_id: '',
@@ -103,7 +107,20 @@ export default function Measure() {
         chamfer2: { machine: '', m1: 0, m2: 0, m3: 0, m4: 0, m5: 0 }
     });
 
-
+    /** CGHL Details **/
+    const { data:cghlDetails , setData:setCghlDetails, reset: resetCghlDetails} = useForm({
+        datalist_id: '',
+        datalist_lot_number: '',
+        model:'',
+        batch_number:'',
+        machine_number:'',
+        upper_conveyor_speed:'',
+        lower_conveyor_speed:'',
+        carrier_speed:'',
+        auto_cylinder_forward_speed:'',
+        auto_cylinder_moving_distance:'',
+        micrometer_serial_number:''
+    });
 
     //useform for details
     //form for common details
@@ -122,18 +139,23 @@ export default function Measure() {
         const model = modelState ? modelState : null
         console.log('hesslloxx', processState, modelState)
 
-        if (processState && processState.process === '' && modelState || processState && processState.process !== '' && processState.value && !modelState) {
+        if (processState && processState.process === '' && modelState || processState && processState.process !== '' && processState.value && !modelState ) {
             console.log('hessllo');
             router.visit("/machining-checklist/measure");
         }
+
     }, [processState, modelState])
+
     useEffect(() => {
         if (!model) return;
         setCurrentModel(model);
     }, [model]);
+
     //manage form data
     useEffect(() => {
+        //manage dynamicdata @return all data
         console.log('Updating data!');
+
         const arrayBankNew = {
             barelling: {
                 data: data,
@@ -145,11 +167,20 @@ export default function Measure() {
                 reset: resetBarellingDetails,
                 resetPoints: resetMagnetPoints,
                 subreset: resetTimerDetails
+            },
+            cghl: {
+                data:data,
+                details:cghlDetails,
+                set:setCghlDetails,
+                reset:resetCghlDetails,
+                subreset:resetCghlDetails,
+                resetPoints:resetCghlDetails
             }
         }
+
         setArrayBank(arrayBankNew)
-        console.log('check if updating: ', barellingDetails);
-    }, [barellingDetails, timerDetails, magnetPoints])
+        console.log('check if updating: ', cghlDetails);
+    }, [barellingDetails, timerDetails, magnetPoints,cghlDetails])
 
 
 
@@ -283,9 +314,6 @@ export default function Measure() {
             save();
 
         }, 2000);
-
-
-
     }
 
     const handleUpdateAllowed = async () => {
@@ -381,13 +409,13 @@ export default function Measure() {
             setData(key, values);
         })
 
-        if (convertedData.time_setting) {
+        if (convertedData.time_setting && processState.process === 'barelling') {
             Object.entries(convertedData.time_setting).map(([key, values]) => {
                 setTimerDetails(key, values);
             })
         }
 
-        if (convertedData.points) {
+        if (convertedData.points && processState.process === 'barelling') {
             Object.entries(convertedData.points).map(([key, values]) => {
                 setMagnetPoints(key, values);
             })
@@ -416,6 +444,7 @@ export default function Measure() {
 
     useEffect(() => {
         if (!current_lot && !modal) return
+
         if (current_lot) {
             console.log('HHELLOO LOOE', current_lot)
             processForm?.reset()
@@ -427,19 +456,25 @@ export default function Measure() {
             processForm?.set('model',modelState);
         }
 
+        if(processState && processState.process === "barelling"){
+            processForm?.set('chamfertype' , model.chamfer_type ?? null);
+        }
+
         if (modal) {
             setTriModal(modal);
             setLoading(false);
         }
+
     }, [flash, current_lot, modal]);
 
     useEffect(() => {
         setProcessFromCount(false)
 
         if (!processForm) return;
-        //set datalist_id
 
+        //set datalist_id
         let countCurrentEmpty = 0
+
         Object.entries(processForm).map(([key, value]) => {
             console.log('to count', key)
             if (typeof value === 'object' && key !== 'data') {
@@ -452,7 +487,7 @@ export default function Measure() {
         countCurrentEmpty > alloweAble[processState.process].preparing ? setProcessFromCount(false) : setProcessFromCount(true)
     }, [processForm, existing]);
 
-    console.log('DATA NOW:', currentModel);
+    console.log('DATA NOW:', cghlDetails);
     return (
         <>
             {
@@ -509,7 +544,7 @@ export default function Measure() {
                             loading={loading}
                             handleClear={handleClear}
                             statusCheck={statusCheck}
-                            batch_number={barellingDetails && barellingDetails.batch_number ? barellingDetails.batch_number : 'Finding.....'}
+                            batch_number={barellingDetails && processForm.details &&processForm.details.batch_number ?processForm.details.batch_number: 'Finding.....'}
 
                         />
                     }
@@ -529,7 +564,14 @@ export default function Measure() {
                                 barellProcessing={submittingForm}
                                 chamfertype={currentModel.chamfer_type ?? null}
                                 edit={editBatch}
-                            /> : null
+                            />
+                        :statusCheck &&  modelState && processState && processState.process === 'cghl' && (processForm?.details["status"] === 'preparing' || processForm?.details["status"] === 'prepared' || !processForm?.details["status"]) ?
+                            <Cghl
+                                handleKeyDown={handleKeyDown}
+                                cghlDetails={cghlDetails}
+                                setCghlDetails={setCghlDetails}
+                                edit={editBatch}
+                            />:null
                     }
 
                     {
@@ -552,7 +594,9 @@ export default function Measure() {
                                 </div>
                                 <MeasuringData goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} status={processForm.details["status"]} edit={editBatch} />
                             </div>
-                            : null
+                            : statusCheck && modelState && processState && processState.process === 'cghl' && (processForm?.details["status"] === 'measuring' || processForm?.details["status"] === 'measured') ?
+                                <CghMeasuring cghlDetails={cghlDetails}/>
+                            :null
                     }
 
                     {

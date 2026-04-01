@@ -140,10 +140,10 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                     color: function (context) {
                         const label = context.tick.label;
                         const number = Number(label.split(" ")[1]) ?? 0
-                        if (label === 'Point' || label === 'End') return '#0B2F3D'
+                        if (label === 'Point' || label === 'End') return '#6A758A'
                         if ((label === 'Magnet 1' || label === 'Magnet 2' || label === 'Magnet 3' || label === 'Magnet 4' || label === 'Magnet 5')
 
-                            && JudgementPoints[number].minimum > specsBank[process]["model"].min && JudgementPoints[number].maximum < specsBank[process]["model"].max) return '#0B2F3D';
+                            && JudgementPoints[number].minimum > specsBank[process]["model"].min && JudgementPoints[number].maximum < specsBank[process]["model"].max) return '#6A758A';
 
                         return 'red'
                     },
@@ -153,21 +153,21 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                         weight: 'bold'
                     },
                 },
-                grid: { color: '#19728A' },
+                grid: { color: '#CCD0D8' },
             },
 
             y: {
                 min: specsBank[process]["model"].min,
                 max: specsBank[process]["model"].max,
                 ticks: {
-                    color: '#0B2F3D',
+                    color: '#6A758A',
                     font: {
                         size: 12,
                         family: 'Poppins',
                         weight: 'bold'
                     }
                 },
-                grid: { color: '#19728A' },
+                grid: { color: '#CCD0D8' },
             }
         },
         plugins: {
@@ -215,185 +215,146 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
     };
     console.log('BANK: ',specsBank[process]['model']);
     return (
-        <>
+        <div className='container-fixed-row'>
             <div>
                 <h1>Barelling Thickness</h1>
             </div>
-            <div className='measuring-main'>
-                <div className='measuring-points'>
-                    <table className='measuring-process' border={1} style={{ border: '#072940' }}>
-                        <thead>
-                            <tr>
-                                <th colSpan={15} className='titletables' style={{ background: '#1F8BB2', color: '#E9F6FB' }}>ACTUAL DIMENSION</th>
-
-                            </tr>
-                            <tr>
-                                <td colSpan={15} className='titletables' style={{ background: '#1F8BB2', color: '#E9F6FB' }}>MINIMUM:&nbsp;{specsBank[process]["model"].min}&nbsp;TARGET:&nbsp;{specsBank[process]["model"].target}&nbsp;MAXIMUM:&nbsp;{specsBank[process]["model"].max}</td>
-                            </tr>
-                            <tr>
-                                <th style={{ background: '#9CDBED' }}>No</th>
-                                <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 1</th>
-                                <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 2</th>
-                                <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 3</th>
-                                <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 4</th>
-                                <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 5</th>
-                                <th className='worst-color' style={{ background: '#FFB86A' }}>Worst</th>
-                                <th>Maximum</th>
-                                <th>Minimum</th>
-                                <th className='worst-color'>Target</th>
-                                <th>Max Diff</th>
-                                <th>Min Diff</th>
-                                <th>Average</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                maxMagnet.map((items) => {
-                                    return (
-                                        <>
-                                            <tr>
-                                                <td style={{ background: '#9CDBED' }}>{items}</td>
-                                                <td>
-                                                    <input
-
-
-                                                        type="number"
-                                                        onChange={
-                                                            (e) =>
-                                                                setMagnetPoints(prev => ({
-                                                                    ...prev,
-                                                                    ['magnet_' + items]: {
-                                                                        ...prev['magnet_' + items],
-                                                                        ['p' + 1]: Number(e.target.value)
-                                                                    }
-                                                                }))
-                                                        }
-                                                        value={magnetPoints['magnet_' + items]['p' + 1] ? magnetPoints['magnet_' + items]['p' + 1] : ''}
-                                                        onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                        disabled={(status === 'approved' || status === 'measured') && !(edit)}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-
-                                                        type="number"
-                                                        onChange={
-                                                            (e) =>
-                                                                setMagnetPoints(prev => ({
-                                                                    ...prev,
-                                                                    ['magnet_' + items]: {
-                                                                        ...prev['magnet_' + items],
-                                                                        ['p' + 2]: Number(e.target.value)
-                                                                    }
-                                                                }))
-                                                        }
-                                                        value={magnetPoints['magnet_' + items]['p' + 2] ? magnetPoints['magnet_' + items]['p' + 2] : ''}
-                                                        onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                        disabled={(status === 'approved' || status === 'measured') && !(edit)} />
-                                                </td>
-                                                <td>
-                                                    <input
-
-                                                        type="number"
-                                                        onChange={
-                                                            (e) =>
-                                                                setMagnetPoints(prev => ({
-                                                                    ...prev,
-                                                                    ['magnet_' + items]: {
-                                                                        ...prev['magnet_' + items],
-                                                                        ['p' + 3]: Number(e.target.value)
-                                                                    }
-                                                                }))
-                                                        }
-                                                        value={magnetPoints['magnet_' + items]['p' + 3] ? magnetPoints['magnet_' + items]['p' + 3] : ''}
-                                                        onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                        disabled={(status === 'approved' || status === 'measured') && !(edit)} />
-                                                </td>
-                                                <td>
-                                                    <input
-
-                                                        type="number"
-                                                        onChange={
-                                                            (e) =>
-                                                                setMagnetPoints(prev => ({
-                                                                    ...prev,
-                                                                    ['magnet_' + items]: {
-                                                                        ...prev['magnet_' + items],
-                                                                        ['p' + 4]: Number(e.target.value)
-                                                                    }
-                                                                }))
-                                                        }
-                                                        value={magnetPoints['magnet_' + items]['p' + 4] ? magnetPoints['magnet_' + items]['p' + 4] : ''}
-                                                        onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                        disabled={(status === 'approved' || status === 'measured') && !(edit)} />
-                                                </td>
-                                                <td>
-                                                    <input
-
-                                                        type="number"
-                                                        onChange={
-                                                            (e) =>
-                                                                setMagnetPoints(prev => ({
-                                                                    ...prev,
-                                                                    ['magnet_' + items]: {
-                                                                        ...prev['magnet_' + items],
-                                                                        ['p' + 5]: Number(e.target.value)
-                                                                    }
-                                                                }))
-                                                        }
-                                                        value={magnetPoints['magnet_' + items]['p' + 5] ? magnetPoints['magnet_' + items]['p' + 5] : ''}
-                                                        onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                        disabled={(status === 'approved' || status === 'measured') && !(edit)} />
-                                                </td>
-                                                <td style={{ background: '#FFDCB8' }}>{JudgementPoints[items].maximum ?? null}</td>
-                                                <td style={{ color: JudgementPoints[items].maximum > specsBank[process]["model"].min && JudgementPoints[items].maximum < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].maximum ?? null}</td>
-                                                <td style={{ color: JudgementPoints[items].minimum > specsBank[process]["model"].min && JudgementPoints[items].minimum < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].minimum ?? null}</td>
-                                                <td style={{ fontWeight: "bold" }}>{specsBank[process]["model"].target}</td>
-                                                <td>{JudgementPoints[items].diffmax?? null}</td>
-                                                <td>{JudgementPoints[items].diffmin ?? null}</td>
-                                                <td style={{ color: JudgementPoints[items].average > specsBank[process]["model"].min && JudgementPoints[items].average < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].average ?? null}</td>
-                                            </tr>
-                                        </>
-                                    )
-                                })
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <div className='measuring-points-graph' style={{ backgroundColor: '#f5f5f5' }}>
-                    <Scatter data={data} options={options} />
-                </div>
-                <div>
-                    <div>
-                        <table className='mini-table' >
+            <div className='container-row'>
+                <div className='details-white'>
+                    <div className='container-column'>
+                        <div className='container-theme-black'>
+                            <h1>Thickness</h1>
+                            <p>Minimum:&nbsp;{specsBank[process]["model"].min}&nbsp;Target:&nbsp;{specsBank[process]["model"].target}&nbsp;Maximum:&nbsp;{specsBank[process]["model"].max}</p>
+                        </div>
+                        <table className='measuring-process' border={1} >
                             <thead>
-                                 <tr>
-                                    <th colSpan={2}>JUDGEMENT REMARKS</th>
+                                <tr>
+                                    <th colSpan={15} className='titletables'>ACTUAL DIMENSION</th>
                                 </tr>
                                 <tr>
-                                    <th>Magnet</th>
-                                    <th>Status</th>
+                                    <th style={{ background: '#9CDBED' }}>No</th>
+                                    <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 1</th>
+                                    <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 2</th>
+                                    <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 3</th>
+                                    <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 4</th>
+                                    <th className='pt-color' style={{ background: '#FFFBE6' }}>Pt. 5</th>
+                                    <th className='worst-color' style={{ background: '#FFB86A' }}>Worst</th>
+                                    <th>Maximum</th>
+                                    <th>Minimum</th>
+                                    <th className='worst-color'>Target</th>
+                                    <th>Max Diff</th>
+                                    <th>Min Diff</th>
+                                    <th>Average</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    maxMagnet.map((items)=>{
-                                        console.log(JudgementPoints[items])
-                                        const currentData = JudgementPoints[items]
-                                        const JudegmentDiplay =
-                                              currentData.maximum >= specsBank[process]['model'].max - 0.010 || currentData.minimum  <= specsBank[process]["model"].min + 0.010 ? 'Reject':
-                                              currentData.maximum >= specsBank[process]['model'].max - 0.015 || currentData.minimum  <= specsBank[process]["model"].min  + 0.015? 'Adjust'
-                                              :'Good'
-                                        const colorTheme = JudegmentDiplay === 'Reject' ?'#750002': JudegmentDiplay === 'Adjust' ?'#472600':'#02170A';
-                                        const backgroundTheme = JudegmentDiplay === 'Reject' ?'#FFB8B9': JudegmentDiplay === 'Adjust' ?'#FFF3E6':'#7BF1A8';
+                                    maxMagnet.map((items) => {
+                                        return (
+                                            <>
+                                                <tr>
+                                                    <td style={{ background: '#9CDBED' }}>{items}</td>
+                                                    <td>
+                                                        <input
 
-                                        return(
-                                            <tr style={{ background:backgroundTheme }}>
-                                                <td style={{ color:colorTheme}}>Magnet {items}</td>
-                                                <td style={{ color:colorTheme , fontWeight:'bold'}}>
-                                                    <strong>{JudegmentDiplay}</strong>
-                                                </td>
-                                            </tr>
+
+                                                            type="number"
+                                                            onChange={
+                                                                (e) =>
+                                                                    setMagnetPoints(prev => ({
+                                                                        ...prev,
+                                                                        ['magnet_' + items]: {
+                                                                            ...prev['magnet_' + items],
+                                                                            ['p' + 1]: Number(e.target.value)
+                                                                        }
+                                                                    }))
+                                                            }
+                                                            value={magnetPoints['magnet_' + items]['p' + 1] ? magnetPoints['magnet_' + items]['p' + 1] : ''}
+                                                            onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
+                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <input
+
+                                                            type="number"
+                                                            onChange={
+                                                                (e) =>
+                                                                    setMagnetPoints(prev => ({
+                                                                        ...prev,
+                                                                        ['magnet_' + items]: {
+                                                                            ...prev['magnet_' + items],
+                                                                            ['p' + 2]: Number(e.target.value)
+                                                                        }
+                                                                    }))
+                                                            }
+                                                            value={magnetPoints['magnet_' + items]['p' + 2] ? magnetPoints['magnet_' + items]['p' + 2] : ''}
+                                                            onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
+                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)} />
+                                                    </td>
+                                                    <td>
+                                                        <input
+
+                                                            type="number"
+                                                            onChange={
+                                                                (e) =>
+                                                                    setMagnetPoints(prev => ({
+                                                                        ...prev,
+                                                                        ['magnet_' + items]: {
+                                                                            ...prev['magnet_' + items],
+                                                                            ['p' + 3]: Number(e.target.value)
+                                                                        }
+                                                                    }))
+                                                            }
+                                                            value={magnetPoints['magnet_' + items]['p' + 3] ? magnetPoints['magnet_' + items]['p' + 3] : ''}
+                                                            onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
+                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)} />
+                                                    </td>
+                                                    <td>
+                                                        <input
+
+                                                            type="number"
+                                                            onChange={
+                                                                (e) =>
+                                                                    setMagnetPoints(prev => ({
+                                                                        ...prev,
+                                                                        ['magnet_' + items]: {
+                                                                            ...prev['magnet_' + items],
+                                                                            ['p' + 4]: Number(e.target.value)
+                                                                        }
+                                                                    }))
+                                                            }
+                                                            value={magnetPoints['magnet_' + items]['p' + 4] ? magnetPoints['magnet_' + items]['p' + 4] : ''}
+                                                            onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
+                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)} />
+                                                    </td>
+                                                    <td>
+                                                        <input
+
+                                                            type="number"
+                                                            onChange={
+                                                                (e) =>
+                                                                    setMagnetPoints(prev => ({
+                                                                        ...prev,
+                                                                        ['magnet_' + items]: {
+                                                                            ...prev['magnet_' + items],
+                                                                            ['p' + 5]: Number(e.target.value)
+                                                                        }
+                                                                    }))
+                                                            }
+                                                            value={magnetPoints['magnet_' + items]['p' + 5] ? magnetPoints['magnet_' + items]['p' + 5] : ''}
+                                                            onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
+                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)} />
+                                                    </td>
+                                                    <td style={{ background: '#FFDCB8' }}>{JudgementPoints[items].maximum ?? null}</td>
+                                                    <td style={{ color: JudgementPoints[items].maximum > specsBank[process]["model"].min && JudgementPoints[items].maximum < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].maximum ?? null}</td>
+                                                    <td style={{ color: JudgementPoints[items].minimum > specsBank[process]["model"].min && JudgementPoints[items].minimum < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].minimum ?? null}</td>
+                                                    <td style={{ fontWeight: "bold" }}>{specsBank[process]["model"].target}</td>
+                                                    <td>{JudgementPoints[items].diffmax?? null}</td>
+                                                    <td>{JudgementPoints[items].diffmin ?? null}</td>
+                                                    <td style={{ color: JudgementPoints[items].average > specsBank[process]["model"].min && JudgementPoints[items].average < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].average ?? null}</td>
+                                                </tr>
+                                            </>
                                         )
                                     })
                                 }
@@ -401,7 +362,57 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                         </table>
                     </div>
                 </div>
+                <div className='details-white'>
+                    <div className='container-column'>
+                        <div className='container-theme-black'>
+                            <h1>Thickness Judgement</h1>
+                        </div>
+                        <div className='container-row'>
+                            <div className='measuring-points-graph' style={{ backgroundColor: 'white', width:'27rem'}}>
+                                <Scatter data={data} options={options} />
+                            </div>
+                            <div>
+                                <div>
+                                    <table className='mini-table' >
+                                        <thead>
+                                            <tr>
+                                                <th colSpan={2}>JUDGEMENT REMARKS</th>
+                                            </tr>
+                                            <tr>
+                                                <th>Magnet</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                maxMagnet.map((items)=>{
+                                                    console.log(JudgementPoints[items])
+                                                    const currentData = JudgementPoints[items]
+                                                    const JudegmentDiplay =
+                                                        currentData.maximum >= specsBank[process]['model'].max - 0.010 || currentData.minimum  <= specsBank[process]["model"].min + 0.010 ? 'Reject':
+                                                        currentData.maximum >= specsBank[process]['model'].max - 0.015 || currentData.minimum  <= specsBank[process]["model"].min  + 0.015? 'Adjust'
+                                                        :'Good'
+                                                    const colorTheme = JudegmentDiplay === 'Reject' ?'#750002': JudegmentDiplay === 'Adjust' ?'#472600':'#02170A';
+                                                    const backgroundTheme = JudegmentDiplay === 'Reject' ?'#FFB8B9': JudegmentDiplay === 'Adjust' ?'#FFF3E6':'#7BF1A8';
+
+                                                    return(
+                                                        <tr style={{ background:backgroundTheme }}>
+                                                            <td style={{ color:colorTheme}}>Magnet {items}</td>
+                                                            <td style={{ color:colorTheme , fontWeight:'bold'}}>
+                                                                <strong>{JudegmentDiplay}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </>
+        </div>
     )
 }

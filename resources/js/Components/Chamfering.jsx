@@ -37,41 +37,42 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
 
     console.log('CHAMFER DISPLAY: ', magnetPoints, status,judegment);
     return (
-        <div className="details-container-gray">
+        <div className="details-container-white">
             <div>
                 <h1>Chamfering</h1>
+
+                               <p>
+                                <strong style={{ fontWeight:'Bold' }}>Point A:</strong>  Minimum:&nbsp;{specsBank[process]["chamfer1"].min.toFixed(3)}&nbsp;Target:&nbsp;{ specsBank[process]["chamfer1"].target.toFixed(3)}&nbsp;Maximum:&nbsp;{specsBank[process]["chamfer1"].max.toFixed(3) }
+                                {pointIdentifier === 2 ? <><br/>  <strong style={{ fontWeight:'Bold' }}>Point B:</strong> Minimum:&nbsp;{specsBank[process]["chamfer2"].min.toFixed(3)}&nbsp;Target:&nbsp;{ specsBank[process]["chamfer2"].target.toFixed(3)}&nbsp;Maximum:&nbsp;{specsBank[process]["chamfer2"].max.toFixed(3) }</>:null}&nbsp;&nbsp;
+                                <br/>
+                                <strong style={{ fontWeight:'Bold' }}>Chamfer Type:</strong>&nbsp;{chamfertype}
+                               </p>
+
             </div>
             <div>
                 <table className="measuring-table" >
                     <thead>
-                        <tr className="measuring-box-head">
+                        <tr >
                             <th colSpan={6}>Magnet Samples</th>
                             <th colSpan={5}>Judegment Per Piece</th>
                         </tr>
-                        <tr className="measuring-box-head">
-                            <th colSpan={11}>
-                                Minimum:&nbsp;{specsBank[process]["chamfer1"].min.toFixed(3)}&nbsp;Target:&nbsp;{ specsBank[process]["chamfer1"].target.toFixed(3)}&nbsp;Maximum:&nbsp;{specsBank[process]["chamfer1"].max.toFixed(3) }&nbsp;&nbsp;
-                                &nbsp;&nbsp;{pointIdentifier === 2 ? <>Minimum:&nbsp;{specsBank[process]["chamfer2"].min.toFixed(3)}&nbsp;Target:&nbsp;{ specsBank[process]["chamfer2"].target.toFixed(3)}&nbsp;Maximum:&nbsp;{specsBank[process]["chamfer2"].max.toFixed(3) }</>:null}&nbsp;&nbsp;
-                                &nbsp;&nbsp;Chamfer Type:&nbsp;{chamfertype}
-                            </th>
-                        </tr>
                         <tr>
-                            <th className="measuring-box-title"> Machine  No.</th>
-                            <th className="measuring-box-title">Magent 1</th>
-                            <th className="measuring-box-title">Magent 2</th>
-                            <th className="measuring-box-title">Magent 3</th>
-                            <th className="measuring-box-title">Magent 4</th>
-                            <th className="measuring-box-title">Magent 5</th>
-                            <th className="measuring-box-title">Magent 1</th>
-                            <th className="measuring-box-title">Magent 2</th>
-                            <th className="measuring-box-title">Magent 3</th>
-                            <th className="measuring-box-title">Magent 4</th>
-                            <th className="measuring-box-title">Magent 5</th>
+                            <th > Machine  No.</th>
+                            <th >Magent 1</th>
+                            <th >Magent 2</th>
+                            <th >Magent 3</th>
+                            <th >Magent 4</th>
+                            <th >Magent 5</th>
+                            <th >Magent 1</th>
+                            <th >Magent 2</th>
+                            <th >Magent 3</th>
+                            <th >Magent 4</th>
+                            <th >Magent 5</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td className="measuring-box-data">
+                            <td >
                                 <input
                                     onChange={(e) => setMagnetPoints(prev => ({ ...prev, ['chamfer'+pointIdentifier]: { ...prev['chamfer'+pointIdentifier], ['machine']: e.target.value } }))}
                                     onKeyDown={(e) => handleKeyDown(e)}
@@ -81,7 +82,7 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
                             </td>
                             {
                                 number.map((items) =>
-                                    <td className="measuring-box-data">
+                                    <td>
                                         <div className="point-container">
                                             <div className="point-data">
                                                 <p>Point A</p>

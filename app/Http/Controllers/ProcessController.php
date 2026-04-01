@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Barelling;
+use App\Models\cghModel;
 use App\Models\models;
 use Mockery\Expectation;
 
@@ -83,6 +84,7 @@ class ProcessController extends Controller
 
         $processBank = [
             'barelling' => Barelling::class,
+            'cghl' => cghModel::class,
         ];
 
         $dataBank = [
