@@ -122,6 +122,12 @@ export default function Measure() {
         micrometer_serial_number:''
     });
 
+    const {  data:cghlPoint , setData:setCghlPoint, reset: resetCghlPoint } =useForm({
+        magnet_1: { p1_1:'' ,p1_2:'',p1_3:'',p2_1:'' ,p2_2:'',p2_3:'',p3_1:'' ,p3_2:'',p3_3:''},
+        magnet_2: { p1_1:'' ,p1_2:'',p1_3:'',p2_1:'' ,p2_2:'',p2_3:'',p3_1:'' ,p3_2:'',p3_3:''},
+        magnet_3: { p1_1:'' ,p1_2:'',p1_3:'',p2_1:'' ,p2_2:'',p2_3:'',p3_1:'' ,p3_2:'',p3_3:''},
+    });
+
     //useform for details
     //form for common details
     const handleCloseModal = () => {
@@ -595,7 +601,7 @@ export default function Measure() {
                                 <MeasuringData goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} status={processForm.details["status"]} edit={editBatch} />
                             </div>
                             : statusCheck && modelState && processState && processState.process === 'cghl' && (processForm?.details["status"] === 'measuring' || processForm?.details["status"] === 'measured') ?
-                                <CghMeasuring cghlDetails={cghlDetails}/>
+                                <CghMeasuring cghlDetails={cghlDetails} cghlPoint={cghlPoint} setCghlPoint={setCghlPoint} currentModel={currentModel} handleKeyDown={handleKeyDown}/>
                             :null
                     }
 
@@ -627,6 +633,22 @@ export default function Measure() {
                                 }
                                 <MeasuringData goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} status={processForm.details["status"]} edit={editBatch} />
                             </div>
+                            : statusCheck && modelState && processState && processState.process === 'cghl' && processForm?.details["status"] === 'approved' ?
+                                <>
+                                    <Cghl
+                                        handleKeyDown={handleKeyDown}
+                                        cghlDetails={cghlDetails}
+                                        setCghlDetails={setCghlDetails}
+                                        edit={editBatch}
+                                    />
+                                    <CghMeasuring
+                                        cghlDetails={cghlDetails}
+                                        cghlPoint={cghlPoint}
+                                        setCghlPoint={setCghlPoint}
+                                        currentModel={currentModel}
+                                        handleKeyDown={handleKeyDown}
+                                    />
+                                </>
                             : null
                     }
 

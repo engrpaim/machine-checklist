@@ -1207,11 +1207,18 @@ button:disabled:hover {
 }
 
 .measuring-table {
+    border-collapse: collapse;
     width: 85vw;
     background: white;
     color: #2d3848;
     padding: 0.5rem;
 }
+
+.measuring-table thead {
+    background: #0070a3;
+    color: #e6f7ff;
+}
+
 .measuring-table input {
     text-align: center;
     border: none;
