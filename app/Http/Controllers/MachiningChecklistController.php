@@ -218,7 +218,7 @@ class MachiningChecklistController  extends ProcessController
 
     public function finalizeProcess(Request $request)
     {
-
+        dd($request->all());
         $finalizeBank = [
             "preparing" => "prepared",
             "measuring" => "measured",

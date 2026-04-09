@@ -123,11 +123,21 @@ export default function Measure() {
     });
 
     const {  data:cghlPoint , setData:setCghlPoint, reset: resetCghlPoint } =useForm({
-        magnet_1: { p1_1:'' ,p1_2:'',p1_3:'',p2_1:'' ,p2_2:'',p2_3:'',p3_1:'' ,p3_2:'',p3_3:''},
-        magnet_2: { p1_1:'' ,p1_2:'',p1_3:'',p2_1:'' ,p2_2:'',p2_3:'',p3_1:'' ,p3_2:'',p3_3:''},
-        magnet_3: { p1_1:'' ,p1_2:'',p1_3:'',p2_1:'' ,p2_2:'',p2_3:'',p3_1:'' ,p3_2:'',p3_3:''},
+        magnet_1: { p1_1:'' ,p1_2:'',p1_3:'',p2_1:'' ,p2_2:'',p2_3:'',p3_1:'' ,p3_2:'',p3_3:'',remarks:''},
+        magnet_2: { p1_1:'' ,p1_2:'',p1_3:'',p2_1:'' ,p2_2:'',p2_3:'',p3_1:'' ,p3_2:'',p3_3:'',remarks:''},
+        magnet_3: { p1_1:'' ,p1_2:'',p1_3:'',p2_1:'' ,p2_2:'',p2_3:'',p3_1:'' ,p3_2:'',p3_3:'',remarks:''},
     });
 
+    const {data:cghTools ,setData:setCghTools, reset: resetCghTools}=useForm({
+        form_gauge:'',
+        form_n9:'',
+        form_sorted:'',
+        form_remarks:'',
+        go_serial:'',
+        go_validation:'',
+        go_n9:'',
+        go_sorted:''
+    })
     //useform for details
     //form for common details
     const handleCloseModal = () => {
@@ -178,15 +188,17 @@ export default function Measure() {
                 data:data,
                 details:cghlDetails,
                 set:setCghlDetails,
+                mass_pro:cghTools,
+                points:cghlPoint,
                 reset:resetCghlDetails,
-                subreset:resetCghlDetails,
-                resetPoints:resetCghlDetails
+                subreset:resetCghTools,
+                resetPoints:resetCghlPoint
             }
         }
 
         setArrayBank(arrayBankNew)
         console.log('check if updating: ', cghlDetails);
-    }, [barellingDetails, timerDetails, magnetPoints,cghlDetails])
+    }, [barellingDetails, timerDetails, magnetPoints,cghlDetails,cghTools])
 
 
 
@@ -601,7 +613,7 @@ export default function Measure() {
                                 <MeasuringData goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} status={processForm.details["status"]} edit={editBatch} />
                             </div>
                             : statusCheck && modelState && processState && processState.process === 'cghl' && (processForm?.details["status"] === 'measuring' || processForm?.details["status"] === 'measured') ?
-                                <CghMeasuring cghlDetails={cghlDetails} cghlPoint={cghlPoint} setCghlPoint={setCghlPoint} currentModel={currentModel} handleKeyDown={handleKeyDown}/>
+                                <CghMeasuring cghlDetails={cghlDetails} cghlPoint={cghlPoint} cghTools={cghTools} setCghTools={setCghTools} setCghlPoint={setCghlPoint} currentModel={currentModel} handleKeyDown={handleKeyDown}/>
                             :null
                     }
 
@@ -641,12 +653,15 @@ export default function Measure() {
                                         setCghlDetails={setCghlDetails}
                                         edit={editBatch}
                                     />
+
                                     <CghMeasuring
                                         cghlDetails={cghlDetails}
                                         cghlPoint={cghlPoint}
                                         setCghlPoint={setCghlPoint}
                                         currentModel={currentModel}
                                         handleKeyDown={handleKeyDown}
+                                        cghTools={cghTools}
+                                        setCghTools={setCghTools}
                                     />
                                 </>
                             : null

@@ -1368,8 +1368,9 @@ td {
 
 .details-container-white-row {
     display: flex;
+    justify-content: center;
     flex-direction: row;
-    width: 50vw;
+    width: fit-content;
     padding: 2rem;
     background: white;
     border-radius: 1rem;

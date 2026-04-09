@@ -1,7 +1,5 @@
 
 export default function PasswordModal({ setPasswordModal, handlePassword, passworModal, Notification }) {
-
-
     console.log('Password Notif:', Notification);
     return (
         <div className="modal">
@@ -20,7 +18,6 @@ export default function PasswordModal({ setPasswordModal, handlePassword, passwo
                         <p>{Notification && Notification.message ? Notification.message : ''}</p>
                     </div>
                 </div>
-
             </div>
         </div>
     )
