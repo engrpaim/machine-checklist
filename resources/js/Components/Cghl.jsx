@@ -1,6 +1,6 @@
 import { useEffect,useState } from "react";
 import { CrossIcon } from "../Icons/SVG";
-export default function CGHL({cghlDetails,setCghlDetails,handleKeyDown,edit}){
+export default function Cghl({cghlDetails,setCghlDetails,handleKeyDown,edit}){
     console.log('CGHL: ',cghlDetails);
 
     const [currentStatus , setCurrentStatus] = useState(false);
