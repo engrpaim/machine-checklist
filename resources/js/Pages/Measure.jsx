@@ -16,8 +16,12 @@ import Cghl from "../Components/Cghl";
 import CghMeasuring from "../Components/CghMeasuring";
 export default function Measure() {
     /**
+     *
+     *
      * return machining sheet
      * Details Selector return components based on sheet
+     *
+     *
      * **/
     const { modelsList, flash, modal, current_lot, batches, existing, model , copy_batch } = usePage().props;
     console.log('Props', flash, modal, current_lot, existing, 'Models: ', model,'Details: ',copy_batch);
@@ -151,8 +155,8 @@ export default function Measure() {
     }
 
     useEffect(() => {
-        const process = processState && processState.process ? processState.process : null
-        const model = modelState ? modelState : null
+        // const process = processState && processState.process ? processState.process : null
+        // const model = modelState ? modelState : null
         console.log('hesslloxx', processState, modelState)
 
         if (processState && processState.process === '' && modelState || processState && processState.process !== '' && processState.value && !modelState ) {
