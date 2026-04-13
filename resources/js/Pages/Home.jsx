@@ -6,7 +6,7 @@ import Notification from '../Layouts/Notification';
 import PasswordPrompts  from '../Layouts/PasswordPrompts';
 import ModelSelector from '../Layouts/ModelSelector';
 import InProcessDisplay from '../Layouts/InProcessDisplay';
-import Cghl from '../Layouts/Cghl';
+import Cghl from '../Components/Cghl';
 import Lapping from '../Layouts/Lapping';
 import SlicingMachine from '../Layouts/Slicing';
 import Admin from '../Layouts/Admin';
@@ -436,9 +436,7 @@ export default function Home({ message }) {
 
                         />
                     :data && data.model && data.process === 'cghl' ?
-                        <Cghl
-                            data={data}
-                        />
+                        <Cghl/>
                     :data && data.model && data.process === 'lapping' ?
                         <Lapping
                             data={data}/>
