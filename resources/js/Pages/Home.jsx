@@ -35,12 +35,10 @@ export default function Home({ message }) {
 
         if (!flash) return;
         Object.entries(flash).map(([key, value]) => {
-
             setNotificationMessage({
                 title: key,
                 message: value,
             });
-
             setTimeout(()=>{
                 setNotificationMessage(null);
             },2000);
