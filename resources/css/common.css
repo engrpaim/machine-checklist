@@ -34,8 +34,10 @@
 
 .details-container-gray {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
     width: fit-content;
+    max-width: 85vw;
     min-height: 13.5rem;
     max-height: fit-content;
     padding: 1rem 2rem;
@@ -48,6 +50,7 @@
 
 .details-container-inner {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 1.5rem;
     justify-content: space-between;

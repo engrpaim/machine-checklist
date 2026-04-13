@@ -1,6 +1,7 @@
 import { useState ,useEffect , useRef} from "react";
 import GraphControlX from "./GraphControlX";
-export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,currentModel,handleKeyDown,cghTools,setCghTools}){
+import GraphControlR from "./GraphControlR";
+export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,currentModel,handleKeyDown,cghTools,setCghTools,edit}){
     console.log('MEASURING CGH: ', cghlDetails,cghlPoint);
     /**
      *
@@ -18,6 +19,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
     const spcAverage = [];
     const RAverage = [];
     const XAverage = [];
+    const allRaverage = []
     const SPCControlls = {};
     const [model,setModel] = useState(false);
 
@@ -29,7 +31,15 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
         setModel(currentModel);
     },[currentModel])
 
+    const [currentStatus, setCurrentStatus] = useState(null);
+    const toDisabled = ['prepared', 'measured', 'approved']
+    useEffect(() => {
+        const status = cghlDetails.status
+        const allowed = toDisabled.includes(status) ? true : false
+        console.log('STATUS CGH' , allowed, status )
+        setCurrentStatus(allowed);
 
+    }, [cghlDetails]);
     const refereceValues=(u=0)=>{
         const currentCell = u
         const values = {
@@ -60,20 +70,20 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
         const min = currentModel.cghl_min
 
         const TOL = max - min
-        const STEP = Number((TOL/10) - 0.001.toFixed(3))
+        const STEP = Number((TOL/10) - 0.001)
         console.log('Tolerance: ',TOL,'STEP: ',STEP);
         const range = []
 
-        let currentStart = Number(min.toFixed(3))
+        let currentStart = Number(min)
 
         for(let i=0 ;i < 10;i++){
             const currentEnd = currentStart + STEP
-            const End = Number(currentEnd.toFixed(3))
+            const End = Number(currentEnd)
             console.log(currentStart ," --- " ,End);
             const newStart = End + 0.001
 
             range.push( i === 9 ? max:End)
-            currentStart = Number(newStart.toFixed(3))
+            currentStart = Number(newStart)
         }
 
         return range
@@ -121,7 +131,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
         }
         // finalAverage = sum of average / number of average
         const finalAverage = runningAverage ? runningAverage/count:0
-        container['average'+suffix] = finalAverage > 0  ?Number(finalAverage.toFixed(3)):null
+        container['average'+suffix] = finalAverage > 0  ?Number(finalAverage):null
         container['max'+suffix] = maxAverage > 0  ?maxAverage:null
         container['min'+suffix] = minAverage > 0  ?minAverage:null
     }
@@ -146,18 +156,18 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
         // get square root
         const stdev = Math.sqrt(mean)
 
-        container["stdev"] = Number(stdev.toFixed(3))
+        container["stdev"] = Number(stdev)
 
-        console.log('summation: ',summation , ' count: ', count , ' stdev: ',stdev.toFixed(3))
+        console.log('summation: ',summation , ' count: ', count , ' stdev: ',stdev)
     }
 
     const handleProcessCapabilityIndex =(array,container,min,max)=>{
         console.log('Process Capability Index: ',array,container,min,max,container.stdev);
         if(!container.stdev) return
-        const tol = max.toFixed(3) - min
+        const tol = max - min
         const stdev = container.stdev
-        const cp = Number(tol.toFixed(3))/(6 * stdev)
-        container['cp'] = Number(cp.toFixed(3))
+        const cp = Number(tol)/(6 * stdev)
+        container['cp'] = Number(cp)
     }
 
     const handleCPLLowerCapabilityIndex =(array,container,min,average)=> {
@@ -167,7 +177,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
         const stdev = container.stdev
 
         const cpl = (currentAverage - currentMin)/(3*stdev)
-        container["cpl"] = Number(cpl.toFixed(3))
+        container["cpl"] = Number(cpl)
     }
 
     const handleCPUUpperCapability =(array,container,max,average)=> {
@@ -177,7 +187,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
         const stdev = container.stdev
 
         const cpu = (currentMax - currentAverage)/(3*stdev)
-        container["cpu"] = Number(cpu.toFixed(3))
+        container["cpu"] = Number(cpu)
     }
 
     const handleUCL =(array,container,Average,cl)=>{
@@ -235,8 +245,8 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
             judgement[magnetNumber][items][`p${items}_2_color`] = theme2
             judgement[magnetNumber][items][`p${items}_3_color`] = theme3
 
-            judgement[magnetNumber][items]["min"] = currentMin3points.toFixed(3)
-            judgement[magnetNumber][items]["max"] = currentMax3points.toFixed(3)
+            judgement[magnetNumber][items]["min"] = currentMin3points
+            judgement[magnetNumber][items]["max"] = currentMax3points
 
             const refValues = refereceValues()
             // worst theme
@@ -244,12 +254,15 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
 
             const worstValue = currentMax3points - refValues.OK_DIM_MIN > refValues.OK_DIM_MIN - currentMin3points ? currentMax3points : currentMin3points
             console.log('DIFFERENCE: ',currentMax3points -  currentMin3points ,currentMax3points ,  currentMin3points);
-            const rValueCurrent = (currentMax3points -  currentMin3points).toFixed(3)
+            const rValueCurrent = (currentMax3points -  currentMin3points)
 
             //R value
             rValueCurrent && currentMax3points > 0 && currentMin3points > 0  ? RAverage.push(Number(rValueCurrent)):null
 
+            allRaverage.push(Number(rValueCurrent.toFixed(3)))
+
             const RAverageValues = handleAverage(RAverage ,SPCControlls , '_UCL');
+              console.log('finding: ',allRaverage);
             const worstJudgement = resultJudgementPoint(worstValue)
             const worstTheme = resultTheme(worstJudgement);
             judgement[magnetNumber][items]["worst"] = worstValue
@@ -260,22 +273,21 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
             const U91 = divisionStep[4]
             const reultAA95 = refereceValues(U91)
             console.log('ref:',currentMin3points,refValues.AA87 ,  currentMax3points , refValues.AA94,currentMin3points  < refValues.AA87 , currentMax3points > refValues.AA94,reultAA95.AA95);
+            const SPCAverage =  point1 > 0 && point2 > 0 && point3 > 0 ? (point1 + point2 + point3)/3:null
 
-            const judgementPerPiece =  currentMin3points  < refValues.AA87 || currentMax3points > refValues.AA94 ? 'REJECT':currentMin3points < reultAA95.AA95 || currentMax3points > refValues.AA96?'FOR ADJUSTMENT':'ACCEPT'
-
-            judgement[magnetNumber][items]["piece"] = currentMin3points <= 0 && currentMax3points <= 0? null : judgementPerPiece
-            judgement[magnetNumber][items]["piece_color"] =currentMin3points <= 0 && currentMax3points <= 0? null : resultTheme(judgementPerPiece)
+            judgement[magnetNumber][items]["piece"] = worstJudgement
+            judgement[magnetNumber][items]["piece_color"] =worstTheme
 
 
             //status
-            const status = judgementPerPiece === 'ACCEPT'? "Magnet within specs"
-                            :currentMax3points > refValues.AA96 && currentMax3points !== 0 && currentMin3points < reultAA95.AA95 && currentMin3points !== 0  ? "For Adjustment, Magnet minimum & maximum range"
-                            :currentMin3points < reultAA95.AA95 && currentMin3points !== 0 ?"For Adjustment, Magnet minimum range "
-                            :currentMax3points > refValues.AA96 && currentMax3points !== 0 ?"For Adjustment, Magnet maximum range"
-                            :null
+            const status = worstJudgement === 'ACCEPT'? "Magnet within specs"
+                            :currentMax3points > refValues.AA91 && currentMax3points !== 0 && currentMin3points < reultAA95.OK_DIM_MIN && currentMin3points !== 0  ? "For Adjustment, Magnet minimum & maximum range"
+                            :currentMin3points < reultAA95.OK_DIM_MIN && currentMin3points !== 0 ?"For Adjustment, Magnet minimum range "
+                            :currentMax3points >= refValues.AA96 && currentMax3points !== 0 ?"For Adjustment, Magnet maximum range"
+                            :'Specs Condition is not yet teach!'
             //status theme
             judgement[magnetNumber][items]["status"] = status
-            judgement[magnetNumber][items]["status_color"] = currentMin3points <= 0 && currentMax3points <= 0? null: resultTheme(judgementPerPiece)
+            judgement[magnetNumber][items]["status_color"] = currentMin3points <= 0 && currentMax3points <= 0? null: resultTheme(worstJudgement)
 
             //min & max theme
             const minResult = resultJudgementPoint(currentMin3points)
@@ -289,13 +301,13 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
 
             //remarks
             judgement[magnetNumber][items]["remarks"] = status === "Magnet within specs" ? "Good dimension, Proceed":null
-            console.log(divisionStep,refValues,judgementPerPiece,)
+            console.log(divisionStep,refValues,)
 
 
             //SPC Control
-            const SPCAverage =  point1 > 0 && point2 > 0 && point3 > 0 ? (point1 + point2 + point3)/3:null
+
             SPCAverage && SPCAverage > 0 ? XAverage.push(Number(SPCAverage.toFixed(3))):null
-            const ConvertedAverage = SPCAverage ? Number(SPCAverage.toFixed(3)):null
+            const ConvertedAverage = SPCAverage ? Number(SPCAverage):null
             judgement[magnetNumber][items]["average"] = ConvertedAverage
 
             //Average over all
@@ -322,15 +334,28 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
 
             //x control ucl
             SPCControlls && SPCControlls.average ? handleUCL(RAverage,SPCControlls,SPCControlls.average,SPCControlls.average_UCL):null
-
+            console.log('R average: ',RAverage,RAverageValues);
             //r control
-            SPCControlls &&  SPCControlls.average_UCL ? SPCControlls["r_ucl"] = 1.82  * SPCControlls.average_UCL:null
-            console.log('SPC VALUES: ' , spcAverage, spcAverage.length,SPCControlls , RAverage ,XAverage);
+            if(SPCControlls &&  SPCControlls.average_UCL )
+            {
+                    //All
+                    const all_stdv =  SPCControlls.average_UCL/2.33
+                    SPCControlls["r_ucl"] = 1.82  * SPCControlls.average_UCL
+                    SPCControlls["all_ucl"] = all_stdv
+                    SPCControlls["all_cl"] = (refValues.AA94 - refValues.AA87)/(6 * all_stdv)
+
+                    const allCPKMax = (refValues.AA94 - SPCControlls.cl)/(3 * all_stdv)
+                    const allCPKMin = (SPCControlls.cl - refValues.AA87 )/(3 * all_stdv)
+                    SPCControlls["all_cpk"] = allCPKMax < allCPKMin ? allCPKMax : allCPKMin
+
+            }
+
+
         })
 
     });
 
-
+    console.log('Check data exisitng: ',currentStatus,edit,cghlPoint);
 
     return(
         <>
@@ -339,7 +364,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                 <div className="details-container-white">
                     <div>
                         <h1>CGH (L) Specification</h1>
-                        <p><strong style={{ fontWeight:'bold' }}>Maximum:</strong>&nbsp;{model && model.cghl_max.toFixed(3)}&nbsp;<strong style={{ fontWeight:'bold' }}>Target:</strong>&nbsp;{model && model.cghl_target.toFixed(3)}&nbsp;<strong style={{ fontWeight:'bold' }}>Minimum:</strong>&nbsp;{model && model.cghl_min.toFixed(3)}</p>
+                        <p><strong style={{ fontWeight:'bold' }}>Maximum:</strong>&nbsp;{model && model.cghl_max}&nbsp;<strong style={{ fontWeight:'bold' }}>Target:</strong>&nbsp;{model && model.cghl_target}&nbsp;<strong style={{ fontWeight:'bold' }}>Minimum:</strong>&nbsp;{model && model.cghl_min}</p>
                     </div>
                     <table className="measuring-table">
                         <thead>
@@ -381,24 +406,31 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                                                     }
                                                     <td>{magnet.current}</td>
                                                     <td><input
+                                                                value ={cghlPoint[`magnet_${mainItems}`][`p${items}_1`] ? cghlPoint[`magnet_${mainItems}`][`p${items}_1`]:''}
                                                                 type='number'
                                                                 onChange={(e)=>{setCghlPoint(`magnet_${mainItems}`,{
                                                                     ...cghlPoint[`magnet_${mainItems}`],[`p${items}_1`]:e.target.value
                                                                 })}}
-                                                                onKeyDown={(e)=>handleKeyDown(e)}/></td>
+                                                                onKeyDown={(e)=>handleKeyDown(e)}
+                                                                disabled={(currentStatus && !edit)}
+                                                                /></td>
                                                     <td><input
+                                                                value ={cghlPoint[`magnet_${mainItems}`][`p${items}_1`] ? cghlPoint[`magnet_${mainItems}`][`p${items}_2`]:''}
                                                                 type='number'
                                                                 onChange={(e)=>{setCghlPoint(`magnet_${mainItems}`,{
                                                                     ...cghlPoint[`magnet_${mainItems}`],[`p${items}_2`]:e.target.value
                                                                 })}}
                                                                 onKeyDown={(e)=>handleKeyDown(e)}
+                                                                disabled={(currentStatus && !edit)}
                                                                 /></td>
                                                     <td><input
+                                                                value ={cghlPoint[`magnet_${mainItems}`][`p${items}_1`] ? cghlPoint[`magnet_${mainItems}`][`p${items}_3`]:''}
                                                                 type='number'
                                                                 onChange={(e)=>{setCghlPoint(`magnet_${mainItems}`,{
                                                                     ...cghlPoint[`magnet_${mainItems}`],[`p${items}_3`]:e.target.value
                                                                 })}}
                                                                 onKeyDown={(e)=>handleKeyDown(e)}
+                                                                disabled={(currentStatus && !edit)}
                                                                 /></td>
 
                                                     <td
@@ -435,11 +467,12 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                                                         {
                                                             judgement[mainItems] && judgement[mainItems][items]['remarks'] ?  judgement[mainItems][items][`remarks`]:
                                                             <input
-
+                                                                value={cghlPoint[`magnet_${mainItems}`][`remarks`]?cghlPoint[`magnet_${mainItems}`][`remarks`]:null}
                                                                 onChange={(e)=>{setCghlPoint(`magnet_${mainItems}`,{
                                                                     ...cghlPoint[`magnet_${mainItems}`],[`remarks`]:e.target.value
                                                                 })}}
                                                                 onKeyDown={(e)=>handleKeyDown(e)}
+                                                                disabled={(currentStatus && !edit)}
                                                                 style={{ width:'10rem' }}/>
                                                         }
                                                     </td>
@@ -459,29 +492,25 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                     </table>
                 </div>
                 <div>
-                    <h1>Dimension graph</h1>
-                    <GraphControlX XAverage={XAverage}/>
-                </div>
-                <div>
                     <h1>Measuring Tools</h1>
                     <div className="container-row">
                         <div className="details-container-white-row">
                             <div className="container-column">
                                 <div className="container-row-between">
                                     <label>Form Gauge Serial No.</label>
-                                    <input style={{ width:'10rem' }} onChange={(e)=>setCghTools('form_gauge',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)}/>
+                                    <input value={cghTools.form_gauge?cghTools.form_gauge:''} style={{ width:'10rem' }} onChange={(e)=>setCghTools('form_gauge',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)} disabled={(currentStatus && !edit)}/>
                                 </div>
                                 <div className="container-row-between">
                                     <label>n=9</label>
-                                    <input style={{ width:'10rem' }} onChange={(e)=>setCghTools('form_n9',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)}/>
+                                    <input value={cghTools.form_n9?cghTools.form_n9:''}  style={{ width:'10rem' }} onChange={(e)=>setCghTools('form_n9',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)} disabled={(currentStatus && !edit)}/>
                                 </div>
                                 <div className="container-row-between">
                                     <label>Sorted By:</label>
-                                    <input style={{ width:'10rem' }} onChange={(e)=>setCghTools('form_sorted',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)}/>
+                                    <input value={cghTools.form_sorted?cghTools.form_sorted:''}  style={{ width:'10rem' }} onChange={(e)=>setCghTools('form_sorted',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)} disabled={(currentStatus && !edit)}/>
                                 </div>
                                 <div className="container-row-between">
                                     <label>Remarks:</label>
-                                    <input style={{ width:'10rem' }} onChange={(e)=>setCghTools('form_remarks',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)}/>
+                                    <input value={cghTools.form_remarks?cghTools.form_remarks:''}  style={{ width:'10rem' }} onChange={(e)=>setCghTools('form_remarks',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)} disabled={(currentStatus && !edit)}/>
                                 </div>
                             </div>
                         </div>
@@ -489,24 +518,36 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                             <div className="container-column">
                                 <div className="container-row-between">
                                     <label>Go/No Go Jig Serial No.:</label>
-                                    <input style={{ width:'10rem' }} onChange={(e)=>setCghTools('go_serial',e.target.value)}  onKeyDown={(e)=>handleKeyDown(e)}/>
+                                    <input value={cghTools.go_serial?cghTools.go_serial:''}  style={{ width:'10rem' }} onChange={(e)=>setCghTools('go_serial',e.target.value)}  onKeyDown={(e)=>handleKeyDown(e)} disabled={(currentStatus && !edit)}/>
                                 </div>
                                 <div className="container-row-between">
                                     <label>Go/No Go Jig Validation:</label>
-                                    <input style={{ width:'10rem' }} onChange={(e)=>setCghTools('go_validation',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)}/>
+                                    <input value={cghTools.go_validation?cghTools.go_validation:''}  style={{ width:'10rem' }} onChange={(e)=>setCghTools('go_validation',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)} disabled={(currentStatus && !edit)}/>
                                 </div>
                                 <div className="container-row-between">
                                     <label>n=9</label>
-                                    <input style={{ width:'10rem' }} onChange={(e)=>setCghTools('go_n9',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)}/>
+                                    <input value={cghTools.go_n9?cghTools.go_n9:''}  style={{ width:'10rem' }} onChange={(e)=>setCghTools('go_n9',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)} disabled={(currentStatus && !edit)}/>
                                 </div>
                                 <div className="container-row-between">
                                     <label>Sorted By:</label>
-                                    <input style={{ width:'10rem' }} onChange={(e)=>setCghTools('go_sorted',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)}/>
+                                    <input value={cghTools.go_sorted?cghTools.go_sorted:''}  style={{ width:'10rem' }} onChange={(e)=>setCghTools('go_sorted',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)} disabled={(currentStatus && !edit)}/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div>
+                    <h1>Dimension Graph</h1>
+                    <div className="container-row">
+                        <div>
+                            <GraphControlX XAverage={XAverage}/>
+                        </div>
+                        <div>
+                            <GraphControlR data={allRaverage} min={SPCControlls.r_ucl} max={SPCControlls.average_UCL}/>
+                        </div>
+                    </div>
+                </div>
+
                 <div>
                     <h1>SPC Control</h1>
                     <div className="details-container-white-row">
@@ -559,7 +600,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                                 <input value={SPCControlls.cl ? SPCControlls.cl.toFixed(3):null} disabled={true}/>
                             </div>
                             <div  style={{ width:'10rem'}} className="container-row-between">
-                                <label>UCL</label>
+                                <label>LCL</label>
                                 <input value={SPCControlls.lcl ? SPCControlls.lcl.toFixed(3):null} disabled={true}/>
                             </div>
                         </div>
@@ -572,6 +613,21 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                             <div  style={{ width:'10rem'}} className="container-row-between">
                                 <label>CL</label>
                                 <input value={SPCControlls.average_UCL ? SPCControlls.average_UCL.toFixed(3):null} disabled={true}/>
+                            </div>
+                        </div>
+                        <div className="container-column">
+                            <div className="container-row-between" style={{ fontWeight:'bold' }}>SPC Control</div>
+                            <div  style={{ width:'10rem'}} className="container-row-between">
+                                <label>σ</label>
+                                 <input value={SPCControlls.all_ucl ? SPCControlls.all_ucl.toFixed(3):null} disabled={true}/>
+                            </div>
+                            <div  style={{ width:'10rem'}} className="container-row-between">
+                                <label>CL</label>
+                                <input value={SPCControlls.all_cl ? SPCControlls.all_cl.toFixed(3):null} disabled={true}/>
+                            </div>
+                            <div  style={{ width:'10rem'}} className="container-row-between">
+                                <label>CPK</label>
+                                <input value={SPCControlls.all_cpk ? SPCControlls.all_cpk.toFixed(3):null} disabled={true}/>
                             </div>
                         </div>
                     </div>

@@ -32,7 +32,7 @@ export default function TriBlockModal({message,handleCloseModal,handleCreate,all
                                         })
                                     }
                                 </select>
-                                <button  className='btn-grad'  style={{ padding:'0.5rem' }} onClick={()=>handleBatch(update)} disabled={!(update)}>UPDATE</button>
+                                <button  className='btn-grad'  style={{ padding:'0.5rem' }} onClick={()=>handleBatch(update)} disabled={!(update || allBatches.length <= 0)}>UPDATE</button>
                             </div>
                         </div>
                         <div>

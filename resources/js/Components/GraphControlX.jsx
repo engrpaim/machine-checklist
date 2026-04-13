@@ -34,14 +34,14 @@ export default function GraphControlX({XAverage}){
         labels: ['Value','1', '2', '3', '4', '5','6','7','8','9','End'],
         datasets: [
             {
-                label: 'X Bar',
+                label: 'X point',
                 data: xmerge,
                 textColor:'red',
                 borderColor: 'blue',
                 borderWidth: 1,
                 pointStyle: 'rectRot',
                 pointRadius: 5,
-                 tension: 0.5,
+                tension:0,
                 pointBackgroundColor: (context)=>{
                     console.log(context , context.dataIndex);
                     if(context.dataIndex <= 0 )return
@@ -161,9 +161,9 @@ const options = {
 
     return(
         <>
-           <div className='details-container-white' style={{ width:'50rem', height:'30rem' }}>
-                <h1>X Graph</h1>
-                <Line data={data} options={options} style={{ width:'100%' ,height:'100%' , margin:'2rem'}} />
+           <div  style={{ display:'flex',justifyContent:'center',flexDirection:'column',width:'40vw',minWidth:'fit-content', height:'40vh',padding:'2rem' , background:'white',borderRadius:'1rem'}}>
+                <h1 style={{ justifySelf:'start' ,color: '#19232e'}}>X Graph</h1>
+                <Line data={data} options={options} style={{ width:'40vw' ,height:'35vh' }} />
            </div>
         </>
     )

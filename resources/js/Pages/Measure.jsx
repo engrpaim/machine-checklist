@@ -19,8 +19,8 @@ export default function Measure() {
      * return machining sheet
      * Details Selector return components based on sheet
      * **/
-    const { modelsList, flash, modal, current_lot, batches, existing, model } = usePage().props;
-    console.log('Props', flash, modal, current_lot, existing, 'Models: ', model);
+    const { modelsList, flash, modal, current_lot, batches, existing, model , copy_batch } = usePage().props;
+    console.log('Props', flash, modal, current_lot, existing, 'Models: ', model,'Details: ',copy_batch);
     const [modelState, setModelState] = useState(null);
     const [processState, setProcessState] = useState(null);
     const [measureButton, setMeasureButton] = useState(null);
@@ -36,14 +36,14 @@ export default function Measure() {
     const [currentModel, setCurrentModel] = useState(false);
     const [editBatch, setEditBatch] = useState(false);
     const [passworModal, setPasswordModal] = useState(false);
-
+    const [copyBatchDetails ,setCopyBatchDetails] = useState(false);
 
     //Notification
     const [Notification, setNotification] = useState(false);
     console.log('type chamfer: ', currentModel.chamfer_type);
     const alloweAble = {
         barelling: { preparing: 8 },
-        cghl:{preparing:4}
+        cghl:{preparing:11}
     }
     const toHide = ["prepared", "measured", "approved"];
     const buttonStatus = {
@@ -173,32 +173,40 @@ export default function Measure() {
         console.log('Updating data!');
 
         const arrayBankNew = {
+
             barelling: {
                 data: data,
                 details: barellingDetails,
                 time_setting: timerDetails,
                 points: magnetPoints,
-                magnet: null,
+                set_data:setData,
+                set_points:setMagnetPoints,
+                set_time_setting:setTimerDetails,
+                set_magnet:setMagnetPoints,
                 set: setBarellingDetails,
                 reset: resetBarellingDetails,
                 resetPoints: resetMagnetPoints,
                 subreset: resetTimerDetails
             },
+
             cghl: {
                 data:data,
                 details:cghlDetails,
                 set:setCghlDetails,
                 mass_pro:cghTools,
                 points:cghlPoint,
+                set_mass_pro:setCghTools,
+                set_points:setCghlPoint,
                 reset:resetCghlDetails,
                 subreset:resetCghTools,
                 resetPoints:resetCghlPoint
-            }
+            },
+
         }
 
         setArrayBank(arrayBankNew)
         console.log('check if updating: ', cghlDetails);
-    }, [barellingDetails, timerDetails, magnetPoints,cghlDetails,cghTools])
+    }, [barellingDetails, timerDetails, magnetPoints,cghlDetails,cghTools,cghlPoint])
 
 
 
@@ -427,17 +435,34 @@ export default function Measure() {
             setData(key, values);
         })
 
-        if (convertedData.time_setting && processState.process === 'barelling') {
+        if(processState.process === 'barelling'){
+            //time
+            convertedData.time_setting &&
             Object.entries(convertedData.time_setting).map(([key, values]) => {
                 setTimerDetails(key, values);
             })
-        }
 
-        if (convertedData.points && processState.process === 'barelling') {
+            //points
+            convertedData.points &&
             Object.entries(convertedData.points).map(([key, values]) => {
                 setMagnetPoints(key, values);
             })
+        } else if(processState.process === 'cghl'){
+             //time
+            convertedData.mass_pro &&
+            Object.entries(convertedData.mass_pro).map(([key, values]) => {
+                setCghTools(key, values);
+            })
+
+            //points
+            convertedData.points &&
+            Object.entries(convertedData.points).map(([key, values]) => {
+                setCghlPoint(key, values);
+            })
         }
+
+
+
     }, [existing])
 
     useEffect(() => {
@@ -506,6 +531,41 @@ export default function Measure() {
     }, [processForm, existing]);
 
     console.log('DATA NOW:', cghlDetails);
+
+    //Handle copy batch details @@handle
+
+    useEffect(()=>{
+        if(!copy_batch) return
+        const copyDetails = JSON.parse(copy_batch);
+        console.log('Copy Branch: ',arrayBank);
+        Object.entries(copyDetails).map(([key,value])=>{
+            if(key !== 'created_at' && key !== 'updated_at' && key !== 'shift' && key !== 'status') {
+
+                if( typeof value === 'object'){
+                    console.log('OBJECT: ',processForm?.[key]);
+                    switch(key){
+                        case 'time_setting':
+                            Object.entries(value).map(([keyInner , valueInner])=>{
+                                processForm?.set_time_setting(keyInner,valueInner)
+                            })
+                        default:
+                            break;
+                    }
+                }else{
+                    console.log('KEY EXIST: ' ,processForm?.details[key])
+
+                    if(processForm?.data[key] !== undefined){
+                        processForm?.set_data(key,value);
+                    }
+
+                    if(processForm?.details[key] !== undefined && key !== 'batch_number' && key !== 'status'){
+                        console.log('cc: ',key , value)
+                        processForm?.set(key,value)
+                    }
+                }
+            }
+        })
+    },[copy_batch])
     return (
         <>
             {
@@ -613,7 +673,17 @@ export default function Measure() {
                                 <MeasuringData goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} status={processForm.details["status"]} edit={editBatch} />
                             </div>
                             : statusCheck && modelState && processState && processState.process === 'cghl' && (processForm?.details["status"] === 'measuring' || processForm?.details["status"] === 'measured') ?
-                                <CghMeasuring cghlDetails={cghlDetails} cghlPoint={cghlPoint} cghTools={cghTools} setCghTools={setCghTools} setCghlPoint={setCghlPoint} currentModel={currentModel} handleKeyDown={handleKeyDown}/>
+
+                                    <CghMeasuring
+                                        cghlDetails={cghlDetails}
+                                        cghlPoint={cghlPoint}
+                                        setCghlPoint={setCghlPoint}
+                                        currentModel={currentModel}
+                                        handleKeyDown={handleKeyDown}
+                                        cghTools={cghTools}
+                                        setCghTools={setCghTools}
+                                        edit={editBatch}
+                                    />
                             :null
                     }
 
@@ -662,6 +732,7 @@ export default function Measure() {
                                         handleKeyDown={handleKeyDown}
                                         cghTools={cghTools}
                                         setCghTools={setCghTools}
+                                        edit={editBatch}
                                     />
                                 </>
                             : null
@@ -691,7 +762,6 @@ export default function Measure() {
                                     {processForm?.details["status"] !== 'approved' ? <button className="status-btn" onClick={(e) => handleProceed(processForm?.details["status"])}>{processForm && processForm?.details["status"] ? buttonStatus[processForm?.details["status"]] : null}</button> : null}
                                     {
                                         editBatch ? <button className="status-btn" onClick={(e) => handleUpdateAllowed()}>Update</button> : <button className="status-btn" onClick={(e) => setPasswordModal(true)}>Edit</button>
-
                                     }
                                 </>
                             }

@@ -25,6 +25,19 @@ class ProcessController extends Controller
             return false;
         }
     }
+    public function  checkBatch1($id, $lot_number, $dbUse)
+    {
+        //return latest data
+        try {
+            $checkIfExist = $dbUse::where('datalist_id', $id)
+                ->where('datalist_lot_number', $lot_number)
+                ->where('batch_number', 1)
+                ->first();
+            return $checkIfExist;
+        } catch (ModelNotFoundException $E) {
+            return false;
+        }
+    }
 
     public function getModel($db, $model)
     {
@@ -106,6 +119,8 @@ class ProcessController extends Controller
 
             if (!$checkIfExist->batch_number || $checkIfExist->batch_number < 1) return redirect()->back()->with('error', 'Batch number not exist!');
 
+
+
             $addedBatch  = [
                 'datalist_id' => $id,
                 'datalist_lot_number' => $lot_number,
@@ -114,13 +129,11 @@ class ProcessController extends Controller
                 'operator_name' => $operatorName,
                 'checker' => $checker,
                 'staff_engineer' => $staffEngineer
-
             ];
 
 
             return $this->savingQuery($dbUse, $addedBatch);
         } else {
-
             $initialData = [
                 'datalist_id' => $id,
                 'datalist_lot_number' => $lot_number,

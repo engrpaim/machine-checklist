@@ -1224,7 +1224,7 @@ button:disabled:hover {
 
 .measuring-table {
     border-collapse: collapse;
-    width: 85vw;
+    width: 80vw;
     background: white;
     color: #2d3848;
     padding: 0.5rem;
@@ -1357,10 +1357,13 @@ td {
 .details-container-white {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    max-width: 85vw;
     padding: 2rem;
     background: white;
     border-radius: 1rem;
     color: #19232e;
+    animation: fadeIn 0.3s ease-in-out;
 }
 .details-container-white h1 {
     color: #19232e;
@@ -1368,14 +1371,17 @@ td {
 
 .details-container-white-row {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     flex-direction: row;
     width: fit-content;
+    max-width: 85vw;
     padding: 2rem;
     background: white;
     border-radius: 1rem;
     color: #19232e;
     gap: 3rem;
+    animation: fadeIn 0.3s ease-in-out;
 }
 .details-white {
     display: flex;

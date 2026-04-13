@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('micrometer_serial_number')->nullable();
             $table->json('mass_pro')->nullable();
             $table->json('perpendicularity')->nullable();
+            $table->json('points')->nullable();
             $table->enum('status', ['preparing', 'prepared', 'measuring', 'measured', 'approved'])->default('preparing');
             $table->timestamps();
 

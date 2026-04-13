@@ -27,12 +27,14 @@ class cghModel extends Model
         'micrometer_serial_number',
         'mass_pro',
         'technician_gl',
+        'points',
         'perpendicularity'
 
     ];
 
     protected $casts = [
         'mass_pro' => 'array',
+        'points' => 'array',
         'perpendicularity' => 'array',
     ];
 }

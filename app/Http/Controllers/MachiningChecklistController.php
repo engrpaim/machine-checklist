@@ -176,11 +176,26 @@ class MachiningChecklistController  extends ProcessController
         $convertModel = $models->toArray();
 
         $creatBatch =  $processControl->Batching($process,  $reference_id, $reference_lot_number, $data);
+        $batchDetails = $creatBatch->toArray();
+
+
+        $detailsBatchNumber = $batchDetails["batch_number"];
+        $currentDBProcess = $this->dataBaseBank($process);
+
+
+        if ($detailsBatchNumber  >  1) {
+            $copyBatch =   $processControl->checkBatch1($batchDetails["datalist_id"], $batchDetails["datalist_lot_number"], $currentDBProcess);
+            $copyArray =  $copyBatch  ? $copyBatch->toArray() : null;
+            $copyJSON =  $copyArray ? json_encode($copyArray) : null;
+        }
+
         if ($creatBatch) return redirect()->back()->with([
             'success' => 'Successfully created new batch!',
             'current_lot' => $creatBatch,
-            'model' => $convertModel
+            'model' => $convertModel,
+            'copy_batch' => $copyJSON
         ]);
+
         return redirect()->back()->with('error', 'Batch creation failed');
     }
 
@@ -218,7 +233,7 @@ class MachiningChecklistController  extends ProcessController
 
     public function finalizeProcess(Request $request)
     {
-        dd($request->all());
+
         $finalizeBank = [
             "preparing" => "prepared",
             "measuring" => "measured",
@@ -237,9 +252,10 @@ class MachiningChecklistController  extends ProcessController
         $status = $details["status"] ?? 'preparing';
         $process = $data['process'] ?? null;
 
+
         $checkPointForm = $form["points"] ?? null;
-        if ($checkPointForm) {
-            if (($form["points"]["chamfer1"] || $form["points"]["chamfer2"]) && $process === 'barelling') {
+        if ($checkPointForm && $process === 'barelling') {
+            if (($form["points"]["chamfer1"] || $form["points"]["chamfer2"])) {
                 $form["points"]["chamfer1"] ? $magnet["chamfer1"] = $form["points"]["chamfer1"] : null;
                 $form["points"]["chamfer2"] ? $magnet["chamfer2"] = $form["points"]["chamfer2"] : null;
             }
