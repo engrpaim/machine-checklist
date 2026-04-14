@@ -382,6 +382,11 @@ class MachiningChecklistController  extends ProcessController
         dd($request->all(), $bank, $isGetDetails->toArray());
     }
 
+    /**
+     *
+     * save partial data (perpendicularity histogram)
+     *
+     * **/
     public function updateData(Request $request)
     {
 
@@ -408,6 +413,25 @@ class MachiningChecklistController  extends ProcessController
         if ($result) return redirect()->back()->with('success', '[Updating]Pic updated successfully!');
 
         return redirect()->back()->with('error', '[Updating]Error 404!');
+    }
+
+
+    public function partSave(Request $request)
+    {
+        $data = $request->input('data');
+        $points =  $data['points'];
+        $process = $data['process'];
+        $details = $data['details'];
+
+        if (!$points || !$process) return redirect()->back()->with('error', '[Part Updating]Missing Data!');
+        $updateData =  new ProcessController;
+        $dbuse = $this->dataBaseBank($process);
+        $batch_number = $details["batch_number"];
+        $id = $details["datalist_id"];
+        $result = $updateData->updateQuery($dbuse, $points, $batch_number, $id);
+        if ($result) return redirect()->back()->with('success', '[Part Updating]Pic updated successfully!');
+
+        return redirect()->back()->with('error', '[Part Updating]Error 404!');
     }
     ///oldd stufffffffffffffffff
     public function loadModels()

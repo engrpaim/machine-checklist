@@ -186,4 +186,35 @@ const AddBoxIcon = ({ size = 24, color = "currentColor" }) => {
     </svg>
   );
 };
-export { CrossIcon ,SettingsIcon ,SettingsIconMinimal,UserIcon,HomeIcon,BarChartIcon,BuildingIcon,InfoIcon,ArrowCircleIcon,AddBoxIcon};
+
+const CloudUploadIcon = ({ size = 24, color = "#1f1f1f", ...props }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height={size}
+      width={size}
+      viewBox="0 -960 960 960"
+      fill={color}
+      {...props}
+    >
+      <path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H520q-33 0-56.5-23.5T440-240v-206l-64 62-56-56 160-160 160 160-56 56-64-62v206h220q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-83-58.5-141.5T480-720q-83 0-141.5 58.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41h100v80H260Zm220-280Z" />
+    </svg>
+  );
+};
+
+const UploadCheckIcon = ({ size = 24, color = "#1f1f1f", ...props }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height={size}
+      width={size}
+      viewBox="0 -960 960 960"
+      fill={color}
+      {...props}
+    >
+      <path d="M80-600v-120q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v220h-80v-220H160v120H80Zm200 320q-11 0-21-5.5T244-302l-69-138H80v-80h120q11 0 21 5.5t15 16.5l44 88 124-248q5-10 15-15t21-5q11 0 21 5t15 15l67 134q-18 11-34.5 23T478-474l-38-76-124 248q-5 11-15 16.5t-21 5.5Zm147 120H160q-33 0-56.5-23.5T80-240v-120h80v120h243q3 21 9 41t15 39Zm53-320Zm58.5 341.5Q480-197 480-280t58.5-141.5Q597-480 680-480t141.5 58.5Q880-363 880-280t-58.5 141.5Q763-80 680-80t-141.5-58.5ZM688-260l91-91-28-28-91 91 28 28Z" />
+    </svg>
+  );
+};
+
+export { CrossIcon ,SettingsIcon ,SettingsIconMinimal,UserIcon,HomeIcon,BarChartIcon,BuildingIcon,InfoIcon,ArrowCircleIcon,AddBoxIcon,CloudUploadIcon,UploadCheckIcon};

@@ -18,13 +18,17 @@ export default function Cghl({cghlDetails,setCghlDetails,handleKeyDown,edit}){
             <h1>CGHL Details</h1>
             <div className="details-container-inner">
                 <div className="details-part">
-                    <div className="details-data" style={{ width:'24rem' }}>
+                    {/* <div className="details-data" style={{ width:'24rem' }}>
                         <label>Batch Number:</label>
                         <input disabled={true} value={cghlDetails.batch_number ?? null}/>
-                    </div>
+                    </div> */}
                     <div className="details-data" style={{ width:'24rem' }}>
                         <label>Machine No:</label>
                         <input onChange={(e) => setCghlDetails('machine_number',e.target.value) } disabled={currentStatus && !(edit)} value={cghlDetails.machine_number} onKeyDown={(e)=>handleKeyDown(e)}/>
+                    </div>
+                    <div className="details-data" style={{ width:'24rem' }}>
+                        <label>Micrometer Serial No:</label>
+                        <input onChange={(e)=>setCghlDetails('micrometer_serial_number',e.target.value)} disabled={currentStatus && !(edit)} value={cghlDetails.micrometer_serial_number} onKeyDown={(e)=>handleKeyDown(e)}/>
                     </div>
                     <div className="details-data" style={{ width:'24rem' }}>
                         <label>Upper conveyor speed:</label>
@@ -49,10 +53,6 @@ export default function Cghl({cghlDetails,setCghlDetails,handleKeyDown,edit}){
                     <div className="details-data" style={{ width:'24rem' }}>
                         <label >Auto Cylinder Moving Distance:</label>
                         <input onChange={(e)=>setCghlDetails('auto_cylinder_moving_distance',e.target.value)} disabled={currentStatus && !(edit)} value={cghlDetails.auto_cylinder_moving_distance} onKeyDown={(e)=>handleKeyDown(e)}/>
-                    </div>
-                    <div className="details-data" style={{ width:'24rem' }}>
-                        <label>Micrometer Serial No:</label>
-                        <input onChange={(e)=>setCghlDetails('micrometer_serial_number',e.target.value)} disabled={currentStatus && !(edit)} value={cghlDetails.micrometer_serial_number} onKeyDown={(e)=>handleKeyDown(e)}/>
                     </div>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 import workingImg from '@/Icons/working.png';
 import { InfoIcon ,ArrowCircleIcon} from '../Icons/SVG';
 import { useState } from 'react';
-export default function TriBlockModal({message,handleCloseModal,handleCreate,allBatches,handleBatch}){
+export default function TriBlockModal({message,handleCloseModal,handleCreate,allBatches,handleBatch,process}){
     const [update ,setUpdate] = useState(false);
     return(
         <div className="modal">

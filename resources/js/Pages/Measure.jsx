@@ -14,6 +14,7 @@ import Chamfering from "../Components/Chamfering";
 import PasswordModal from "../Components/PasswordModal";
 import Cghl from "../Components/Cghl";
 import CghMeasuring from "../Components/CghMeasuring";
+import Histogram from "../Components/histoGram";
 export default function Measure() {
     /**
      *
@@ -41,6 +42,7 @@ export default function Measure() {
     const [editBatch, setEditBatch] = useState(false);
     const [passworModal, setPasswordModal] = useState(false);
     const [copyBatchDetails ,setCopyBatchDetails] = useState(false);
+    const [histogram,setHistogram] = useState(false);
 
     //Notification
     const [Notification, setNotification] = useState(false);
@@ -142,6 +144,10 @@ export default function Measure() {
         go_n9:'',
         go_sorted:''
     })
+
+    const {data:perpenCghlThickness, setData:setPerpenCghlThickness , reset:resetPerpenCghlThickness}=useForm({
+
+    });
     //useform for details
     //form for common details
     const handleCloseModal = () => {
@@ -199,6 +205,7 @@ export default function Measure() {
                 set:setCghlDetails,
                 mass_pro:cghTools,
                 points:cghlPoint,
+                set_data:setData,
                 set_mass_pro:setCghTools,
                 set_points:setCghlPoint,
                 reset:resetCghlDetails,
@@ -222,6 +229,7 @@ export default function Measure() {
             model: modelState ?? null,
         }
     }
+
     const handleStore = async () => {
         setSubmittingForm(false);
         setLoading(true);
@@ -570,6 +578,23 @@ export default function Measure() {
             }
         })
     },[copy_batch])
+
+    const handlePartUpdate =async(data,identifier)=>{
+        setLoading(true);
+        const  process =  processState.process
+        const currentData = {points:data,process:process,identifier:identifier,details:processForm?.details}
+        try {
+            console.log('Update Part: ', data);
+            // Send to Laravel
+            await router.post("/machining-checklist/measure/part-save",{data:currentData}, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+
+        } catch (err) {
+            console.error("Error submitting form:", err);
+        }
+    }
     return (
         <>
             {
@@ -584,6 +609,9 @@ export default function Measure() {
                     allBatches={allBatches}
                     handleBatch={handleBatch}
                 />
+            }
+            {
+                histogram && (<Histogram  title={histogram.title?modelState +histogram.title:null} timing={histogram.timing??null} array={processForm?.perpen} set={processForm?.set_perpen} point={histogram.point??5}/>)
             }
             {
                 loading && <Loading />
@@ -687,6 +715,9 @@ export default function Measure() {
                                         cghTools={cghTools}
                                         setCghTools={setCghTools}
                                         edit={editBatch}
+                                        setHistogram={setHistogram}
+                                        histogram={histogram}
+                                        handlePartUpdate={handlePartUpdate}
                                     />
                             :null
                     }
@@ -737,6 +768,9 @@ export default function Measure() {
                                         cghTools={cghTools}
                                         setCghTools={setCghTools}
                                         edit={editBatch}
+                                        setHistogram={setHistogram}
+                                        histogram={histogram}
+                                        handlePartUpdate={handlePartUpdate}
                                     />
                                 </>
                             : null

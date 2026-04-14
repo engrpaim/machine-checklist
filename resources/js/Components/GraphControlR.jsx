@@ -40,6 +40,7 @@ export default function GraphControlR({data , min , max}){
                 textColor:'red',
                 borderColor: 'blue',
                 borderWidth: 1,
+                pointBackgroundColor:'blue',
                 pointStyle: 'rectRot',
                 pointRadius: 5,
                 tension:0,
@@ -49,47 +50,40 @@ export default function GraphControlR({data , min , max}){
     const options = {
         scales: {
             y: {
-                min: minCurrent + 0.01,
-                max: maxCurrent - 0.01 < 0 ? 0: maxCurrent - 0.01,
+                min: minCurrent + 0.01 ,
+                max: maxCurrent <= 0.01? maxCurrent: maxCurrent - 0.01,
             },
         },
+
         plugins:{
-             legend: {
+            datalabels: {
+                color:'blue',
+                anchor: 'start',
+                align: 'top',
+            },
+            legend: {
                 labels: {
                     usePointStyle: true,
+                    pointBackgroundColor:'blue',
                 },
             },
             annotation: {
+                annotations: {
+                    minLine: {
+                        type: 'line',
+                        yMin: minCurrent,
+                        yMax: minCurrent,
+                        borderColor: 'green' ,
+                        borderWidth: 2,
+                    },
 
-            annotations: {
-                minLine: {
-                    type: 'line',
-                    yMin: minCurrent,
-                    yMax: minCurrent,
-                    borderColor: 'green' ,
-                    borderWidth: 2,
-                    label: {
-                        display: true,
-                        content: 'MIN',
-                        position: 'end',
-                        color:'#753F00',
-                        align:'bottom'
+                    maxLine: {
+                        type: 'line',
+                        yMin: maxCurrent,
+                        yMax: maxCurrent,
+                        borderColor: 'red',
+                        borderWidth: 2,
                     },
-                },
-                maxLine: {
-                    type: 'line',
-                    yMin: maxCurrent,
-                    yMax: maxCurrent,
-                    borderColor: 'red' ,
-                    borderWidth: 2,
-                    label: {
-                        display: true,
-                        content: 'MAX',
-                        align:'top',
-                        color:'#753F00',
-                        position: 'end',
-                    },
-                },
 
                 },
             },

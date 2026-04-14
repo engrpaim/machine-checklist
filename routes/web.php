@@ -90,3 +90,4 @@ Route::post('/machining-checklist/measure/autosave', [MachiningChecklistControll
 Route::post('/machining-checklist/measure/finalize', [MachiningChecklistController::class, 'finalizeProcess']);
 Route::post('/machining-checklist/measure/proceed', [MachiningChecklistController::class, 'proceedToNext']);
 Route::post('/machining-checklist/measure/update', [MachiningChecklistController::class, 'updateData']);
+Route::post('/machining-checklist/measure/part-save', [MachiningChecklistController::class, 'partSave']);

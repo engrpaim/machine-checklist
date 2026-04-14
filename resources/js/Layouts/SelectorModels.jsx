@@ -4,7 +4,7 @@ export default function SelectorModels({ model, setProcessState, setModelState, 
     const modelsParse = JSON.parse(model);
     const processValues = {
         'barelling': 'IN-PROCESS INSPECTION SHEET',
-        'cgh': 'CGH (L) DIMENSION MONITORING',
+        'cghl': 'CGH (L) DIMENSION MONITORING',
         'lapping': 'LAPPING (T) DIMENSION MONITORING',
         'slicing': 'SLICING (W) MONITORING',
     }

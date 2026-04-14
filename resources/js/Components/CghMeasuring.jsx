@@ -1,7 +1,8 @@
 import { useState ,useEffect , useRef} from "react";
 import GraphControlX from "./GraphControlX";
 import GraphControlR from "./GraphControlR";
-export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,currentModel,handleKeyDown,cghTools,setCghTools,edit}){
+import {CloudUploadIcon , UploadCheckIcon} from "../Icons/SVG"
+export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,currentModel,handleKeyDown,cghTools,setCghTools,edit,histogram,setHistogram,handlePartUpdate}){
     console.log('MEASURING CGH: ', cghlDetails,cghlPoint);
     /**
      *
@@ -400,9 +401,15 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                                                  magnet.current += 1
                                             return(
                                                 <tr style={{ background: mainItems ===1 ?'#EFF6FF' : mainItems ===2?'#FEFCE8':'#FFF3E6'  ,height:'3rem'}}>
-
                                                     {
-                                                        items === 1 && <td rowSpan={3} style={{     writingMode: 'vertical-rl'   ,transform: 'rotate(180deg)'}}>{title[mainItems-1]}</td>
+                                                        items === 1 &&
+                                                        <td rowSpan={3} >
+                                                            <h1 style={{ color:'#3b4e68' }}>{title[mainItems-1]}</h1>
+                                                            <div className="histogram-btn">
+                                                                <button onClick={()=>handlePartUpdate({points:cghlPoint, perpendicularity:{ data:null}},'cghl')} className="cloud-btn"><CloudUploadIcon color={'currentColor'} size={30}/></button>
+                                                                <button onClick={()=>setHistogram({title:'(T~L)PERPENDICULARITY MONITORING',timing:title[mainItems-1],point:2})} className="datagram-btn"><UploadCheckIcon color={'currentColor'} size={30}/></button>
+                                                            </div>
+                                                        </td>
                                                     }
                                                     <td>{magnet.current}</td>
                                                     <td><input
