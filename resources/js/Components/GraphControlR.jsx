@@ -51,7 +51,7 @@ export default function GraphControlR({data , min , max}){
         scales: {
             y: {
                 min: minCurrent + 0.01 ,
-                max: maxCurrent <= 0.01? maxCurrent: maxCurrent - 0.01,
+                max:  maxCurrent - 0.02,
             },
         },
 
@@ -69,6 +69,7 @@ export default function GraphControlR({data , min , max}){
             },
             annotation: {
                 annotations: {
+
                     minLine: {
                         type: 'line',
                         yMin: minCurrent,
@@ -92,7 +93,7 @@ export default function GraphControlR({data , min , max}){
     return(
         <div  style={{ display:'flex',justifyContent:'center',flexDirection:'column',width:'40vw', height:'40vh', padding:'2rem', background:'white',borderRadius:'1rem' ,minWidth:'fit-content'}}>
             <h1 style={{ justifySelf:'start' ,color: '#19232e'}}>R Graph</h1>
-                <Line data={dataset} options={options} style={{ width:'40vw' ,height:'35vh' }} />
+            <Line data={dataset} options={options} style={{ width:'40vw' ,height:'35vh' }} />
         </div>
     )
 }

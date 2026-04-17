@@ -48,7 +48,7 @@ export default function Measure() {
     const [Notification, setNotification] = useState(false);
     console.log('type chamfer: ', currentModel.chamfer_type);
     const alloweAble = {
-        barelling: { preparing: 8 },
+        barelling: { preparing: 10},
         cghl:{preparing:11}
     }
     const toHide = ["prepared", "measured", "approved"];
@@ -146,8 +146,18 @@ export default function Measure() {
     })
 
     const {data:perpenCghlThickness, setData:setPerpenCghlThickness , reset:resetPerpenCghlThickness}=useForm({
-
+        1:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
+        2:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
+        3:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
+        4:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
+        5:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
+        6:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
+        7:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
+        8:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
+        9:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
+        10:{pt1_top:'',pt2_top:'',pt3_top:'',pt4_top:'',pt5_top:'',pt1_bottom:'',pt2_bottom:'',pt3_bottom:'',pt4_bottom:'',pt5_bottom:''},
     });
+
     //useform for details
     //form for common details
     const handleCloseModal = () => {
@@ -205,6 +215,8 @@ export default function Measure() {
                 set:setCghlDetails,
                 mass_pro:cghTools,
                 points:cghlPoint,
+                perpendicularity:perpenCghlThickness,
+                set_perpen:setPerpenCghlThickness,
                 set_data:setData,
                 set_mass_pro:setCghTools,
                 set_points:setCghlPoint,
@@ -217,7 +229,7 @@ export default function Measure() {
 
         setArrayBank(arrayBankNew)
         console.log('check if updating: ', cghlDetails);
-    }, [barellingDetails, timerDetails, magnetPoints,cghlDetails,cghTools,cghlPoint])
+    }, [barellingDetails, timerDetails, magnetPoints,cghlDetails,cghTools,cghlPoint,processState])
 
 
 
@@ -459,6 +471,7 @@ export default function Measure() {
             Object.entries(convertedData.points).map(([key, values]) => {
                 setMagnetPoints(key, values);
             })
+
         } else if(processState.process === 'cghl'){
              //time
             convertedData.mass_pro &&
@@ -470,6 +483,11 @@ export default function Measure() {
             convertedData.points &&
             Object.entries(convertedData.points).map(([key, values]) => {
                 setCghlPoint(key, values);
+            })
+            //perpendicularity
+            convertedData.perpendicularity &&
+            Object.entries(convertedData.perpendicularity).map(([key, values]) => {
+                setPerpenCghlThickness(key, values);
             })
         }
 
@@ -595,6 +613,7 @@ export default function Measure() {
             console.error("Error submitting form:", err);
         }
     }
+
     return (
         <>
             {
@@ -611,7 +630,7 @@ export default function Measure() {
                 />
             }
             {
-                histogram && (<Histogram  title={histogram.title?modelState +histogram.title:null} timing={histogram.timing??null} array={processForm?.perpen} set={processForm?.set_perpen} point={histogram.point??5}/>)
+                histogram && (<Histogram  title={histogram.title?modelState +histogram.title:null} timing={histogram.timing??null} setPerpenCghlThickness={setPerpenCghlThickness} perpenCghlThickness={perpenCghlThickness} point={histogram.point??5} hfp={histogram.hfp??'p'} setHistogram={setHistogram} handlePartUpdate={handlePartUpdate} handleKeyDown={handleKeyDown}/>)
             }
             {
                 loading && <Loading />

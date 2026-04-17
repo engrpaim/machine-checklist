@@ -25,28 +25,27 @@ ChartJS.register(
     ChartDataLabels
 );
 
-export default function GraphControlX({XAverage}){
-
+export default function GraphControlX({XAverage,model}){
+    console.log('Graph x: ',model);
     const xdata = [null]
     const averageX =  XAverage ? XAverage:null
     const xmerge = averageX ? [ ...xdata , ...averageX] :null
-   const data = {
+    const data = {
         labels: ['Value','1', '2', '3', '4', '5','6','7','8','9','End'],
         datasets: [
             {
-                label: 'X point',
+                label: 'Good',
                 data: xmerge,
-                textColor:'red',
-                borderColor: 'blue',
+                textColor:'blue',
                 borderWidth: 1,
                 pointStyle: 'rectRot',
                 pointRadius: 5,
                 tension:0,
                 pointBackgroundColor: (context)=>{
                     console.log(context , context.dataIndex);
-                    if(context.dataIndex <= 0 )return
-                     console.log('not 1');
-                    const color =context.raw >= 16.300 && context.raw <= 16.314 ? '#142E90':'red'
+                    if(context.dataIndex <= 0 )return 'blue'
+
+                    const color = context.raw > model.cghl_target && context.raw <= model.cghl_max - 0.005 ? 'blue': (context.raw < model.cghl_target && context.raw > model.cghl_min) || (context.raw > model.cghl_max - 0.005 && context.raw < model.cghl_max) ?'orange':'red'
                     return  color
                 },
                 segment:{
@@ -57,11 +56,20 @@ export default function GraphControlX({XAverage}){
                             const currentPoint = ctx[`p${i}`].raw
                             const nextPoint = ctx[`p${i+1}`].raw ? ctx[`p${i+1}`].raw : 0
 
-                            return currentPoint >= 16.300 && currentPoint <= 16.314 && (nextPoint >= 16.300 && nextPoint <= 16.314 || 0) ? '#142E90':'red'
+                            return currentPoint >= model.cghl_target && currentPoint <= model.cghl_max - 0.005 && (nextPoint >= model.cghl_target && nextPoint <= model.cghl_max -0.005 || 0) ? '#142E90':'red'
 
                         }
                      }
                 }
+            },{
+                label: 'Reject',
+                pointStyle: 'rectRot',
+                backgroundColor: 'red'
+            },
+            {
+                label: 'Adjust',
+                pointStyle: 'rectRot',
+                backgroundColor: 'orange'
             },
         ],
     };
@@ -69,8 +77,8 @@ export default function GraphControlX({XAverage}){
 const options = {
     scales: {
         y: {
-            min: 16.275,
-            max: 16.325,
+            min: model.cghl_min - 0.005,
+            max: model.cghl_max + 0.005,
         },
     },
 
@@ -98,7 +106,9 @@ const options = {
                     const index = context.dataIndex
                     const data = xmerge[index]
 
-                    return data >= 16.300 && data <= 16.314 && data >= 16.300 && data <= 16.314 ? '#142E90':'red'
+                    return data >= model.cghl_target && data <= model.cghl_max - 0.005 && data >= model.cghl_target && data <= model.cghl_max -0.005 ? '#142E90'
+                                : (context.raw < model.cghl_target ||  context.raw > model.cghl_max - 0.005 ) && (context.raw < model.cghl_max || context.raw > model.cghl_min ) ?'orange'
+                                :'red'
                 },
             anchor: 'start',
             align: 'top',
@@ -110,7 +120,7 @@ const options = {
                 minLine: {
                     type: 'box',
                     yMin: 16.280,
-                    yMax: 16.300,
+                    yMax: model.cghl_target,
                     borderColor: 'rgba(255, 137, 4,.1)' ,
                     backgroundColor:'rgba(255, 137, 4,.1)' ,
                     borderWidth: 2,
@@ -139,7 +149,7 @@ const options = {
                 },
                 targetLine: {
                     type: 'box',
-                    yMin: 16.300,
+                    yMin: model.cghl_target,
                     yMax: 16.315,
                     borderColor: 'green',
                     backgroundColor:'rgba(5, 223, 114,.1)',

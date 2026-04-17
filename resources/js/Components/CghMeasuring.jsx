@@ -1,9 +1,10 @@
 import { useState ,useEffect , useRef} from "react";
 import GraphControlX from "./GraphControlX";
 import GraphControlR from "./GraphControlR";
+import CountingGraph from "./CountingGraph";
 import {CloudUploadIcon , UploadCheckIcon} from "../Icons/SVG"
 export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,currentModel,handleKeyDown,cghTools,setCghTools,edit,histogram,setHistogram,handlePartUpdate}){
-    console.log('MEASURING CGH: ', cghlDetails,cghlPoint);
+    console.log('MEASURING CGH: ', cghlDetails,cghlPoint, ' Current Model: ',currentModel);
     /**
      *
      * Excel Based formula
@@ -356,7 +357,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
 
     });
 
-    console.log('Check data exisitng: ',currentStatus,edit,cghlPoint);
+    console.log('Histogram data: ',histogram);
 
     return(
         <>
@@ -406,8 +407,8 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                                                         <td rowSpan={3} >
                                                             <h1 style={{ color:'#3b4e68' }}>{title[mainItems-1]}</h1>
                                                             <div className="histogram-btn">
-                                                                <button onClick={()=>handlePartUpdate({points:cghlPoint, perpendicularity:{ data:null}},'cghl')} className="cloud-btn"><CloudUploadIcon color={'currentColor'} size={30}/></button>
-                                                                <button onClick={()=>setHistogram({title:'(T~L)PERPENDICULARITY MONITORING',timing:title[mainItems-1],point:2})} className="datagram-btn"><UploadCheckIcon color={'currentColor'} size={30}/></button>
+                                                                <button onClick={()=>handlePartUpdate({points:cghlPoint, perpendicularity:{}},'cghl')} className="cloud-btn" disabled={(currentStatus && !edit)}><CloudUploadIcon color={'currentColor'} size={30} /></button>
+                                                                <button onClick={()=>setHistogram({title:'(T~L)PERPENDICULARITY MONITORING',timing:title[mainItems-1],point:2,hfp:'p'})} className="datagram-btn" disabled={(currentStatus && !edit)}><UploadCheckIcon color={'currentColor'} size={30}/></button>
                                                             </div>
                                                         </td>
                                                     }
@@ -500,7 +501,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                 </div>
                 <div>
                     <h1>Measuring Tools</h1>
-                    <div className="container-row">
+                    <div className="container-row" style={{  margin:'0rem' , marginBottom:'1rem'}}>
                         <div className="details-container-white-row">
                             <div className="container-column">
                                 <div className="container-row-between">
@@ -543,17 +544,24 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                         </div>
                     </div>
                 </div>
-                <div>
+                <div className="container-column">
                     <h1>Dimension Graph</h1>
-                    <div className="container-row">
+                    <div className="container-row" style={{  margin:'0rem'}}>
                         <div>
-                            <GraphControlX XAverage={XAverage}/>
+                            <GraphControlX XAverage={XAverage} model={currentModel}/>
                         </div>
                         <div>
                             <GraphControlR data={allRaverage} min={SPCControlls.r_ucl} max={SPCControlls.average_UCL}/>
                         </div>
                     </div>
+                         <div className="container-row" style={{  margin:'0rem'}}>
+                        <div>
+                            <CountingGraph process={'Lapping'} specification={'Height'} max={currentModel.cghl_max??0} min={currentModel.cghl_min??0}/>
+                        </div>
+                    </div>
                 </div>
+
+
 
                 <div>
                     <h1>SPC Control</h1>

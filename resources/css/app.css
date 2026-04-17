@@ -1234,6 +1234,9 @@ button:disabled:hover {
     background: #0070a3;
     color: #e6f7ff;
 }
+.measuring-table td {
+    min-width: 5rem;
+}
 
 .measuring-table input {
     text-align: center;
@@ -1435,4 +1438,36 @@ td {
 .datagram-btn:hover {
     transform: translateY(-2px); /* move up by 2px */
     color: #d18800;
+}
+.save-btn {
+    border: none;
+    background: red;
+    padding: 0.3rem;
+    border-radius: 0.2rem;
+    color: #8adcff;
+    background: #003247;
+}
+.save-btn:hover {
+    background: #8adcff;
+    color: #003247;
+}
+.cancel2-btn {
+    border: none;
+    background: red;
+    padding: 0.3rem;
+    border-radius: 0.2rem;
+    color: #fa968f;
+    background: #700c05;
+}
+.cancel2-btn:hover {
+    background: #fa968f;
+    color: #700c05;
+}
+.cloud-btn:disabled:hover,
+.datagram-btn:disabled:hover {
+    background: none;
+    color: red;
+    pointer-events: auto;
+    cursor: not-allowed;
+    transform: none;
 }
