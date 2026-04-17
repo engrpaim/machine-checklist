@@ -14,7 +14,7 @@ import Chamfering from "../Components/Chamfering";
 import PasswordModal from "../Components/PasswordModal";
 import Cghl from "../Components/Cghl";
 import CghMeasuring from "../Components/CghMeasuring";
-import Histogram from "../Components/histoGram";
+import Histogram from "../Components/HistoGram";
 export default function Measure() {
     /**
      *
