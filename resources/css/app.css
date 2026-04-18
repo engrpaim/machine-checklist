@@ -1367,6 +1367,7 @@ td {
     border-radius: 1rem;
     color: #19232e;
     animation: fadeIn 0.3s ease-in-out;
+    overflow: auto;
 }
 .details-container-white h1 {
     color: #19232e;
