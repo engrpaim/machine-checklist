@@ -46,9 +46,11 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
         let diffmax = 0;
         let diffmin = 0;
         let average = 0;
+        let countCount = 0;
         Object.entries(pointsValue).map(([key, value]) => {
-            console.log(key, value);
-            average += value / 5;
+            console.log('Setting judgement: ',key, value,countCount);
+            countCount = value > 0 ? countCount +=1 :countCount
+            average += value ;
             value > maximum ? maximum = value : maximum;
             value < minimum || minimum === 0 ? minimum = value : minimum;
             diffmax = specsBank[process]["model"].target - maximum;
@@ -56,7 +58,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
         })
         JudgementPoints[items] = {
             p: items,
-            average: Number(average.toFixed(3)),
+            average: Number((average/countCount).toFixed(3)),
             maximum: Number(maximum.toFixed(3)),
             minimum: Number(minimum.toFixed(3)),
             diffmax: Math.abs(Number(diffmax.toFixed(3))),
@@ -111,7 +113,9 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                 tension: 0.3,
                 pointRadius: 15,
                 pointBackgroundColor: formattedData.map(p =>
-                    p.y <= specsBank[process]["model"].min + .010 || p.y >= specsBank[process]["model"].max - .010 ? 'red' : p.y <= specsBank[process]["model"].min + .015 || p.y >= specsBank[process]["model"].max - .015 ? 'orange' : 'green'
+                    p.y < specsBank[process]["model"].min || p.y > specsBank[process]["model"].max ? 'red'
+                    :p.y <= specsBank[process]["model"].min + .010 || p.y >= specsBank[process]["model"].max - .010 ? 'orange'
+                    :'green'
                 ),
 
             },
@@ -157,8 +161,8 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
             },
 
             y: {
-                min: specsBank[process]["model"].min,
-                max: specsBank[process]["model"].max,
+                min: specsBank[process]["model"].min - 0.01,
+                max: specsBank[process]["model"].max + 0.01,
                 ticks: {
                     color: '#6A758A',
                     font: {
@@ -213,7 +217,25 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
             }
         }
     };
-    console.log('BANK: ',specsBank[process]['model']);
+
+    const judgementTable =(average)=>{
+          console.log('Detailssx: ', average, specsBank[process]["model"].min )
+        if(!average || average <= 0)  return { judegement:null , background:null}
+
+
+        const JudegmentDiplay =
+            average > specsBank[process]['model'].max || average <  specsBank[process]["model"].min ? 'Reject':
+            average <= specsBank[process]['model'].max  &&  average >= specsBank[process]['model'].max - 0.010 || average >= specsBank[process]['model'].min  &&  average <= specsBank[process]['model'].min + 0.010? 'Adjust'
+            :'Good'
+
+        const backgroundTheme = JudegmentDiplay === 'Reject' ?'error-theme': JudegmentDiplay === 'Adjust' ?'adjust-theme':'success-theme';
+        console.log('JTx',JudegmentDiplay,backgroundTheme);
+
+        return { judegement:JudegmentDiplay ,  background:backgroundTheme}
+
+    }
+
+    console.log('BANK: ',specsBank[process]['model'] ,'Magnet: ', maxMagnet);
     return (
         <div className='container-fixed-row'>
             <div>
@@ -245,6 +267,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                                     <th>Max Diff</th>
                                     <th>Min Diff</th>
                                     <th>Average</th>
+                                    <th>Judgement</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -352,7 +375,12 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                                                     <td style={{ fontWeight: "bold" }}>{specsBank[process]["model"].target}</td>
                                                     <td>{JudgementPoints[items].diffmax?? null}</td>
                                                     <td>{JudgementPoints[items].diffmin ?? null}</td>
-                                                    <td style={{ color: JudgementPoints[items].average > specsBank[process]["model"].min && JudgementPoints[items].average < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].average ?? null}</td>
+                                                    <td style={{ color: JudgementPoints[items].average > specsBank[process]["model"].min && JudgementPoints[items].average < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].average  ? JudgementPoints[items].average :0}</td>
+                                                    <td className={judgementTable(JudgementPoints[items].average).background}>
+                                                        {
+                                                            judgementTable(JudgementPoints[items].average).judegement
+                                                        }
+                                                    </td>
                                                 </tr>
                                             </>
                                         )
@@ -370,44 +398,6 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                         <div className='container-row'>
                             <div className='measuring-points-graph' style={{ backgroundColor: 'white', width:'27rem'}}>
                                 <Scatter data={data} options={options} />
-                            </div>
-                            <div>
-                                <div>
-                                    <table className='mini-table' >
-                                        <thead>
-                                            <tr>
-                                                <th colSpan={2}>JUDGEMENT REMARKS</th>
-                                            </tr>
-                                            <tr>
-                                                <th>Magnet</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                maxMagnet.map((items)=>{
-                                                    console.log(JudgementPoints[items])
-                                                    const currentData = JudgementPoints[items]
-                                                    const JudegmentDiplay =
-                                                        currentData.maximum >= specsBank[process]['model'].max - 0.010 || currentData.minimum  <= specsBank[process]["model"].min + 0.010 ? 'Reject':
-                                                        currentData.maximum >= specsBank[process]['model'].max - 0.015 || currentData.minimum  <= specsBank[process]["model"].min  + 0.015? 'Adjust'
-                                                        :'Good'
-                                                    const colorTheme = JudegmentDiplay === 'Reject' ?'#750002': JudegmentDiplay === 'Adjust' ?'#472600':'#02170A';
-                                                    const backgroundTheme = JudegmentDiplay === 'Reject' ?'#FFB8B9': JudegmentDiplay === 'Adjust' ?'#FFF3E6':'#7BF1A8';
-
-                                                    return(
-                                                        <tr style={{ background:backgroundTheme }}>
-                                                            <td style={{ color:colorTheme}}>Magnet {items}</td>
-                                                            <td style={{ color:colorTheme , fontWeight:'bold'}}>
-                                                                <strong>{JudegmentDiplay}</strong>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
                             </div>
                         </div>
                     </div>
