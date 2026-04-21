@@ -642,7 +642,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                     </div>
                          <div className="container-row" style={{  margin:'0rem'}}>
                         <div>
-                            <CountingGraph process={'Lapping'} specification={'Height'} max={currentModel.cghl_max??0} min={currentModel.cghl_min??0} perpendicularity={perpenCghlThickness}/>
+                            <CountingGraph process={'Lapping'} specification={'Height'} max={currentModel.cghl_max??0} min={currentModel.cghl_min??0} perpendicularity={perpenCghlThickness} maxperpen={currentModel.perpendicularity??0}/>
                         </div>
                     </div>
                 </div>

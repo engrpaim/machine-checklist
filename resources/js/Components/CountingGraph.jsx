@@ -23,9 +23,9 @@ ChartJS.register(
 );
 
 
-export default function CountingGraph({process,specification,max,min,perpendicularity}){
+export default function CountingGraph({process,specification,max,min,perpendicularity,maxperpen}){
      console.log('COUNTING PERPEN DATA: ',perpendicularity)
-    const maxValue = 0.2
+    const maxValue = maxperpen
     const divisor = maxValue >= 0.05? 0.010:0.005
     const quotient = Math.ceil(maxValue/divisor)
     const subdivision = []
