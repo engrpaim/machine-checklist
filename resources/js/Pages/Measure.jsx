@@ -229,7 +229,7 @@ export default function Measure() {
 
         setArrayBank(arrayBankNew)
         console.log('check if updating: ', cghlDetails);
-    }, [barellingDetails, timerDetails, magnetPoints,cghlDetails,cghTools,cghlPoint,processState])
+    }, [barellingDetails, timerDetails, magnetPoints,cghlDetails,cghTools,cghlPoint,processState,perpenCghlThickness])
 
 
 
@@ -724,7 +724,6 @@ export default function Measure() {
                                 <MeasuringData goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} status={processForm.details["status"]} edit={editBatch} />
                             </div>
                             : statusCheck && modelState && processState && processState.process === 'cghl' && (processForm?.details["status"] === 'measuring' || processForm?.details["status"] === 'measured') ?
-
                                     <CghMeasuring
                                         cghlDetails={cghlDetails}
                                         cghlPoint={cghlPoint}
@@ -737,6 +736,7 @@ export default function Measure() {
                                         setHistogram={setHistogram}
                                         histogram={histogram}
                                         handlePartUpdate={handlePartUpdate}
+                                        perpenCghlThickness={perpenCghlThickness}
                                     />
                             :null
                     }
@@ -790,6 +790,7 @@ export default function Measure() {
                                         setHistogram={setHistogram}
                                         histogram={histogram}
                                         handlePartUpdate={handlePartUpdate}
+                                        perpenCghlThickness={perpenCghlThickness}
                                     />
                                 </>
                             : null

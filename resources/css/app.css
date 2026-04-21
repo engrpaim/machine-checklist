@@ -1396,12 +1396,15 @@ td {
     border-radius: 1rem;
     color: #19232e;
 }
+
 .container-theme-black {
     color: #19232e;
 }
+
 .container-theme-black h1 {
     color: #19232e;
 }
+
 .box-check {
     background: red;
     width: 1rem;

@@ -45,7 +45,7 @@ export default function GraphControlX({XAverage,model}){
                     console.log(context , context.dataIndex);
                     if(context.dataIndex <= 0 )return 'blue'
 
-                    const color = context.raw > model.cghl_target && context.raw <= model.cghl_max - 0.005 ? 'blue': (context.raw < model.cghl_target && context.raw > model.cghl_min) || (context.raw > model.cghl_max - 0.005 && context.raw < model.cghl_max) ?'orange':'red'
+                    const color = context.raw >= model.cghl_target && context.raw <= model.cghl_max - 0.005 ? 'blue': (context.raw <= model.cghl_target && context.raw >= model.cghl_min) || (context.raw > model.cghl_max - 0.005 && context.raw < model.cghl_max) ?'orange':'red'
                     return  color
                 },
                 segment:{

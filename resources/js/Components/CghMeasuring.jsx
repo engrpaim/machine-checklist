@@ -3,7 +3,8 @@ import GraphControlX from "./GraphControlX";
 import GraphControlR from "./GraphControlR";
 import CountingGraph from "./CountingGraph";
 import {CloudUploadIcon , UploadCheckIcon} from "../Icons/SVG"
-export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,currentModel,handleKeyDown,cghTools,setCghTools,edit,histogram,setHistogram,handlePartUpdate}){
+import HistogramX from "./HistoGram";
+export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,currentModel,handleKeyDown,cghTools,setCghTools,edit,histogram,setHistogram,handlePartUpdate,perpenCghlThickness}){
     console.log('MEASURING CGH: ', cghlDetails,cghlPoint, ' Current Model: ',currentModel);
     /**
      *
@@ -499,6 +500,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                         </tbody>
                     </table>
                 </div>
+
                 <div>
                     <h1>Measuring Tools</h1>
                     <div className="container-row" style={{  margin:'0rem' , marginBottom:'1rem'}}>
@@ -544,25 +546,6 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                         </div>
                     </div>
                 </div>
-                <div className="container-column">
-                    <h1>Dimension Graph</h1>
-                    <div className="container-row" style={{  margin:'0rem'}}>
-                        <div>
-                            <GraphControlX XAverage={XAverage} model={currentModel}/>
-                        </div>
-                        <div>
-                            <GraphControlR data={allRaverage} min={SPCControlls.r_ucl} max={SPCControlls.average_UCL}/>
-                        </div>
-                    </div>
-                         <div className="container-row" style={{  margin:'0rem'}}>
-                        <div>
-                            <CountingGraph process={'Lapping'} specification={'Height'} max={currentModel.cghl_max??0} min={currentModel.cghl_min??0}/>
-                        </div>
-                    </div>
-                </div>
-
-
-
                 <div>
                     <h1>SPC Control</h1>
                     <div className="details-container-white-row">
@@ -644,6 +627,22 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                                 <label>CPK</label>
                                 <input value={SPCControlls.all_cpk ? SPCControlls.all_cpk.toFixed(3):null} disabled={true}/>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="container-column">
+                    <h1>Dimension Graph</h1>
+                    <div className="container-row" style={{  margin:'0rem'}}>
+                        <div>
+                            <GraphControlX XAverage={XAverage} model={currentModel}/>
+                        </div>
+                        <div>
+                            <GraphControlR data={allRaverage} min={SPCControlls.r_ucl} max={SPCControlls.average_UCL}/>
+                        </div>
+                    </div>
+                         <div className="container-row" style={{  margin:'0rem'}}>
+                        <div>
+                            <CountingGraph process={'Lapping'} specification={'Height'} max={currentModel.cghl_max??0} min={currentModel.cghl_min??0} perpendicularity={perpenCghlThickness}/>
                         </div>
                     </div>
                 </div>
