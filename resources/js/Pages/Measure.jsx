@@ -630,7 +630,7 @@ export default function Measure() {
                 />
             }
             {
-                histogram && (<Histogram  title={histogram.title?modelState +histogram.title:null} timing={histogram.timing??null} setPerpenCghlThickness={setPerpenCghlThickness} perpenCghlThickness={perpenCghlThickness} point={histogram.point??5} hfp={histogram.hfp??'p'} setHistogram={setHistogram} handlePartUpdate={handlePartUpdate} handleKeyDown={handleKeyDown}/>)
+                histogram && (<Histogram  title={histogram.title?modelState +histogram.title:null} timing={histogram.timing??null} setPerpenCghlThickness={setPerpenCghlThickness} perpenCghlThickness={perpenCghlThickness} point={histogram.point??5} hfp={histogram.hfp??'p'} setHistogram={setHistogram} handlePartUpdate={handlePartUpdate} handleKeyDown={handleKeyDown} isDisabled ={histogram.status??true} maxperpen={currentModel.perpendicularity??0}/>)
             }
             {
                 loading && <Loading />

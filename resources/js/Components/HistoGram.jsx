@@ -5,9 +5,9 @@
  * @returns perpendicularity
  */
 
-export default function Histogram({title,timing,perpenCghlThickness,setPerpenCghlThickness,point,hfp = 'hfp',setHistogram,handlePartUpdate, handleKeyDown}){
+export default function Histogram({title,timing,perpenCghlThickness,setPerpenCghlThickness,point,hfp = 'hfp',setHistogram,handlePartUpdate, handleKeyDown , isDisabled,maxperpen}){
     console.log('Histogram perpenCghlThickness: ',perpenCghlThickness,setPerpenCghlThickness);
-    const max = 0.08
+    const max = maxperpen
     const timingLower = timing.toLowerCase();
     const pointUse = point;
     const hfpCode = {
@@ -114,6 +114,7 @@ export default function Histogram({title,timing,perpenCghlThickness,setPerpenCgh
                                                     timingNumber[pointUse].map((number)=>
                                                         <td style={{background:'#FFF085'}}  key={`pt${number}_top`}>
                                                             <input
+                                                                disabled={isDisabled}
                                                                 value={perpenCghlThickness[main][`pt${number}_top`] ? perpenCghlThickness[main][`pt${number}_top`]:''}
                                                                 id={`pt${number}_top`}
                                                                 type="number"
@@ -153,6 +154,7 @@ export default function Histogram({title,timing,perpenCghlThickness,setPerpenCgh
                                                 <td style={{background:'#B9F7FE' ,padding:'0.6rem'}}>Bottom</td>
                                                 {
                                                     timingNumber[pointUse].map(number=><td style={{background:'#B9F7FE'}} key={`pt${number}_bottom`}><input
+                                                        disabled={isDisabled}
                                                         onKeyDown={(e)=>handleKeyDown(e)}
                                                         id={`pt${number}_bottom`}
                                                         value={perpenCghlThickness[main][`pt${number}_bottom`] ? perpenCghlThickness[main][`pt${number}_bottom`]:''}
@@ -178,7 +180,7 @@ export default function Histogram({title,timing,perpenCghlThickness,setPerpenCgh
                         </table>
                     </div>
                     <div className="container-row" style={{ gap:'1rem' }}>
-                        <button className="save-btn" onClick={(e)=>handlePartUpdate({perpendicularity:perpenCghlThickness})}>Save</button>
+                        <button className="save-btn" onClick={(e)=>handlePartUpdate({perpendicularity:perpenCghlThickness})} disabled={isDisabled}>Save</button>
                         <button onClick={()=>setHistogram(false)} className="cancel2-btn">Cancel</button>
                     </div>
                 </div>

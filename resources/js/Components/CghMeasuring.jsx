@@ -409,7 +409,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                                                             <h1 style={{ color:'#3b4e68' }}>{title[mainItems-1]}</h1>
                                                             <div className="histogram-btn">
                                                                 <button onClick={()=>handlePartUpdate({points:cghlPoint, perpendicularity:{}},'cghl')} className="cloud-btn" disabled={(currentStatus && !edit)}><CloudUploadIcon color={'currentColor'} size={30} /></button>
-                                                                <button onClick={()=>setHistogram({title:'(T~L)PERPENDICULARITY MONITORING',timing:title[mainItems-1],point:2,hfp:'p'})} className="datagram-btn" disabled={(currentStatus && !edit)}><UploadCheckIcon color={'currentColor'} size={30}/></button>
+                                                                <button onClick={()=>setHistogram({title:'(T~L)PERPENDICULARITY MONITORING',timing:title[mainItems-1],point:2,hfp:'p',status:(currentStatus && !edit)})} className="datagram-btn" ><UploadCheckIcon color={'currentColor'} size={30}/></button>
                                                             </div>
                                                         </td>
                                                     }

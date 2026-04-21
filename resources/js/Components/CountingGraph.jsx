@@ -41,7 +41,8 @@ export default function CountingGraph({process,specification,max,min,perpendicul
     for(let i = 0; i < quotient ; i++){
         currentMax += divisor
         const minPush = currentMin+0.001
-        const newMax = currentMax > maxValue ? maxValue: currentMax
+        let newMax = currentMax > maxValue ? maxValue: currentMax
+        newMax = newMax === maxValue?  maxValue - 0.001 :newMax
         subdivision.push({min:Number(minPush.toFixed(3)),max:Number((newMax).toFixed(3))})
         i === quotient - 1 ?  subdivision.push({min:Number(maxValue.toFixed(3)),max:9999}):null
         currentMin = currentMax
