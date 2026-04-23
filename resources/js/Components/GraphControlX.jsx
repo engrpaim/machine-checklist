@@ -119,7 +119,7 @@ const options = {
             annotations: {
                 minLine: {
                     type: 'box',
-                    yMin: 16.280,
+                    yMin: model.cghl_min,
                     yMax: model.cghl_target,
                     borderColor: 'rgba(255, 137, 4,.1)' ,
                     backgroundColor:'rgba(255, 137, 4,.1)' ,
@@ -134,8 +134,8 @@ const options = {
                 },
                 maxLine: {
                     type: 'box',
-                    yMin: 16.315,
-                    yMax: 16.320,
+                    yMin: model.cghl_max,
+                    yMax:model.cghl_target ,
                     borderColor: 'rgba(255, 137, 4,.1)' ,
                     backgroundColor:'rgba(255, 137, 4,.1)' ,
                     borderWidth: 2,
@@ -149,8 +149,8 @@ const options = {
                 },
                 targetLine: {
                     type: 'box',
-                    yMin: model.cghl_target,
-                    yMax: 16.315,
+                    yMin: model.cghl_max - 0.005,
+                    yMax: model.cghl_target,
                     borderColor: 'green',
                     backgroundColor:'rgba(5, 223, 114,.1)',
                     borderDash: [6, 6],

@@ -1467,6 +1467,7 @@ td {
     background: #fa968f;
     color: #700c05;
 }
+
 .cloud-btn:disabled:hover,
 .datagram-btn:disabled:hover {
     background: none;
@@ -1474,4 +1475,35 @@ td {
     pointer-events: auto;
     cursor: not-allowed;
     transform: none;
+}
+
+.admin-table {
+    width: 50vw;
+}
+
+.admin-table th {
+    background: #d1dae5;
+}
+
+.details-container-white-fit {
+    width: fit-content;
+    background: #f3f2f1;
+    padding: 1rem;
+    border-radius: 1rem;
+    color: #1a222e;
+}
+.details-container-white-fit h1 {
+    color: #1a222e;
+}
+
+.add-btn {
+    background: none;
+    border: none;
+    color: #1a5b3d;
+    cursor: pointer;
+}
+.add-btn:hover {
+    color: #2d9966;
+    cursor: pointer;
+    transform: translateY(-2px);
 }

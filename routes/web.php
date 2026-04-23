@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MachiningChecklistController;
 use Inertia\Inertia;
@@ -65,7 +66,6 @@ Route::get('/machining-checklist/settings', function () {
 });
 
 Route::get('/machining-checklist/measure', function () {
-
     $models = models::all('*');
     $modified = [];
     foreach ($models as  $key => $values) {
@@ -81,6 +81,11 @@ Route::get('/machining-checklist/measure', function () {
     ]);
 });
 
+Route::get('/machining-checklist/admin', function () {
+    return Inertia::render('Admin', [
+        'modelsList' => models::paginate(5)
+    ]);
+});
 
 
 Route::post('/machining-checklist/measure/store', [MachiningChecklistController::class, 'store']);
@@ -91,3 +96,4 @@ Route::post('/machining-checklist/measure/finalize', [MachiningChecklistControll
 Route::post('/machining-checklist/measure/proceed', [MachiningChecklistController::class, 'proceedToNext']);
 Route::post('/machining-checklist/measure/update', [MachiningChecklistController::class, 'updateData']);
 Route::post('/machining-checklist/measure/part-save', [MachiningChecklistController::class, 'partSave']);
+Route::post('/machining-checklist/admin/models', [AdminController::class, 'create']);

@@ -1,4 +1,4 @@
-import { SettingsIconMinimal,UserIcon,HomeIcon,BarChartIcon } from "../Icons/SVG";
+import { SettingsIconMinimal,UserIcon,HomeIcon,BarChartIcon,ShieldSecurityIcon } from "../Icons/SVG";
 import { useState } from "react";
 import aeImg from '../Icons/AE2.png';
 export default function Navigation(){
@@ -11,9 +11,7 @@ export default function Navigation(){
                 </div>
 
                 <nav className="nav-btn">
-                    <div className="hoverables"
-
-                    >
+                    <div className="hoverables">
                         <a
                           onMouseEnter={()=>setIsHovered('home')}
                           onMouseLeave={()=>setIsHovered(false)}
@@ -31,6 +29,16 @@ export default function Navigation(){
                             onMouseLeave={()=>setIsHovered(false)}
                             href="/machining-checklist/measure"><BarChartIcon color={'currentColor'}/></a>
                         {isHovered === 'checklist' && <div className="hover-side">Sheet</div>}
+                    </div>
+                    <div className="hoverables">
+                        <a
+                          onMouseEnter={()=>setIsHovered('admin')}
+                          onMouseLeave={()=>setIsHovered(false)}
+                          href="/machining-checklist/admin"
+                        >
+                            <ShieldSecurityIcon size={30} color={'currentColor'}/>
+                        </a>
+                        {isHovered === 'admin' && <div className="hover-side">Admin</div>}
                     </div>
                 </nav>
             </div>

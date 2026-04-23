@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
             'existing' => fn() => $request->session()->get('existing'),
             'model' => fn() => $request->session()->get('model'),
             'copy_batch' => fn() => $request->session()->get('copy_batch'),
+            'pagination' => fn() => $request->Session()->get('pagination'),
         ]);
     }
 }
