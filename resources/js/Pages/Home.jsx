@@ -9,7 +9,7 @@ import InProcessDisplay from '../Layouts/InProcessDisplay';
 import Cghl from '../Components/Cghl';
 import Lapping from '../Layouts/Lapping';
 import SlicingMachine from '../Layouts/Slicing';
-import Admin from '../Layouts/Admin';
+
 export default function Home({ message }) {
 
     const { flash ,LotData,detailsLot,dataExist,availabilty , modelsList} = usePage().props;
@@ -443,10 +443,7 @@ export default function Home({ message }) {
                     :data && data.model && data.process === 'slicing' ?
                         <SlicingMachine
                             data={data}/>
-                    :data && data.process === 'admin' ?
-                        <Admin
-                            modelListState={modelListState} setModelListState={setModelListState} dataExist={dataExist} setAvailabilityCheck={setAvailabilityCheck} availabilityCheck={availabilityCheck} ProcessMain={data.process} ManagementContainer={ManagementContainer} setManagementContainer={setManagementContainer} Notification={Notification} setNotificationMessage={setNotificationMessage}/>
-                        :null
+                    :null
             }
         </div>
     );
