@@ -13,27 +13,30 @@ return new class extends Migration
     {
         Schema::create('models', function (Blueprint $table) {
             $table->id();
-            $table->string('model');
-            $table->float('barelling_target');
-            $table->float('barelling_min');
-            $table->float('barelling_max');
-            $table->float('chamfer_barelling_target');
-            $table->float('chamfer_barelling_min');
-            $table->float('chamfer_barelling_max');
-            $table->enum('chamfer_type', ['REF. VAL.', 'R- CHAMFER', 'C- CHAMFER']);
-            $table->float('cghl_target');
-            $table->float('cghl_max');
-            $table->float('cghl_min');
-            $table->float('lappingt_target');
-            $table->float('lappingt_max');
-            $table->float('lappingt_min');
-            $table->float('flatness_lapping');
-            $table->float('parallelism_lapping');
-            $table->float('height_lapping');
-            $table->float('slicing_target');
-            $table->float('slicing_max');
-            $table->float('slicing_min');
+            $table->string('model')->unique();
+            $table->decimal('barelling_target')->nullable();
+            $table->decimal('barelling_min')->nullable();
+            $table->decimal('barelling_max')->nullable();
+            $table->decimal('chamfer_barelling_target')->nullable();
+            $table->decimal('chamfer_barelling_min')->nullable();
+            $table->decimal('chamfer_barelling_max')->nullable();
+            $table->enum('chamfer_type', ['REF. VAL.', 'R- CHAMFER', 'C- CHAMFER'])
+                ->default('R- CHAMFER');
+            $table->decimal('cghl_target')->nullable();
+            $table->decimal('cghl_max')->nullable();
+            $table->decimal('cghl_min')->nullable();
+            $table->decimal('lappingt_target')->nullable();
+            $table->decimal('lappingt_max')->nullable();
+            $table->decimal('lappingt_min')->nullable();
+            $table->decimal('flatness_lapping')->nullable();
+            $table->decimal('parallelism_lapping')->nullable();
+            $table->decimal('height_lapping')->nullable();
+            $table->decimal('slicing_target')->nullable();
+            $table->decimal('slicing_max')->nullable();
+            $table->decimal('slicing_min')->nullable();
             $table->timestamps();
+
+            $table->index(['id', 'model', 'updated_at']);
         });
     }
 

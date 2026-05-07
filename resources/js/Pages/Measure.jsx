@@ -15,6 +15,7 @@ import PasswordModal from "../Components/PasswordModal";
 import Cghl from "../Components/Cghl";
 import CghMeasuring from "../Components/CghMeasuring";
 import Histogram from "../Components/HistoGram";
+import NotificationDisplay from "../Layouts/Notification";
 export default function Measure() {
     /**
      *
@@ -24,8 +25,8 @@ export default function Measure() {
      *
      *
      * **/
-    const { modelsList, flash, modal, current_lot, batches, existing, model , copy_batch } = usePage().props;
-    console.log('Props', flash, modal, current_lot, existing, 'Models: ', model,'Details: ',copy_batch);
+    const { modelsList, flash, modal, current_lot, batches, existing, model , copy_batch , GoToProcess, GoToModel } = usePage().props;
+    console.log('Props', flash, modal, current_lot, existing, 'Models: ', model,'Details: ',copy_batch , ' Go to:',GoToProcess, GoToModel );
     const [modelState, setModelState] = useState(null);
     const [processState, setProcessState] = useState(null);
     const [measureButton, setMeasureButton] = useState(null);
@@ -45,11 +46,18 @@ export default function Measure() {
     const [histogram,setHistogram] = useState(false);
 
     //Notification
+    const [flashNotification , setFlashNotification] = useState(false);
     const [Notification, setNotification] = useState(false);
     console.log('type chamfer: ', currentModel.chamfer_type);
     const alloweAble = {
-        barelling: { preparing: 10},
+        barelling: { preparing: 7},
         cghl:{preparing:11}
+    }
+    const sheetTitle = {
+            barelling: 'IN-PROCESS INSPECTION SHEET',
+            cghl:'CGH (L) DIMENSION MONITORING',
+            lapping:'LAPPING (T) DIMENSION MONITORING',
+            slicing:'SLICING (W) MONITORING'
     }
     const toHide = ["prepared", "measured", "approved"];
     const buttonStatus = {
@@ -75,7 +83,6 @@ export default function Measure() {
         datalist_id: '',
         datalist_lot_number: '',
         batch_number: '',
-        total_batch_number: '',
         total_qty_lot: '',
         media_size: '',
         media_weight: '',
@@ -85,6 +92,11 @@ export default function Measure() {
         magnet_wt_pc_: '',
         chamfertype: '',
         model:'',
+        total_wt_batch:'',
+        contracer_serial:'',
+        chamfer_jig_serial:'',
+        total_qty_batch:'',
+        micrometer_serial:'',
     });
 
     //timer
@@ -170,29 +182,7 @@ export default function Measure() {
         setTriModal(false);
     }
 
-    useEffect(() => {
-        // const process = processState && processState.process ? processState.process : null
-        // const model = modelState ? modelState : null
-        console.log('hesslloxx', processState, modelState)
-
-        if (processState && processState.process === '' && modelState || processState && processState.process !== '' && processState.value && !modelState ) {
-            console.log('hessllo');
-            router.visit("/machining-checklist/measure");
-        }
-
-    }, [processState, modelState])
-
-    useEffect(() => {
-        if (!model) return;
-        setCurrentModel(model);
-    }, [model]);
-
-    //manage form data
-    useEffect(() => {
-        //manage dynamicdata @return all data
-        console.log('Updating data!');
-
-        const arrayBankNew = {
+    const arrayBankNew = {
 
             barelling: {
                 data: data,
@@ -226,6 +216,123 @@ export default function Measure() {
             },
 
         }
+    useEffect(()=>{
+        if(!GoToModel || !GoToProcess) return;
+        console.log('GO to effect:',GoToProcess , GoToModel , current_lot);
+        setModelState(GoToModel);
+        setProcessState((prev)=>({process:GoToProcess , value:sheetTitle[GoToProcess]}));
+        setStatusCheck(GoToProcess);
+
+        console.log('GO to bank:' , arrayBankNew[GoToProcess]);
+
+        if(!arrayBankNew[GoToProcess]) return
+
+        const details = arrayBankNew[GoToProcess]?.details
+        const data = arrayBankNew[GoToProcess]?.data
+
+        //return common data
+        data && Object.entries(data).map(([key,value])=>{
+            console.log('low: ',key,value);
+            arrayBankNew[GoToProcess]?.set_data(key,current_lot[key])
+
+            switch(key){
+                case 'page':
+                    arrayBankNew[GoToProcess]?.set_data(key,'measure')
+                    break;
+                case 'lot_number':
+                    arrayBankNew[GoToProcess]?.set_data(key,current_lot.datalist_lot_number)
+                    break;
+                case 'id':
+                    arrayBankNew[GoToProcess]?.set_data(key,current_lot.datalist_id)
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        //return details per process
+        details && Object.entries(details).map(([key,value])=>{
+            console.log('low: ',key,value);
+            arrayBankNew[GoToProcess]?.set(key,current_lot[key])
+            arrayBankNew[GoToProcess]?.set('status',current_lot['status'])
+        });
+
+        //return measurements and graphs
+        Object.entries(arrayBankNew[GoToProcess]).map(([key,value])=>{
+            //return process values
+            if(typeof value === 'object' && key !== 'data' && key !== 'details'){
+                const setCurrentKey = `set_${key}`
+                const currentArray = current_lot[key];
+
+                console.log('checkk: ',`set_${key}`);
+                console.log(current_lot[key]);
+
+                if(!currentArray) return
+
+                Object.entries(arrayBankNew[GoToProcess]?.[key]).map(([innerKey,innerValue])=>{
+                    console.log('ypwss: ',key,currentArray[innerKey],innerValue);
+
+                    if(!currentArray[innerKey]) return
+                    //populate data from dashboard
+                    switch(GoToProcess){
+                        case "barelling":
+                            arrayBankNew[GoToProcess]?.[setCurrentKey](innerKey,currentArray[innerKey]);
+                            break;
+                        case "cghl":
+
+                            if(innerValue){
+                                if(key !== 'perpendicularity' && key !== 'mass_pro'){
+                                    console.log('cghl:x',key , innerKey,innerValue)
+                                    arrayBankNew[GoToProcess]?.[setCurrentKey](innerKey,currentArray[innerKey])
+                                }else if(key === 'perpendicularity'){
+                                    Object.entries(innerValue).map(([processKey ,processValue])=>{
+                                        console.log('cghl:xxr:' ,processKey ,processValue,setCurrentKey);
+                                        arrayBankNew[GoToProcess]?.set_perpen((prev)=>({
+                                            ...prev,
+                                            [innerKey]:{
+                                                ...prev[innerKey],
+                                                [processKey]:current_lot['perpendicularity'][innerKey][processKey]
+                                            }
+                                        }))
+                                    })
+                                };
+                            }else{
+                                //Measuring tools
+                               arrayBankNew[GoToProcess]?.[setCurrentKey](innerKey,currentArray[innerKey])
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                });
+            }
+        });
+        setMeasureButton(true);
+    },[GoToModel,GoToProcess,current_lot]);
+
+    useEffect(() => {
+        // const process = processState && processState.process ? processState.process : null
+        // const model = modelState ? modelState : null
+        console.log('hesslloxx', processState, modelState)
+
+        if (processState && processState.process === '' && modelState || processState && processState.process !== '' && processState.value && !modelState ) {
+            console.log('hessllo');
+            router.visit("/machining-checklist/measure");
+        }
+
+    }, [processState, modelState])
+
+    useEffect(() => {
+        if (!model) return;
+        setCurrentModel(model);
+    }, [model]);
+
+    //manage form data
+    useEffect(() => {
+        //manage dynamicdata @return all data
+        console.log('Updating data!');
+
 
         setArrayBank(arrayBankNew)
         console.log('check if updating: ', cghlDetails);
@@ -234,6 +341,7 @@ export default function Measure() {
 
 
     const currenProcess = processState && processState.process ? processState.process : null;
+
     const payload = {
         page: {
             processing: data,
@@ -438,6 +546,7 @@ export default function Measure() {
         processForm?.resetPoints()
         setStatusCheck(false)
     }
+
     useEffect(() => {
         //return data for update
         setProcessFromCount(false)
@@ -502,21 +611,38 @@ export default function Measure() {
     }, [batches])
 
     useEffect(() => {
-        if (!processState) return
-        setData('process', processState.process)
-        setProcessForm(arrayBank[processState.process])
-    }, [processState, arrayBank])
+        if (!processState && !GoToProcess) return
+        const process = processState && processState.process ? processState.process :GoToProcess
+        setData('process', process );
+        setProcessForm(arrayBank[process]);
+        console.log('Current Processform:' ,processForm);
+
+
+    }, [processState, arrayBank ,GoToProcess])
 
     useEffect(() => {
+
+        Object.entries(flash).map(([key,values])=>{
+            console.log(key ,values ,'falsh');
+            values ? setFlashNotification({theme:`${key}-container`,message:values}):null;
+        })
+
         setTimeout(() => {
             setLoading(false)
         }, 500)
+
+        setTimeout(() => {
+            setFlashNotification(false)
+        }, 5000)
+
         if (flash.success) setStatusCheck(flash.success);
+
         return;
+
     }, [flash])
 
     useEffect(() => {
-        if (!current_lot && !modal) return
+        if (!current_lot && !modal || (GoToProcess || GoToModel)  ) return
 
         if (current_lot) {
             console.log('HHELLOO LOOE', current_lot)
@@ -560,7 +686,7 @@ export default function Measure() {
         countCurrentEmpty > alloweAble[processState.process].preparing ? setProcessFromCount(false) : setProcessFromCount(true)
     }, [processForm, existing]);
 
-    console.log('DATA NOW:', cghlDetails);
+    console.log('DATA NOW:', processForm);
 
     //Handle copy batch details @@handle
 
@@ -613,9 +739,12 @@ export default function Measure() {
             console.error("Error submitting form:", err);
         }
     }
-
+    console.log("Process: ", current_lot , processFromCount);
     return (
         <>
+            {
+                flashNotification && (<NotificationDisplay message={flashNotification.message ??null} theme={flashNotification.theme??null}  />)
+            }
             {
                 passworModal && <PasswordModal setPasswordModal={setPasswordModal} passworModal={passworModal} handlePassword={handlePassword} Notification={Notification} />
             }
@@ -673,7 +802,7 @@ export default function Measure() {
                             loading={loading}
                             handleClear={handleClear}
                             statusCheck={statusCheck}
-                            batch_number={barellingDetails && processForm.details &&processForm.details.batch_number ?processForm.details.batch_number: 'Finding.....'}
+                            batch_number={barellingDetails && processForm && processForm.details &&processForm.details.batch_number ?processForm.details.batch_number: 'Finding.....'}
 
                         />
                     }
@@ -707,10 +836,34 @@ export default function Measure() {
                         statusCheck && modelState && processState && processState.process === 'barelling' && (processForm?.details["status"] === 'measuring' || processForm?.details["status"] === 'measured') ?
                             <div className="container-column">
                                 <div>
+                                    <h1>Point of Measurements</h1>
+                                    <div className="point-main">
+                                        {
+                                            model && model.chamfer_point1_data &&
+                                            (
+                                                <div className="point-measurement" >
+                                                    <p>Chamfer point 1</p>
+                                                    <img className="point-picture" src={`/storage/${model.chamfer_point1_data}`}/>
+                                                </div>
+                                            )
+                                        }
+
+                                         {
+                                            model && model.chamfer_point2_data &&
+                                            (
+                                                <div className="point-measurement" >
+                                                    <p>Chamfer point 2</p>
+                                                    <img className="point-picture" src={`/storage/${model.chamfer_point2_data}`}/>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                                <div>
                                     <h1>Measuring</h1>
                                 </div>
                                 <div className="inner-container-row">
-                                  {
+                                {
                                     currentModel && currentModel.chamfer_points  &&  currentModel.chamfer_points === 2  ?
 
                                         <Chamfering pointIdentifier={2} goToNextInput={goToNextInput} setMagnetPoints={setMagnetPoints} magnetPoints={magnetPoints} model={currentModel} process={processState.process} chamfertype={barellingDetails.chamfertype ?? null} handleKeyDown={handleKeyDown} status={processForm.details["status"]} edit={editBatch} />
@@ -756,6 +909,30 @@ export default function Measure() {
                                         chamfertype={currentModel.chamfer_type ?? null}
                                         edit={editBatch}
                                     />
+                                </div>
+                                <div>
+                                    <h1>Point of Measurements</h1>
+                                    <div className="point-main">
+                                        {
+                                            model && model.chamfer_point1_data &&
+                                            (
+                                                <div className="point-measurement" >
+                                                    <p>Chamfer Point A</p>
+                                                    <img className="point-picture" src={`/storage/${model.chamfer_point1_data}`}/>
+                                                </div>
+                                            )
+                                        }
+
+                                         {
+                                            model && model.chamfer_point2_data &&
+                                            (
+                                                <div className="point-measurement" >
+                                                    <p>Chamfer Point B</p>
+                                                    <img className="point-picture" src={`/storage/${model.chamfer_point2_data}`}/>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
                                 </div>
                                 <div>
                                     <h1>Measuring</h1>

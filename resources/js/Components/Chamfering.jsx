@@ -10,23 +10,23 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
     const specsBank = {
         barelling: {
             chamfer1: {
-                target: model.chamfer_barelling_target ?? 0, max: model.chamfer_barelling_max ?? 0, min: model.chamfer_barelling_min ?? 0
+                target: Number(model.chamfer_barelling_target ?? 0), max:  Number(model.chamfer_barelling_max ?? 0), min:  Number(model.chamfer_barelling_min ?? 0)
             },
              chamfer2: {
-                target: model.chamfer_barelling_target2 ?? 0, max: model.chamfer_barelling_max2 ?? 0, min: model.chamfer_barelling_min2 ?? 0
+                target:  Number( model.chamfer_barelling_target2 ?? 0), max:  Number(model.chamfer_barelling_max2 ?? 0), min:  Number(model.chamfer_barelling_min2 ?? 0)
             }
         },
     };
     const chamferValues = magnetPoints.chamfer
-    console.log('CHAMFER VALUE: ', chamfertype);
+    console.log('CHAMFER VALUE: ', specsBank);
     const judegment = { }
     const pointsJudgement = { chamfer1:{},chamfer2:{}}
     points.map((count)=>{
          number.map((items) => {
             const magnet = magnetPoints['chamfer'+count]['m' + items] !== 0 ? Number(((chamferValue['REF. VAL.'] - magnetPoints['chamfer'+count]['m' + items]) * chamferValue[chamfertype]).toFixed(3)) : 0
-
-            const lowerReject =Number((specsBank[process]["chamfer"+count].min + 0.001).toFixed(3))
-
+            console.log('Minimummm' ,process, specsBank[process]["chamfer"+count].min);
+            const lowerReject =Number(Number(specsBank[process]["chamfer"+count].min) + 0.001)
+            console.log('Lower Reject: '  ,magnet,lowerReject);
             if (magnet === 0) return judegment[count +'m' + items] = { judegment: null, value: magnet, theme: null };
             if (magnet < lowerReject) return judegment[count+'m' + items] = { judegment: 'adjust', value: magnet, theme: 'adjust-theme' };
             if ( magnet > specsBank[process]["chamfer"+count].max ) return judegment[count+'m' + items] = { judegment: 'reject', value: magnet, theme: 'error-theme' };
@@ -42,8 +42,8 @@ export default function Chamfering({ goToNextInput, setMagnetPoints, magnetPoint
                 <h1>Chamfering</h1>
 
                                <p>
-                                <strong style={{ fontWeight:'Bold' }}>Point A:</strong>  Minimum:&nbsp;{specsBank[process]["chamfer1"].min.toFixed(3)}&nbsp;Target:&nbsp;{ specsBank[process]["chamfer1"].target.toFixed(3)}&nbsp;Maximum:&nbsp;{specsBank[process]["chamfer1"].max.toFixed(3) }
-                                {pointIdentifier === 2 ? <><br/>  <strong style={{ fontWeight:'Bold' }}>Point B:</strong> Minimum:&nbsp;{specsBank[process]["chamfer2"].min.toFixed(3)}&nbsp;Target:&nbsp;{ specsBank[process]["chamfer2"].target.toFixed(3)}&nbsp;Maximum:&nbsp;{specsBank[process]["chamfer2"].max.toFixed(3) }</>:null}&nbsp;&nbsp;
+                                <strong style={{ fontWeight:'Bold' }}>Point A:</strong>  Minimum:&nbsp;{Number(specsBank[process]["chamfer1"].min).toFixed(3)}&nbsp;Target:&nbsp;{ Number(specsBank[process]["chamfer1"].target).toFixed(3)}&nbsp;Maximum:&nbsp;{Number(specsBank[process]["chamfer1"].max).toFixed(3) }
+                                {pointIdentifier === 2 ? <><br/>  <strong style={{ fontWeight:'Bold' }}>Point B:</strong> Minimum:&nbsp;{Number(specsBank[process]["chamfer2"].min).toFixed(3)}&nbsp;Target:&nbsp;{ Number(specsBank[process]["chamfer2"].target).toFixed(3)}&nbsp;Maximum:&nbsp;{Number(specsBank[process]["chamfer2"].max).toFixed(3) }</>:null}&nbsp;&nbsp;
                                 <br/>
                                 <strong style={{ fontWeight:'Bold' }}>Chamfer Type:</strong>&nbsp;{chamfertype}
                                </p>

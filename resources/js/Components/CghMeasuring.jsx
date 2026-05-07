@@ -387,9 +387,9 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                                 <th>Pt.1</th>
                                 <th>Pt.2</th>
                                 <th>Pt.3</th>
-                                <th>Pt.1</th>
-                                <th>Pt.2</th>
-                                <th>Pt.3</th>
+                                <th style={{ width:'4rem' }}>Pt.1</th>
+                                <th style={{ width:'4rem' }}>Pt.2</th>
+                                <th style={{ width:'4rem' }}>Pt.3</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -408,8 +408,8 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                                                         <td rowSpan={3} >
                                                             <h1 style={{ color:'#3b4e68' }}>{title[mainItems-1]}</h1>
                                                             <div className="histogram-btn">
-                                                                <button onClick={()=>handlePartUpdate({points:cghlPoint, perpendicularity:{}},'cghl')} className="cloud-btn" disabled={(currentStatus && !edit)}><CloudUploadIcon color={'currentColor'} size={30} /></button>
-                                                                <button onClick={()=>setHistogram({title:'(T~L)PERPENDICULARITY MONITORING',timing:title[mainItems-1],point:2,hfp:'p',status:(currentStatus && !edit)})} className="datagram-btn" ><UploadCheckIcon color={'currentColor'} size={30}/></button>
+                                                                <button onClick={()=>handlePartUpdate({points:cghlPoint, perpendicularity:{}},'cghl')} className="status-btn" disabled={(currentStatus && !edit)}>Save</button>
+                                                                <button onClick={()=>setHistogram({title:'(T~L)PERPENDICULARITY MONITORING',timing:title[mainItems-1],point:2,hfp:'p',status:(currentStatus && !edit)})} className="status-btn" >Histogram</button>
                                                             </div>
                                                         </td>
                                                     }
@@ -642,7 +642,7 @@ export default function CghMeasuring({cghlDetails,cghlPoint ,setCghlPoint,curren
                     </div>
                          <div className="container-row" style={{  margin:'0rem'}}>
                         <div>
-                            <CountingGraph process={'Lapping'} specification={'Height'} max={currentModel.cghl_max??0} min={currentModel.cghl_min??0} perpendicularity={perpenCghlThickness} maxperpen={currentModel.perpendicularity??0}/>
+                            <CountingGraph process={'Lapping'} specification={'Perpendicularity'} max={currentModel.cghl_max??0} min={currentModel.cghl_min??0} perpendicularity={perpenCghlThickness} maxperpen={currentModel.perpendicularity??0}/>
                         </div>
                     </div>
                 </div>

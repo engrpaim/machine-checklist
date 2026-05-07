@@ -25,7 +25,7 @@ ChartJS.register(
 
 export default function CountingGraph({process,specification,max,min,perpendicularity,maxperpen}){
      console.log('COUNTING PERPEN DATA: ',perpendicularity)
-    const maxValue = maxperpen
+    const maxValue = Number(maxperpen)
     const divisor = maxValue >= 0.05? 0.010:0.005
     const quotient = Math.ceil(maxValue/divisor)
     const subdivision = []
@@ -44,7 +44,7 @@ export default function CountingGraph({process,specification,max,min,perpendicul
         let newMax = currentMax > maxValue ? maxValue: currentMax
         newMax = newMax === maxValue?  maxValue - 0.001 :newMax
         subdivision.push({min:Number(minPush.toFixed(3)),max:Number((newMax).toFixed(3))})
-        i === quotient - 1 ?  subdivision.push({min:Number(maxValue.toFixed(3)),max:9999}):null
+        i === quotient - 1 ?  subdivision.push({min:Number(maxValue),max:9999}):null
         currentMin = currentMax
     }
 
@@ -117,7 +117,7 @@ export default function CountingGraph({process,specification,max,min,perpendicul
         <>
             <div  style={{ display:'flex' ,color: '#19232e',justifyContent:'center',flexDirection:'column',width:'40vw', height:'40vh', padding:'2rem', background:'white',borderRadius:'1rem' ,minWidth:'fit-content'}}>
                 <h1 style={{ color: '#19232e' }}>{process}&nbsp;{specification}&nbsp;Histogram Chart</h1>
-                <p>Max{maxValue.toFixed(3)}</p>
+                <p>Max{Number(maxValue).toFixed(3)}</p>
                 <Bar data={data} options={options} />
             </div>
         </>

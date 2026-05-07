@@ -30,6 +30,11 @@ class Barelling extends Model
         'magnet',
         'points',
         'time_setting',
+        'total_qty_batch',
+        'contracer_serial',
+        'chamfer_jig_serial',
+        'total_wt_batch',
+        'micrometer_serial'
     ];
 
     protected $casts = [

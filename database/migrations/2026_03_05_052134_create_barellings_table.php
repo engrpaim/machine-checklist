@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('shift');
             $table->string('staff_engineer');
             $table->integer('batch_number');
-            $table->integer('total_batch_number')->nullable();
             $table->integer('total_qty_lot')->nullable();
             $table->string('media_size')->nullable();
             $table->string('media_weight')->nullable();
@@ -34,7 +33,7 @@ return new class extends Migration
             $table->json('time_setting')->nullable();
 
             $table->timestamps();
-
+            $table->index(['datalist_lot_number', 'updated_at']);
             //Composite Foreign Key
             $table->foreign(['datalist_id'])
                 ->references(['id'])

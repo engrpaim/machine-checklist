@@ -26,11 +26,12 @@ ChartJS.register(
 
 
 export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPoints, model, process, status, edit }) {
+    console.log('Modeeelll: ',model);
     const maxMagnet = [1, 2, 3, 4, 5];
     const specsBank = {
         barelling: {
             model: {
-                target: model.barelling_target ?? 0, max: model.barelling_max ?? 0, min: model.barelling_min ?? 0
+                target: Number(model.barelling_target ?? 0), max: Number(model.barelling_max ?? 0), min: Number(model.barelling_min ?? 0)
             },
         },
     };
@@ -220,6 +221,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
 
     const judgementTable =(average)=>{
           console.log('Detailssx: ', average, specsBank[process]["model"].min )
+
         if(!average || average <= 0)  return { judegement:null , background:null}
 
 
@@ -227,6 +229,8 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
             average > specsBank[process]['model'].max || average <  specsBank[process]["model"].min ? 'Reject':
             average <= specsBank[process]['model'].max  &&  average >= specsBank[process]['model'].max - 0.010 || average >= specsBank[process]['model'].min  &&  average <= specsBank[process]['model'].min + 0.010? 'Adjust'
             :'Good'
+
+
 
         const backgroundTheme = JudegmentDiplay === 'Reject' ?'error-theme': JudegmentDiplay === 'Adjust' ?'adjust-theme':'success-theme';
         console.log('JTx',JudegmentDiplay,backgroundTheme);

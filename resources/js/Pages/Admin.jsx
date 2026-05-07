@@ -1,18 +1,40 @@
 import MainLayout from "../Layouts/MainLayout"
-import { useState, useRef } from "react";
-import { usePage, Link, useForm } from "@inertiajs/react"
+import { useState, useRef , useEffect } from "react";
+import { usePage, Link, useForm ,router } from "@inertiajs/react"
 import {AddBoxIcon , CrossIcon } from "../Icons/SVG"
 import Loading from "../Components/Loading"
 import {handleKeyDown} from "../utils/UtilityFunctions"
-
+import AdminUser from "../Layouts/AdminUser";
+import Notification from "../Layouts/Notification"
 export default function Admin(){
-    const {modelsList,flash} = usePage().props
-    const [model ,setModel] = useState(modelsList.data??null)
+
+    const {modelsList,flash,currentUpdate,userList} = usePage().props
+    // const [model ,setModel] = useState(modelsList.data?modelsList.data:null)
+
+    useEffect(()=>{
+        /**
+         *
+         * !!Important
+         * Don't add other varibles this is only for notification
+         *
+         * **/
+        if(!flash) return
+        setNotification(flash)
+        setTimeout(()=>{
+            setNotification({})
+        },3000)
+    },[flash]);
+
+
     const [modal, setModal] = useState(false);
     const [laodingEffects, setLoadingEffects] = useState(false);
     const [preview,setPreview] = useState(false);
+    const [notification , setNotification] = useState({});
+    const [searchQuery ,setSearchQuery] = useState({});
     const fileInputRef = useRef({});
-    console.log('Model: ',modelsList,'Admin model: ',model,flash);
+    const timerRef = useRef(null);
+    console.log('-------------------------Notficcation: ' ,notification);
+    console.log('Model: ',modelsList,'Admin model: ',flash ,' Saved model: ' , currentUpdate,' User Details: ',userList);
 
     //Model Form
     const { data:modelDetails , setData:setModeltails, post:postModel, processing:processingModel, errors:errorModel , reset:resetModelDetails} = useForm({
@@ -26,10 +48,11 @@ export default function Admin(){
         chamfer_barelling_max: "",
         chamfer_barelling_min: "",
         chamfer_barelling_target: "",
-        chamfer_type: "",
-        chamfer_points:"",
-        chamfer_point1:'',
-        chamfer_point2:'',
+        chamfer_barelling_max2: "",
+        chamfer_barelling_min2: "",
+        chamfer_barelling_target2: "",
+        chamfer_type: "R- CHAMFER",
+        chamfer_points:1,
         chamfer_point1_data:'',
         chamfer_point2_data:'',
 
@@ -51,24 +74,70 @@ export default function Admin(){
         flatness_lapping: "",
         height_lapping: "",
         parallelism_lapping: "",
+        perpendicularity:'',
+        page:'model',
+        crud:'save',
+        id:''
 
+    })
+
+    const { data:userDetails , setData:setUserDetails, post:postUser, processing:processingUser, errors:errorUser , reset:resetUserDetails} = useForm({
+        id:null,
+        first_name:'',
+        last_name:'',
+        id_number:'',
+        machine_type:'Desktop',
+        area:'',
+        ip_1:'',
+        ip_2:'',
+        ip_3:'',
+        ip_4:'',
+        permission:'Normal',
+        page:'user',
+        crud:'save',
     })
 
     const handleClose =()=>{
         setModal(false);
+        setPreview({})
         resetModelDetails();
+        resetUserDetails();
     }
+
+    const handleUpdateCurrent =(data , properties)=>{
+            if(!data) properties?.({})
+            Object.entries(data).map(([key,values])=>{
+                 console.log(key,values);
+                 properties?.(key,values)
+            });
+    }
+
     const submit = (e,table) => {
         e.preventDefault()
         console.log('Submitting',e);
         setLoadingEffects(true)
-
+        console.log('fg' , modelDetails.model)
         switch(table){
             case 'model':
                 if(!modelDetails.model) return setLoadingEffects(false)
                 postModel("/machining-checklist/admin/models", {
+                    preserveScroll: true,
                     onSuccess: () => {
                         setLoadingEffects(false)
+                        resetModelDetails();
+                        setModal(false);
+                        setPreview({});
+                    },
+                })
+                break;
+            case 'user':
+                postUser("/machining-checklist/admin/user", {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        setLoadingEffects(false)
+                        resetUserDetails();
+                        setModal(false);
+                        setPreview({});
                     },
                 })
                 break;
@@ -85,10 +154,15 @@ export default function Admin(){
         console.log('File uploaded: ', e ,file,point);
 
         const preview  =  URL.createObjectURL(file);
-        setModeltails(`chamfer_point${point}`,preview);
+        setPreview((prev)=>({
+                        ...prev,
+                        [`chamfer_point${point}_data`]:preview
+                    }))
+
         setModeltails(`chamfer_point${point}_data`,file)
 
     }
+
     const handleDrop = (e, point) => {
         e.preventDefault();
 
@@ -97,313 +171,348 @@ export default function Admin(){
 
         const preview = URL.createObjectURL(file);
 
-        setModeltails(`chamfer_point${point}`,preview)
+         setPreview((prev)=>({
+                        ...prev,
+                        [`chamfer_point${point}_data`]:file
+                    }))
         setModeltails(`chamfer_point${point}_data`,file)
 
     };
-    console.log('File uploaded point : ',modelDetails);
+
+    //update model
+
+    const handleUpdateModel =(index, page)=>{
+        console.log('Updating Data: ',modelsList.data[index],page);
+
+        switch(page){
+            case 'model':
+                if(!modelsList.data[index]) return
+                const selectedModel = modelsList.data[index];
+                Object.entries(modelDetails).map(([key,value])=>{
+                    setModeltails(key,selectedModel[key]);
+
+                    if(key.includes('chamfer_point') && !key.includes('chamfer_points') ){
+                        setPreview((prev)=>({...prev ,[key ]: `/storage/${encodeURI(selectedModel[key])}`}) )
+                    }
+                })
+                setModeltails('page','model');
+                setModeltails('crud','save');
+                setModal(page);
+                break;
+            case 'user':
+                const data = userList.data[index]
+                console.log('User Update: ' , data);
+                if(!data) return
+                console.log(data.ip_address.split("."));
+                const ipSplit = data.ip_address.split(".")
+                console.log(ipSplit[0]);
+                Object.entries(userDetails).map(([key,value])=>{
+                    console.log('User key: ',key);
+                    setUserDetails(key,data[key]);
+                });
+                setUserDetails('ip_1',ipSplit[0]);
+                setUserDetails('ip_2',ipSplit[1]);
+                setUserDetails('ip_3',ipSplit[2]);
+                setUserDetails('ip_4',ipSplit[3]);
+                setUserDetails('page',page);
+                setUserDetails('crud','save');
+                setModal(page);
+                break;
+            default:
+                break;
+        }
+    }
+
+    function deleteManipulator(array,table){
+        console.log('Delete: ',array);
+         if(!array) return
+                const selected = array
+                const page = table
+                router.post("/machining-checklist/admin/models", {
+                    ...selected,
+                    page: page,
+                    crud: 'delete'
+                },{
+                    preserveScroll:true,
+                    onSuccess: () => {
+                        setLoadingEffects(false);
+                    }
+                });
+    }
+
+    const handleDelete=(e,index,table)=>{
+        console.log('deleting: ', e ,index,table);
+        console.log('---> ',modelsList.data[index]);
+        setLoadingEffects(true);
+        switch(table){
+            case 'model':
+               deleteManipulator(modelsList.data[index],table)
+               break;
+            case 'user':
+               deleteManipulator(userList.data[index],table)
+               break;
+            default:
+                setLoadingEffects(false);
+                break;
+        }
+    }
+
+    const handleSearch=(value,query_identify,model)=>{
+        setSearchQuery({value:value,page:model});
+        setTimeout(()=>{
+            router.get('/machining-checklist/admin',{
+                [query_identify]:value
+            },{
+                preserveScroll:true,
+                preserveState:true
+            })
+        },[500])
+    }
+    console.log('File uploaded point : ',modelsList.data,' Preview: ',preview);
     return(
          <section>
+            {
+                notification && Object.entries(notification).filter(([_, value]) => value).map(([key,value]) =>{
+                      return(
+                            <Notification message={value} theme={`${key}-container`} />
+                        );
+                })
+            }
             {
                 laodingEffects && (<Loading />)
             }
             {
-                model && modal &&
+                modelsList.data  && modal === 'model' ?
+                (
+                    <AdminUser
+                        modelDetails={modelDetails}
+                        setModeltails={setModeltails}
+                        handleKeyDown={handleKeyDown}
+                        handleClose={handleClose}
+                        preview={preview}
+                        processingModel={processingModel}
+                        fileInputRef={fileInputRef}
+                        handleUpload={handleUpload}
+                        submit={submit}
+                        />
+                ):
+                modelsList.data  && modal === 'user' ?
                 (
                     <div className="modal">
-                        <div className="details-container-white">
-                            <div style={{ alignSelf:'flex-end'}}>
-                               <button className="close-btn" onClick={()=>handleClose()}><CrossIcon/></button>
-                            </div>
-                            <div>
-                                <h1>Create Model</h1>
-                            </div>
-                            <form onSubmit={(e)=>submit(e,'model')}   style={{ display: "flex", flexDirection: "column" ,gap:"1rem"}}>
+                        <form  className="form-data" onSubmit={
+                                                                    (e)=> {
+
+                                                                            submit(e,'user');
+
+                                                                          }
+                                                                  }>
+                            <div className="details-container-white">
+                                <div style={{ alignSelf:'flex-end'}}>
+                                    <button className="close-btn" onClick={()=>handleClose()}><CrossIcon/></button>
+                                </div>
                                 <div>
+                                    <p style={{ fontWeight:'bold' }}>User Manager</p>
+                                </div>
+                                <div className="modal-row">
                                     <div>
-                                        <div>
-                                            <div className="modal-input">
-                                                <label>Model:</label>
-                                                <input
-                                                    value={modelDetails.model}
-                                                    onChange={(e)=>setModeltails('model',e.target.value)}
-                                                    onKeyDown={(e)=>handleKeyDown(e)}
-                                                />
-                                            </div>
+                                        <div className="modal-input">
+                                            <label>First Name:</label>
+                                            <input value={userDetails.first_name} onChange={(e)=>setUserDetails('first_name',e.target.value)} type="text" onKeyDown={(e)=>handleKeyDown(e)} />
                                         </div>
-                                        <div className="modal-row">
-                                            <div>
-                                                <div>
-                                                    <h1>CGHL L</h1>
-                                                </div>
-                                                <div>
-                                                    <div className="modal-input">
-                                                        <label>CGHL target:</label>
-                                                        <input
-                                                            value={modelDetails.cghl_target}
-                                                            onChange={(e)=>setModeltails('cghl_target',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>CGHL minimum:</label>
-                                                        <input
-                                                            value={modelDetails.cghl_min}
-                                                            onChange={(e)=>setModeltails('cghl_min',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>CGHL maximum:</label>
-                                                        <input
-                                                            value={modelDetails.cghl_max}
-                                                            onChange={(e)=>setModeltails('cghl_max',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <h1>Lapping T</h1>
-                                                    <div className="modal-input">
-                                                        <label>Lapping T target:</label>
-                                                        <input
-                                                            value={modelDetails.lappingt_target}
-                                                            onChange={(e)=>setModeltails('lappingt_target',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Lapping T minimum:</label>
-                                                        <input
-                                                            value={modelDetails.lappingt_min}
-                                                            onChange={(e)=>setModeltails('lappingt_min',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Lapping T maximum:</label>
-                                                        <input
-                                                            value={modelDetails.lappingt_max}
-                                                            onChange={(e)=>setModeltails('lappingt_max',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/*Slicing Data*/}
-                                            <div>
-                                                <div>
-                                                    <h1>Slicing</h1>
-                                                </div>
-                                                <div>
-                                                    <div className="modal-input">
-                                                        <label>Slicing target:</label>
-                                                        <input
-                                                            value={modelDetails.slicing_target}
-                                                            onChange={(e)=>setModeltails('slicing_target',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Slicing minimum:</label>
-                                                        <input
-                                                            value={modelDetails.slicing_min}
-                                                            onChange={(e)=>setModeltails('slicing_min',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Slicing maximum:</label>
-                                                        <input
-                                                            value={modelDetails.slicing_max}
-                                                            onChange={(e)=>setModeltails('slicing_max',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <h1>Histogram</h1>
-                                                    <div className="modal-input">
-                                                        <label>Flatness:</label>
-                                                        <input
-                                                            value={modelDetails.flatness_lapping}
-                                                            onChange={(e)=>setModeltails('flatness_lapping',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Height:</label>
-                                                        <input
-                                                            value={modelDetails.height_lapping}
-                                                            onChange={(e)=>setModeltails('height_lapping',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Parallelism:</label>
-                                                        <input
-                                                            value={modelDetails.parallelism_lapping}
-                                                            onChange={(e)=>setModeltails('parallelism_lapping',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/*Barelling Data*/}
-                                            <div>
-                                                <div>
-                                                    <h1>Barelling</h1>
-                                                </div>
-                                                <div>
-                                                    <div className="modal-input">
-                                                        <label>Barelling target:</label>
-                                                        <input
-                                                            value={modelDetails.barelling_target}
-                                                            onChange={(e)=>setModeltails('barelling_target',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}
-                                                            ></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Barelling minimum:</label>
-                                                        <input
-                                                            value={modelDetails.barelling_min}
-                                                            onChange={(e)=>setModeltails('barelling_min',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}
-                                                            ></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Barelling maximum:</label>
-                                                        <input
-                                                            value={modelDetails.barelling_max}
-                                                            onChange={(e)=>setModeltails('barelling_max',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}
-                                                            ></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Barelling points:</label>
-                                                        <input
-                                                            value={modelDetails.point}
-                                                            onChange={(e)=>setModeltails('point',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <h1>Chamfering</h1>
-                                                    <div className="modal-input">
-                                                        <label>Chamfering Barelling target:</label>
-                                                        <input
-                                                            value={modelDetails.chamfer_barelling_target}
-                                                            onChange={(e)=>setModeltails('chamfer_barelling_target',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Chamfering Barelling minimum:</label>
-                                                        <input
-                                                            value={modelDetails.chamfer_barelling_min}
-                                                            onChange={(e)=>setModeltails('chamfer_barelling_min',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Chamfering Barelling maximum:</label>
-                                                        <input
-                                                            value={modelDetails.chamfer_barelling_max}
-                                                            onChange={(e)=>setModeltails('chamfer_barelling_max',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Chamfer Type:</label>
-                                                        <input
-                                                            value={modelDetails.chamfer_type}
-                                                            onChange={(e)=>setModeltails('chamfer_type',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                    <div className="modal-input">
-                                                        <label>Chamfer Points:</label>
-                                                        <input
-                                                            value={modelDetails.chamfer_points}
-                                                            onChange={(e)=>setModeltails('chamfer_points',e.target.value)}
-                                                            onKeyDown={(e)=>handleKeyDown(e)}></input>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div className="modal-input">
+                                            <label>Last Name:</label>
+                                            <input value={userDetails.last_name} onChange={(e)=>setUserDetails('last_name',e.target.value)} type="text" onKeyDown={(e)=>handleKeyDown(e)} />
+
+                                        </div>
+                                        <div className="modal-input">
+                                            <label>I.D Number:</label>
+                                            <input type="number" value={userDetails.id_number} onChange={(e)=>setUserDetails('id_number',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="modal-input">
+                                            <label>Machine Type:</label>
+                                            <select value={userDetails.machine_type} onChange={(e)=>setUserDetails('machine_type' ,e.target.value)}>
+                                                <option selected={true}>Desktop</option>
+                                                <option>Laptop</option>
+                                            </select>
+                                        </div>
+                                        <div className="modal-input">
+                                            <label>Area:</label>
+                                            <input  type="text" value={userDetails.area} onChange={(e)=>setUserDetails('area',e.target.value)} onKeyDown={(e)=>handleKeyDown(e)} />
+                                        </div>
+                                        <div className="modal-input">
+                                            <label>Permission:</label>
+                                            <select value={userDetails.permission} onChange={(e)=>setUserDetails('permission',e.target.value)}>
+                                                <option>Admin</option>
+                                                <option>PIC</option>
+                                                <option selected={true}>Normal</option>
+                                            </select>
+                                        </div>
+                                        <div className="modal-input-ip">
+                                            <label>I.P Address:</label>
+                                            <input value={userDetails.ip_1} onChange={(e)=>setUserDetails('ip_1',e.target.value)} type="number" onKeyDown={(e)=>handleKeyDown(e)} />
+                                            <h1>.</h1>
+                                            <input value={userDetails.ip_2} onChange={(e)=>setUserDetails('ip_2',e.target.value)} type="number" onKeyDown={(e)=>handleKeyDown(e)} />
+                                            <h1>.</h1>
+                                            <input value={userDetails.ip_3} onChange={(e)=>setUserDetails('ip_3',e.target.value)} type="number" onKeyDown={(e)=>handleKeyDown(e)} />
+                                            <h1>.</h1>
+                                            <input value={userDetails.ip_4} onChange={(e)=>setUserDetails('ip_4',e.target.value)} type="number" onKeyDown={(e)=>handleKeyDown(e)} />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="container-row picture-container">
-                                {
-                                    modelDetails && modelDetails.chamfer_points ?
-                                    Array.from({ length: modelDetails.chamfer_points }).map((_, i) => (
-                                        <div className="upload-container-row">
-                                            <div    className="drop-zone"
-                                                    onDragOver={(e) => e.preventDefault()}
-                                                    onClick={() => fileInputRef.current[`point${i+1}`].click()}
-                                                    onDrop={(e) => handleDrop(e, i+1)}>
-                                                <div>
-                                                    <p style={{ fontWeight:'bold' , fontStyle:'italic' }}>Chamfering Point {i+1}</p>
-                                                    <input id={`file-${i}`} ref={(el) => fileInputRef.current[`point${i+1}`] = el} type="file" accept="image/*" className="upload-input" onChange={(e)=>handleUpload(e,i+1)} idNanme="fileInput" hidden />
-                                                </div>
-                                                <div className="upload-container">
-                                                    <div className="pictures-preview" style={{ width: "13rem" , height:"12rem"}}>
-                                                        {
-                                                            modelDetails[`chamfer_point${i+1}`] && <img src={modelDetails[`chamfer_point${i+1}`]} alt="preview" style={{ width: "13rem" , height:"12rem"}}/>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )): <div    className="drop-zone" style={{ display:'flex' , alignItems:'center' , justifyContent:'center' , width: "13rem" , height:"12rem" }}> No Photo needed</div>
-                                }
-                                </div>
-                                <button className="success-theme" style={{ alignSelf:'flex-end' }} disabled={processingModel}>Submit</button>
-                            </form>
-                        </div>
+                                <button className="success-theme" style={{ alignSelf:'flex-end', marginTop:'1rem',padding:"0.5rem" }} type="submit">Submit</button>
+                            </div>
+                        </form>
                     </div>
-                )
+                ):null
             }
             <div>
                 <div>
                     <h1>Admin - Machining Checklist</h1>
                 </div>
             </div>
-            {/*Admin Panel*/}
-            <div className="details-container-white-fit">
-                <div >
-                    <h1>Model Manager</h1>
-                </div>
-                <div >
-                    <p>User can Add, Update and Delete models.</p>
-                </div>
-                <div className="modal-row" style={{ margin:'1rem 0' }}>
-                    <p>Add Model</p>
-                    <button  className="add-btn" onClick={()=>setModal(true)}><AddBoxIcon/></button>
-                </div>
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Model</th>
-                            <th>Process</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            Object.entries(model).map(([key,value])=>{
-                                return(
-                                    <tr key={key}>
-                                        <td>{value.model??'?'}</td>
-                                        <td>
-                                            <button>Barelling</button>
-                                            <button>(T~L) Perpendicularity</button>
-                                            <button>Lapping (T)</button>
-                                            <button>Slicing (W)</button>
-                                        </td>
-                                        <td>
-                                            <button>Delete</button>
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                        }
-                    </tbody>
-                </table>
-                <div>
-                    {
-                        modelsList && modelsList.links.map((link,index)=>(
-                            <span key={index}>
+            <div className="container-row">
+                {/*Admin Panel*/}
+                <div className="details-container-white-fit" style={{  display: "flex",flexDirection: "column"}}>
+                    <div >
+                        <h1>Model Manager</h1>
+                    </div>
+                    <div >
+                        <p>Admin can Add, Update and Delete models.</p>
+                    </div>
+                    <div className="modal-between">
+                        <div className="modal-row" style={{ margin:'1rem 0' }}>
+                            <p>Add Model</p>
+                            <button  className="add-btn" onClick={()=>setModal('model')}>
+                                <AddBoxIcon/>
+                            </button>
+                        </div>
+                        <div className="modal-search">
+                            <input placeholder="Search model" value={searchQuery && searchQuery.model === 'model' ? searchQuery.value:null} onChange={(e)=>handleSearch(e.target.value,'search_model','model')}/>
+                        </div>
+                    </div>
+                    <div className="admin-container" >
+                        <table className="admin-table" >
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 {
-                                    link.url && index!== 0 && index !== modelsList.data.length -1  && (
-                                                    <Link
-                                                        href={link.url}
-                                                        className={link.active ? 'font-bold' : ''}>
-                                                        {index}
-                                                    </Link>
-                                                )
+                                   modelsList  && modelsList.data && Object.entries(modelsList.data).map(([key,value])=>{
+                                        return(
+                                            <tr key={key} className="model-td">
+                                                <td style={{ width:'15rem' }} >{value.model??'?'}</td>
+                                                <td style={{ width:'5rem' }}>
+                                                    <div className="button-container">
+                                                        <button className="udpate-button" onClick={()=>handleUpdateModel(key,'model')}>Update</button>
+                                                        <button type="submit" className="delete-button" onClick={(e)=>handleDelete(e,key,'model')}>Delete</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
                                 }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="page-container">
+                        {modelsList.links.map((link, index) => (
+                            <span key={index}>
+                            {link.url ? (
+                                <Link
+                                href={link.url}
+                                dangerouslySetInnerHTML={{ __html: link.label }}
+                                className={link.active ? 'page-button-active' : 'page-button'}
+                                />
+                            ) : (
+                                <span className='page-button'  dangerouslySetInnerHTML={{ __html: link.label }} />
+                            )}
                             </span>
-                        ))
-                    }
+                        ))}
+                    </div>
+                    <div className="container-center">
+                        <p style={{ fontSize:"11px" }}><i>Page {modelsList.current_page} of {modelsList.last_page}</i></p>
+                    </div>
+                </div>
+                {/*User*/}
+                <div className="details-container-white-fit">
+                    <div >
+                        <h1>User Manager</h1>
+                    </div>
+                    <div >
+                        <p>Admin can Add, Update and User Details.</p>
+                    </div>
+                    <div className="modal-between">
+                        <div className="modal-row" style={{ margin:'1rem 0' }}>
+                            <p>Add User</p>
+                            <button  className="add-btn" onClick={()=>setModal('user')}>
+                                <AddBoxIcon/>
+                            </button>
+                        </div>
+                        <div className="modal-search">
+                            <input placeholder="Search I.P or I.D" value={searchQuery && searchQuery.model === 'user' ? searchQuery.value:null} onChange={(e)=>handleSearch(e.target.value,'search_user','user')}/>
+                        </div>
+                    </div>
+                    <div className="admin-container" >
+                        <table className="admin-table" style={{  width:'fit-content' }}>
+                            <thead>
+                                <tr>
+                                    <th>I.P Address</th>
+                                    <th>Name</th>
+                                    <th>User Name</th>
+                                    <th style={{ width:'10rem' }}>Type</th>
+                                    <th>Area</th>
+                                    <th>Permission</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    userList && userList.data && Object.entries(userList.data).map(([key,value])=>{
+                                        const first = value.first_name ?? 'x'
+                                        const last = value.last_name ?? 'x'
+                                        const fullname = last +" , "+ first
+                                        return(
+                                            <tr className="model-td">
+                                                <td style={{ width:'10rem' }}>{value.ip_address}</td>
+                                                <td style={{ width:'15rem' }}>{fullname}</td>
+                                                <td style={{ width:'10rem' }}>{value.user_name}</td>
+                                                <td>{value.machine_type}</td>
+                                                <td>{value.area}</td>
+                                                <td>{value.permission}</td>
+                                                <td>
+                                                    <div className="button-container">
+                                                        <button className="udpate-button" onClick={()=>handleUpdateModel(key,'user')}>Update</button>
+                                                        <button className="delete-button" onClick={(e)=>handleDelete(e,key,'user')}>Delete</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+
+                                    })
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="page-container">
+                        {userList && userList.links.map((link, index) => (
+                            <span key={index}>
+                            {link.url ? (
+                                <Link
+                                href={link.url}
+                                dangerouslySetInnerHTML={{ __html: link.label }}
+                                className={link.active ? 'page-button-active' : 'page-button'}
+                                />
+                            ) : (
+                                <span className='page-button'  dangerouslySetInnerHTML={{ __html: link.label }} />
+                            )}
+                            </span>
+                        ))}
+                    </div>
                 </div>
             </div>
          </section>

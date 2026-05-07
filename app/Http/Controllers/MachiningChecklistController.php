@@ -8,7 +8,7 @@ use Exception;
 use Inertia\Inertia;
 use App\Models\Users;
 use App\Models\Datalist;
-use App\Models\models;
+use App\Models\ModelDetails;
 use App\Models\cghModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
@@ -21,18 +21,18 @@ class MachiningChecklistController  extends ProcessController
 {
     public $finalModel;
 
-    public function dataBaseBank($process)
+    public function dataBaseBank(string $process)
     {
         $bank = [
             'barelling' => Barelling::class,
-            'models' => models::class,
+            'models' => ModelDetails::class,
             'cghl' => cghModel::class
         ];
 
         return $bank[$process];
     }
 
-    public function otherJSON($process)
+    public function otherJSON(string $process)
     {
         $jsonData = [
             'barelling' => ['timer']
@@ -40,8 +40,37 @@ class MachiningChecklistController  extends ProcessController
         return $jsonData[$process];
     }
 
+    public function goTo(Request $request)
+    {
+        $lot = $request->input('lot_number') ?? null;
+        $process = $request->input('process') ?? null;
+        $id = $request->input('id') ?? null;
+        $model = $request->input('model') ?? null;
+        if (!$lot || !$process  || !$id) return redirect()->back()->with('error', 'Incomplete data! Please contact PIC.');
+
+        $dbUse = $this->dataBaseBank($process);
+        $processGet = new ProcessController;
+
+        $getData = $processGet->checkBatch1($id, $lot, $dbUse)->toArray();
+        if (!$getData) return redirect()->back()->with('error', 'Cannot find data!');
+
+        $getModelDetails = ModelDetails::where('model', $model)->first()->toArray();
+        if (!$getModelDetails) return redirect()->back()->with('error', 'Model not found please update!');
+
+        return redirect('/machining-checklist/measure')->with([
+            'success' => 'Successfully found data!',
+            'GoToProcess' => $process,
+            'model' => $getModelDetails,
+            'GoToModel' => $model,
+            'current_lot' => $getData
+        ]);
+
+        dd($getData, $request->all());
+    }
+
     public function store(Request $request)
     {
+
         //array for value exist checking
         $preparedItems = [];
         $ip = $request->ip();
@@ -75,12 +104,13 @@ class MachiningChecklistController  extends ProcessController
 
         // Saving data
         //First Save in datalsit
-
         $lotNumber = $processingDetails['processing']['lot_number'];
         $shift = $processingDetails['processing']['shift'];
         $process = $processingDetails['processing']['process'];
-        $preparedItems[$process] = $processingDetails['processing'];
-        $preparing = json_encode($preparedItems);
+        $modelProcessing = $processingDetails['model'];
+        $processListCurrent = [];
+        array_push($processListCurrent, $process);
+        $preparing = $processListCurrent;
         $checkIfexist  =  $isTableExist::where('lot_number', $lotNumber)->first();
 
         $insertProcessDetails = new ProcessController();
@@ -99,7 +129,8 @@ class MachiningChecklistController  extends ProcessController
                     'lot_number' => $lotNumber,
                     'shift' => $shift,
                     'preparing' => $preparing,
-                    'ip_address' => $ip
+                    'ip_address' => $ip,
+                    'model' => $modelProcessing
                 ]);
                 $data = $processingDetails['processing'];
                 $creatBatch = $insertProcessDetails->Batching($process, $isSaved->id, $isSaved->lot_number, $data);
@@ -115,7 +146,19 @@ class MachiningChecklistController  extends ProcessController
             }
         }
 
+
+        if ($checkIfexist->model !== $modelProcessing) return redirect()->back()->with('error', 'Model must be ' . $checkIfexist->model);
+
         if ($checkIfexist && $process) {
+
+            //update datalist process
+            if (!in_array($process, $checkIfexist["preparing"])) {
+                $processUpdatedList = [$process];
+                $currentProcessList = $checkIfexist["preparing"];
+                $combinedProcess =  array_merge($processUpdatedList,  $currentProcessList);
+                $addProcess = json_encode($combinedProcess);
+                $updateProcessList = Datalist::where('lot_number', $checkIfexist["lot_number"])->update(['preparing' => $addProcess]);
+            }
 
             $getAllBatch = $classBank[$process];
 
@@ -201,7 +244,7 @@ class MachiningChecklistController  extends ProcessController
 
     public function autosave(Request $request)
     {
-
+        return redirect()->back();
         $form = $request->input('processForm');
         $process =  $form['data']['process'] ?? null;
         $page =  $form['data']['page'] ?? null;
@@ -239,6 +282,7 @@ class MachiningChecklistController  extends ProcessController
             "measuring" => "measured",
             "approved" => "approved"
         ];
+
         $form = $request->input('processForm') ?? null;
         $details = $form['details'];
         $data = $form['data'];
@@ -382,11 +426,8 @@ class MachiningChecklistController  extends ProcessController
         dd($request->all(), $bank, $isGetDetails->toArray());
     }
 
-    /**
-     *
-     * save partial data (perpendicularity histogram)
-     *
-     * **/
+    //save partial data (perpendicularity histogram)
+
     public function updateData(Request $request)
     {
 
@@ -429,14 +470,14 @@ class MachiningChecklistController  extends ProcessController
         $batch_number = $details["batch_number"];
         $id = $details["datalist_id"];
         $result = $updateData->updateQuery($dbuse, $points, $batch_number, $id);
-        if ($result) return redirect()->back()->with('success', '[Part Updating]Pic updated successfully!');
+        if ($result) return redirect()->back()->with('success', 'Updated successfully!');
 
         return redirect()->back()->with('error', '[Part Updating]Error 404!');
     }
     ///oldd stufffffffffffffffff
     public function loadModels()
     {
-        $models = models::all('*');
+        $models = ModelDetails::all('*');
         $modified = [];
 
         foreach ($models as  $key => $values) {

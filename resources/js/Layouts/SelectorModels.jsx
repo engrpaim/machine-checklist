@@ -18,7 +18,7 @@ export default function SelectorModels({ model, setProcessState, setModelState, 
                 <div className="inside-combined">
                     <div className="inside-spacebetween">
                         <label>Model:&nbsp;</label>
-                        <select onChange={(e) => setModelState(e.target.value)}>
+                        <select value={modelState} onChange={(e) => setModelState(e.target.value)}>
                             <option></option>
                             {
                                 model && Object.entries(modelsParse).map(([key, value]) => {
@@ -30,7 +30,7 @@ export default function SelectorModels({ model, setProcessState, setModelState, 
                     <hr className="inside-hr" />
                     <div className="inside-spacebetween">
                         <label>Process:&nbsp;</label>
-                        <select disabled={!modelState} onChange={(e) => setProcessState({ process: e.target.value, value: processValues[e.target.value] })}>
+                        <select disabled={!modelState} value={processState && processState.process ?processState.process:null} onChange={(e) => setProcessState({ process: e.target.value, value: processValues[e.target.value] })}>
                             <option></option>
                             <option value="barelling" >IN-PROCESS INSPECTION SHEET</option>
                             <option value="cghl">CGH (L) DIMENSION MONITORING</option>

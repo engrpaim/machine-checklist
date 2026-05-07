@@ -27,12 +27,18 @@ export default function BarellingDetails({ handleKeyDown, barellingDetails, setB
                         <div className="details-data">
                             <label>Total Batch/Lot:</label>
                             <input type="number" onChange={(e) =>
-                                setBarellingDetails('total_batch_number', e.target.value)
-                            } value={barellingDetails.total_batch_number} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
+                                setBarellingDetails('total_qty_lot', e.target.value)
+                            } value={barellingDetails.total_qty_lot} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
                         <div className="details-data">
-                            <label>Total Qty/Lot:</label>
-                            <input type="number" onChange={(e) => setBarellingDetails('total_qty_lot', e.target.value)} value={barellingDetails.total_qty_lot} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
+                            <label>Total Qty/Batch:</label>
+                            <input type="number"
+                             onChange={(e) => setBarellingDetails('total_qty_batch', e.target.value)}
+                             value={barellingDetails.total_qty_batch} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
+                        </div>
+                          <div className="details-data">
+                            <label>Total Wt/Batch:</label>
+                            <input type="number" onChange={(e) => setBarellingDetails('total_wt_batch', e.target.value)} value={barellingDetails.total_wt_batch} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
                     </div>
                     <div className="details-part">
@@ -56,12 +62,12 @@ export default function BarellingDetails({ handleKeyDown, barellingDetails, setB
                                 }}
                                 value={barellingDetails.coolant_level} disabled={currentStatus && !(edit)} />
                         </div>
-                    </div>
-                    <div className="details-part">
                         <div className="details-data">
                             <label>Styrene Powder:</label>
                             <input onChange={(e) => setBarellingDetails('styrene_powder', e.target.value)} value={barellingDetails.styrene_powder} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
+                    </div>
+                    <div className="details-part">
                         <div className="details-data">
                             <label>GC Powder:</label>
                             <input onChange={(e) => setBarellingDetails('gc_powder', e.target.value)} value={barellingDetails.gc_powder} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
@@ -70,11 +76,35 @@ export default function BarellingDetails({ handleKeyDown, barellingDetails, setB
                             <label>Magnet wt/pc.:</label>
                             <input onChange={(e) => setBarellingDetails('magnet_wt_pc_', e.target.value)} value={barellingDetails.magnet_wt_pc_} onKeyDown={(e) => handleKeyDown(e)} disabled={(currentStatus || barellProcessing) && !(edit)} />
                         </div>
+                        <div className="details-data">
+                            <label>Chamfertype:</label>
+                            <input disabled={true} value={chamfertype ?chamfertype:barellingDetails.chamfertype?barellingDetails.chamfertype :null} />
+                        </div>
+                        <div className="details-data">
+                            <label>Chamfer jig serial #:</label>
+                            <input
+                                    onChange={(e) => setBarellingDetails('chamfer_jig_serial', e.target.value)} value={barellingDetails.chamfer_jig_serial}
+                                    onKeyDown={(e) => handleKeyDown(e)}
+                                    disabled={(currentStatus || barellProcessing) && !(edit)}
+                            />
+                        </div>
                     </div>
                     <div className="details-part">
                         <div className="details-data">
-                            <label>Chamfertype:</label>
-                            <input disabled={true} value={chamfertype ?? null} />
+                            <label>Contracer serial #:</label>
+                           <input
+                                    onChange={(e) => setBarellingDetails('contracer_serial', e.target.value)} value={barellingDetails.contracer_serial}
+                                    onKeyDown={(e) => handleKeyDown(e)}
+                                    disabled={(currentStatus || barellProcessing) && !(edit)}
+                            />
+                        </div>
+                        <div className="details-data">
+                            <label>Micrometer serial #:</label>
+                            <input
+                                    onChange={(e) => setBarellingDetails('micrometer_serial', e.target.value)} value={barellingDetails.micrometer_serial}
+                                    onKeyDown={(e) => handleKeyDown(e)}
+                                    disabled={(currentStatus || barellProcessing) && !(edit)}
+                            />
                         </div>
                     </div>
                 </div>

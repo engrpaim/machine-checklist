@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('logs', function (Blueprint $table) {
-            $table->id();
-            $table->string('page')->required();
-            $table->json('data')->required();
-            $table->string('ip_address')->required();
-            $table->string('area')->required();
-            $table->string('user_id')->required();
+        Schema::create('selector_bank', function (Blueprint $table) {
+            $table->id('id');
+            $table->string('select_name')->unique('select_name');
+            $table->string('select_value');
+            $table->enum('select_category', ['AREA', 'CHAMFER'])->require();
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('logs');
+        Schema::dropIfExists('selector_bank');
     }
 };

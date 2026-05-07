@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class models extends Model
+class ModelDetails extends Model
 {
+    use HasFactory;
     protected $table = "models";
     protected $fillable = [
         'model',
@@ -36,5 +38,18 @@ class models extends Model
         'flatness_lapping',
         'height_lapping',
         'parallelism_lapping',
+        'chamfer_points',
+
+        'chamfer_barelling_target2',
+        'chamfer_barelling_min2',
+        'chamfer_barelling_max2',
+
+        'perpendicularity',
+        'chamfer_point1_data',
+        'chamfer_point2_data',
+        'slicing_points',
+        'lapping_points',
+        'cghl_points',
+
     ];
 }

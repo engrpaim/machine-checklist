@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn() => $request->session()->get('success'),
                 'error' => fn() => $request->session()->get('error'),
                 'check' => fn() => $request->session()->get('check'),
+
             ],
             'modal' => fn() => $request->session()->get('modal'),
             'current_lot' => fn() => $request->session()->get('current_lot'),
@@ -48,6 +49,10 @@ class HandleInertiaRequests extends Middleware
             'model' => fn() => $request->session()->get('model'),
             'copy_batch' => fn() => $request->session()->get('copy_batch'),
             'pagination' => fn() => $request->Session()->get('pagination'),
+            'currentUpdate' => fn() => $request->session()->get('currentUpdate'),
+            'allLot' => fn() => $request->session()->get('allLot'),
+            'GoToProcess' => fn() => $request->session()->get('GoToProcess'),
+            'GoToModel' => fn() => $request->session()->get('GoToModel')
         ]);
     }
 }

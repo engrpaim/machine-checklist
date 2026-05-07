@@ -168,6 +168,7 @@ export default function Home({ message }) {
         pt5_4:0,
         pt5_5:0,
     });
+
     const exclude = ['model','date','process']
     const dataClear = ['data','points_pt','timerData','barrellingProcss'];
     const formState = { data,points_pt,timerData,barrellingProcss};
@@ -221,7 +222,6 @@ export default function Home({ message }) {
             },
             {
                 preserveScroll:true,
-
 
             });
         }, 2000); // 2 seconds

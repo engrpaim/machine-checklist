@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('models', function (Blueprint $table) {
-            $table->decimal('chamfer_barelling_target2')->nullable();
-            $table->decimal('chamfer_barelling_min2')->nullable();
-            $table->decimal('chamfer_barelling_max2')->nullable();
+        Schema::table('area_user', function (Blueprint $table) {
+            $table->string('id_number')->unique('id_number')->nullable();
+            $table->index(['id_number']);
         });
     }
 
@@ -23,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('models', function (Blueprint $table) {
-            //
-        });
+        //
     }
 };

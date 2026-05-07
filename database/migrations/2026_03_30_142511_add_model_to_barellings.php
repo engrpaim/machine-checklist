@@ -12,6 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('barellings', function (Blueprint $table) {
+            $table->string('contracer_serial')->nullable();
+            $table->string('chamfer_jig_serial')->nullable();
+            $table->string('total_qty_batch')->nullable();
+            $table->string('micrometer_serial')->nullable();
+            $table->string('total_wt_batch')->nullable();
             $table->string('model')->nullable();
         });
     }

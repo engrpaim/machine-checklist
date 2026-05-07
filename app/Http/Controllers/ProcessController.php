@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Barelling;
 use App\Models\cghModel;
-use App\Models\models;
+use App\Models\ModelDetails;
 use Mockery\Expectation;
 
 class ProcessController extends Controller
 {
-    public function  checkIfExist($id, $lot_number, $dbUse)
+    public function  checkIfExist(string $id, string $lot_number, string $dbUse)
     {
         //return latest data
         try {
@@ -25,7 +25,7 @@ class ProcessController extends Controller
             return false;
         }
     }
-    public function  checkBatch1($id, $lot_number, $dbUse)
+    public function  checkBatch1(string $id, string $lot_number, string $dbUse)
     {
         //return latest data
         try {
@@ -39,7 +39,7 @@ class ProcessController extends Controller
         }
     }
 
-    public function getModel($db, $model)
+    public function getModel(string $db, string $model)
     {
         try {
             $checkIfExist = $db::where('model', $model)->first();

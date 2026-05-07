@@ -14,7 +14,8 @@ class Datalist extends Model
         'created_at',
         'updated_at',
         'ip_address',
-        'preparing'
+        'preparing',
+        'model'
     ];
     protected $casts = [
         'preparing' => 'array',
