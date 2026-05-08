@@ -57,7 +57,7 @@ export default function AllProcess({data}){
                         <thead>
                             <tr>
                                 <th style={{ width:'15rem' }}>Model</th>
-                                <th>Lot Number</th>
+                                <th style={{ width:'10rem' }}>Lot Number</th>
                                 <th>Shift</th>
                                 <th  style={{ width:'16rem' }}>Process </th>
                                 <th>Action</th>
