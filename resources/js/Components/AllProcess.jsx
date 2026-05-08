@@ -56,7 +56,7 @@ export default function AllProcess({data}){
                     <table className="dashboard-table">
                         <thead>
                             <tr>
-                                <th>Model</th>
+                                <th style={{ width:'16rem' }}>Model</th>
                                 <th>Lot Number</th>
                                 <th>Shift</th>
                                 <th>Process </th>
@@ -68,7 +68,7 @@ export default function AllProcess({data}){
                                 data && data.data &&  Object.entries(data.data).map(([key,value])=>{
                                         return(
                                             <tr key={key} style={{ background: key % 2 === 0 ? '#E8F4FC':'#BFE1F8' }}>
-                                                <td style={{ textAlign:'start' }}>{value.model}</td>
+                                                <td style={{ textAlign:'start'  }}>{value.model}</td>
                                                 <td>{value.lot_number}</td>
                                                 <td>{value.shift}</td>
                                                 <td >
