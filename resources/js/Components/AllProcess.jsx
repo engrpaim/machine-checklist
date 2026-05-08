@@ -51,7 +51,7 @@ export default function AllProcess({data}){
                 <h1>All Records</h1>
                 <p>This record is sorted from newest to oldest</p>
             </div>
-            <div style={{ height: '35rem' }}>
+            <div style={{ height: '30rem' }}>
                 <div className="container-center"  >
                     <table className="dashboard-table">
                         <thead>
