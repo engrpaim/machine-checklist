@@ -56,10 +56,10 @@ export default function AllProcess({data}){
                     <table className="dashboard-table">
                         <thead>
                             <tr>
-                                <th style={{ width:'16rem' }}>Model</th>
+                                <th style={{ width:'15rem' }}>Model</th>
                                 <th>Lot Number</th>
                                 <th>Shift</th>
-                                <th>Process </th>
+                                <th  style={{ width:'16rem' }}>Process </th>
                                 <th>Action</th>
                             </tr>
                         </thead>
