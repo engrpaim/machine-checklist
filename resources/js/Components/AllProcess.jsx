@@ -31,6 +31,17 @@ export default function AllProcess({data}){
 
     }
 
+    const handleDelete =(id,page)=>{
+        console.log('Lot number: ', id,page);
+        router.post('/machining-checklist/home/delete',
+                {
+                    id:id,
+                    page:page
+                },
+                {
+                    preserveScroll:true
+                })
+    }
     return(
         <div className="dashboard-container">
             {
@@ -49,6 +60,7 @@ export default function AllProcess({data}){
                                 <th>Lot Number</th>
                                 <th>Shift</th>
                                 <th>Process </th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,6 +75,14 @@ export default function AllProcess({data}){
                                                     {
                                                         value.preparing && Object.values(value.preparing).map((items)=>(<button className="process-btn" onClick={()=>handleGoToData(value.lot_number,items,value.id,value.model)}>{items}</button>))
                                                     }
+                                                </td>
+                                                 <td >
+                                                    <div className="button-container">
+                                                        {
+                                                            value.preparing && Object.values(value.preparing).map((items)=>(<button className="delete-button" onClick={()=>handleDelete(value.id,items)}>delete&nbsp;{items}</button>))
+                                                        }
+                                                        <button className="delete-button" onClick={()=>handleDelete(value.id,'datalist')}>Delete All</button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         )

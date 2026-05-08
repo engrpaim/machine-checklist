@@ -3,7 +3,7 @@ import MainLayout from "../Layouts/MainLayout"
 import AllProcess from "../Components/AllProcess"
 export default function Dashboard(){
     const {flash , allLot } = usePage().props
-    console.log(allLot);
+    console.log(allLot,flash);
     return(
           <section>
             <div>

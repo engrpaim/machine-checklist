@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DashBoardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MachiningChecklistController;
 use Inertia\Inertia;
@@ -119,3 +120,8 @@ Route::post('/machining-checklist/home/goto', [MachiningChecklistController::cla
 //Admin
 Route::post('/machining-checklist/admin/models', [AdminController::class, 'create']);
 Route::post('/machining-checklist/admin/user', [AdminController::class, 'createUser']);
+
+
+//dashboard
+
+Route::post('/machining-checklist/home/delete', [DashBoardController::class, 'delete']);
