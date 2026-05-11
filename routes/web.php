@@ -61,9 +61,15 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return redirect('/machining-checklist/home');
 });
-Route::get('/machining-checklist/home', function () {
-
+Route::get('/machining-checklist/home', function (Request $request) {
+     $clientIp = $request->ip();
+    $isExistUser = false;
+    
+    if($clientIp){
+         $isExistUser = UserArea::where('ip_address',$clientIp)->where('permission','Admin')->first();
+    }
     return Inertia::render('Dashboard', [
+        'ip_client' => $isExistUser ? $isExistUser->toArray():null,
         'allLot' => $allLotNumber = Datalist::orderBy('id', 'desc')->paginate(10, ['*'], 'page'),
     ]);
 });
@@ -72,7 +78,7 @@ Route::get('/machining-checklist/settings', function () {
     return Inertia::render('Settings');
 });
 
-Route::get('/machining-checklist/measure', function () {
+Route::get('/machining-checklist/measure', function (Request $request) {
 
     $models = ModelDetails::orderBy('id')->get();
     $modified = [];
@@ -81,10 +87,17 @@ Route::get('/machining-checklist/measure', function () {
         $data = $values->toArray();
         $modified[$data["model"]] =    $data;
     }
-
+    
     $finalModel = json_encode($modified);
 
+    $clientIp = $request->ip();
+    $isExistUser = false;
+
+    if($clientIp){
+         $isExistUser = UserArea::where('ip_address',$clientIp)->where('permission','Admin')->first();
+    }
     return Inertia::render('Measure', [
+        'ip_client' => $isExistUser ? $isExistUser->toArray():null,
         'message' => 'Hello from Laravel!',
         'modelsList' =>  $finalModel
     ]);
@@ -94,16 +107,25 @@ Route::get('/machining-checklist/admin', function (Request $request) {
     $modelSearch = $request->get('search_model');
     $ipSearch = $request->get('search_user');
 
+    $clientIp = $request->ip();
     $checkModel = $modelSearch ? ModelDetails::where('model', 'like', "%{$modelSearch}%")->orderBy('id', 'desc')->paginate(10, ['*'], 'models') : null;
     $checkIp =  $ipSearch ? UserArea::where('ip_address', 'like', "%{$ipSearch}%")->orWhere('user_name', 'like', "%{$ipSearch}%")->orderBy('id', 'desc')->paginate(10, ['*'], 'user') : null;
 
+    
     $modelList = $checkModel &&  count($checkModel->toArray()["data"]) > 0 ? $checkModel : ModelDetails::orderBy('id', 'desc')->paginate(10, ['*'], 'models');
     $userList = $checkIp &&  count($checkIp->toArray()["data"]) > 0 ? $checkIp : UserArea::orderBy('id', 'desc')->paginate(10, ['*'], 'user');
+    $isExistUser = false;
 
+    if($clientIp){
+         $isExistUser = UserArea::where('ip_address',$clientIp)->where('permission','Admin')->first();
+    }
+    
     return Inertia::render('Admin', [
+        'ip_client' => $isExistUser ? $isExistUser->toArray():null,
         'modelsList' => $modelList,
         'userList' => $userList
     ]);
+
 })->name('admin.models');
 
 //Machining

@@ -185,12 +185,18 @@ class AdminController extends Controller
         $page = $request->input('page');
         $crud =  $request->input('crud');
         $id =  $request->input('id') ?? null;
+      
+        $ip_1 =  $request->input('ip_1') !== null ? intval($request->input('ip_1')):null;
+        $ip_2 =  $request->input('ip_2') !== null ? intval($request->input('ip_2')):null;
+        $ip_3 =  $request->input('ip_3') !== null? intval($request->input('ip_3')):null;
+        $ip_4 =  $request->input('ip_4') !== null? intval($request->input('ip_4')):null;
 
-        if (!$request->input('ip_1') || !$request->input('ip_2') ||  !$request->input('ip_3') || !$request->input('ip_4')) return redirect()->back()->with('error', 'I.P Address not completed!');
-        $ipAddress =  $request->input('ip_1') . "." . $request->input('ip_2') . "." . $request->input('ip_3') . "." . $request->input('ip_4');
+   
+        if (  $ip_1 === null  || $ip_2 === null || $ip_3 === null || $ip_4 === null) return redirect()->back()->with('error', 'I.P Address not completed!');
+        $ipAddress =  $ip_1 . "." . $ip_2  . "." .$ip_3. "." . $ip_4;
 
         $userName = $first && $idNumber ? strtoupper(preg_replace('/[^A-Za-z0-9]/', '_', $first)) . "(" . $idNumber . ")" : null;
-
+        
         $data = [
             'ip_address' => $ipAddress,
             'first_name' => $first ?? null,
@@ -217,13 +223,13 @@ class AdminController extends Controller
 
 
         if (!$validator) return redirect()->back()->with('error', 'User validation failed!');
-
+           
         switch ($crud) {
             case 'save':
                 if ($id) {
                     $update = $this->updateAdmin($data, $id, $page);
                     if ($update) return redirect()->back()->with('success', 'Update successfully!');
-                    return redirect()->back()->with('error', 'Updated unsuccessful!');
+                    return redirect()->back()->with('error', 'Update unsuccessful!');
                 }
                 $createNewUser = $this->save($data, $page);
                 if ($createNewUser) return redirect()->back()->with('success',  $ipAddress . ' successfully added!');

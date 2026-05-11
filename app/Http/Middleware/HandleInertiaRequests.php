@@ -52,7 +52,8 @@ class HandleInertiaRequests extends Middleware
             'currentUpdate' => fn() => $request->session()->get('currentUpdate'),
             'allLot' => fn() => $request->session()->get('allLot'),
             'GoToProcess' => fn() => $request->session()->get('GoToProcess'),
-            'GoToModel' => fn() => $request->session()->get('GoToModel')
+            'GoToModel' => fn() => $request->session()->get('GoToModel'),
+            'ip_client' => fn() => $request->session()->get('ip_client')
         ]);
     }
 }

@@ -6,9 +6,10 @@ import Loading from "../Components/Loading"
 import {handleKeyDown} from "../utils/UtilityFunctions"
 import AdminUser from "../Layouts/AdminUser";
 import Notification from "../Layouts/Notification"
+import NotAdmin from "../Components/NotAdmin";
 export default function Admin(){
 
-    const {modelsList,flash,currentUpdate,userList} = usePage().props
+    const {modelsList,flash,currentUpdate,userList,ip_client} = usePage().props
     // const [model ,setModel] = useState(modelsList.data?modelsList.data:null)
 
     useEffect(()=>{
@@ -24,17 +25,18 @@ export default function Admin(){
             setNotification({})
         },3000)
     },[flash]);
-
+    
 
     const [modal, setModal] = useState(false);
     const [laodingEffects, setLoadingEffects] = useState(false);
     const [preview,setPreview] = useState(false);
     const [notification , setNotification] = useState({});
     const [searchQuery ,setSearchQuery] = useState({});
+    const [clientIp ,setClientIp] = useState(ip_client);
     const fileInputRef = useRef({});
     const timerRef = useRef(null);
     console.log('-------------------------Notficcation: ' ,notification);
-    console.log('Model: ',modelsList,'Admin model: ',flash ,' Saved model: ' , currentUpdate,' User Details: ',userList);
+    console.log('Model: ',modelsList,'Admin model: ',flash ,' Saved model: ' , currentUpdate,' User Details: ',userList ,'Client: ',ip_client);
 
     //Model Form
     const { data:modelDetails , setData:setModeltails, post:postModel, processing:processingModel, errors:errorModel , reset:resetModelDetails} = useForm({
@@ -351,13 +353,13 @@ export default function Admin(){
                                         </div>
                                         <div className="modal-input-ip">
                                             <label>I.P Address:</label>
-                                            <input value={userDetails.ip_1} onChange={(e)=>setUserDetails('ip_1',e.target.value)} type="number" onKeyDown={(e)=>handleKeyDown(e)} />
+                                            <input value={userDetails.ip_1} onChange={(e)=>setUserDetails('ip_1',e.target.value)} type="number" min="0" onKeyDown={(e)=>handleKeyDown(e)} />
                                             <h1>.</h1>
-                                            <input value={userDetails.ip_2} onChange={(e)=>setUserDetails('ip_2',e.target.value)} type="number" onKeyDown={(e)=>handleKeyDown(e)} />
+                                            <input value={userDetails.ip_2} onChange={(e)=>setUserDetails('ip_2',e.target.value)} type="number" min="0" onKeyDown={(e)=>handleKeyDown(e)} />
                                             <h1>.</h1>
-                                            <input value={userDetails.ip_3} onChange={(e)=>setUserDetails('ip_3',e.target.value)} type="number" onKeyDown={(e)=>handleKeyDown(e)} />
+                                            <input value={userDetails.ip_3} onChange={(e)=>setUserDetails('ip_3',e.target.value)} type="number" min="0" onKeyDown={(e)=>handleKeyDown(e)} />
                                             <h1>.</h1>
-                                            <input value={userDetails.ip_4} onChange={(e)=>setUserDetails('ip_4',e.target.value)} type="number" onKeyDown={(e)=>handleKeyDown(e)} />
+                                            <input value={userDetails.ip_4} onChange={(e)=>setUserDetails('ip_4',e.target.value)} type="number" min="0" onKeyDown={(e)=>handleKeyDown(e)} />
                                         </div>
                                     </div>
                                 </div>
@@ -372,149 +374,154 @@ export default function Admin(){
                     <h1>Admin - Machining Checklist</h1>
                 </div>
             </div>
-            <div className="container-row">
-                {/*Admin Panel*/}
-                <div className="details-container-white-fit" style={{  display: "flex",flexDirection: "column"}}>
-                    <div >
-                        <h1>Model Manager</h1>
-                    </div>
-                    <div >
-                        <p>Admin can Add, Update and Delete models.</p>
-                    </div>
-                    <div className="modal-between">
-                        <div className="modal-row" style={{ margin:'1rem 0' }}>
-                            <p>Add Model</p>
-                            <button  className="add-btn" onClick={()=>setModal('model')}>
-                                <AddBoxIcon/>
-                            </button>
+            {
+                clientIp ?
+                <>
+                    <div className="container-row">
+                    {/*Admin Panel*/}
+                    <div className="details-container-white-fit" style={{  display: "flex",flexDirection: "column"}}>
+                        <div >
+                            <h1>Model Manager</h1>
                         </div>
-                        <div className="modal-search">
-                            <input placeholder="Search model" value={searchQuery && searchQuery.model === 'model' ? searchQuery.value:null} onChange={(e)=>handleSearch(e.target.value,'search_model','model')}/>
+                        <div >
+                            <p>Admin can Add, Update and Delete models.</p>
                         </div>
-                    </div>
-                    <div className="admin-container" >
-                        <table className="admin-table" >
-                            <thead>
-                                <tr>
-                                    <th>Model</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                   modelsList  && modelsList.data && Object.entries(modelsList.data).map(([key,value])=>{
-                                        return(
-                                            <tr key={key} className="model-td">
-                                                <td style={{ width:'15rem' }} >{value.model??'?'}</td>
-                                                <td style={{ width:'5rem' }}>
-                                                    <div className="button-container">
-                                                        <button className="udpate-button" onClick={()=>handleUpdateModel(key,'model')}>Update</button>
-                                                        <button type="submit" className="delete-button" onClick={(e)=>handleDelete(e,key,'model')}>Delete</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="page-container">
-                        {modelsList.links.map((link, index) => (
-                            <span key={index}>
-                            {link.url ? (
-                                <Link
-                                href={link.url}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                className={link.active ? 'page-button-active' : 'page-button'}
-                                />
-                            ) : (
-                                <span className='page-button'  dangerouslySetInnerHTML={{ __html: link.label }} />
-                            )}
-                            </span>
-                        ))}
-                    </div>
-                    <div className="container-center">
-                        <p style={{ fontSize:"11px" }}><i>Page {modelsList.current_page} of {modelsList.last_page}</i></p>
-                    </div>
-                </div>
-                {/*User*/}
-                <div className="details-container-white-fit">
-                    <div >
-                        <h1>User Manager</h1>
-                    </div>
-                    <div >
-                        <p>Admin can Add, Update and User Details.</p>
-                    </div>
-                    <div className="modal-between">
-                        <div className="modal-row" style={{ margin:'1rem 0' }}>
-                            <p>Add User</p>
-                            <button  className="add-btn" onClick={()=>setModal('user')}>
-                                <AddBoxIcon/>
-                            </button>
+                        <div className="modal-between">
+                            <div className="modal-row" style={{ margin:'1rem 0' }}>
+                                <p>Add Model</p>
+                                <button  className="add-btn" onClick={()=>setModal('model')}>
+                                    <AddBoxIcon/>
+                                </button>
+                            </div>
+                            <div className="modal-search">
+                                <input placeholder="Search model" value={searchQuery && searchQuery.model === 'model' ? searchQuery.value:null} onChange={(e)=>handleSearch(e.target.value,'search_model','model')}/>
+                            </div>
                         </div>
-                        <div className="modal-search">
-                            <input placeholder="Search I.P or I.D" value={searchQuery && searchQuery.model === 'user' ? searchQuery.value:null} onChange={(e)=>handleSearch(e.target.value,'search_user','user')}/>
+                        <div className="admin-container" >
+                            <table className="admin-table" >
+                                <thead>
+                                    <tr>
+                                        <th>Model</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                    modelsList  && modelsList.data && Object.entries(modelsList.data).map(([key,value])=>{
+                                            return(
+                                                <tr key={key} className="model-td">
+                                                    <td style={{ width:'15rem' }} >{value.model??'?'}</td>
+                                                    <td style={{ width:'5rem' }}>
+                                                        <div className="button-container">
+                                                            <button className="udpate-button" onClick={()=>handleUpdateModel(key,'model')}>Update</button>
+                                                            <button type="submit" className="delete-button" onClick={(e)=>handleDelete(e,key,'model')}>Delete</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="page-container">
+                            {modelsList.links.map((link, index) => (
+                                <span key={index}>
+                                {link.url ? (
+                                    <Link
+                                    href={link.url}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    className={link.active ? 'page-button-active' : 'page-button'}
+                                    />
+                                ) : (
+                                    <span className='page-button'  dangerouslySetInnerHTML={{ __html: link.label }} />
+                                )}
+                                </span>
+                            ))}
+                        </div>
+                        <div className="container-center">
+                            <p style={{ fontSize:"11px" }}><i>Page {modelsList.current_page} of {modelsList.last_page}</i></p>
                         </div>
                     </div>
-                    <div className="admin-container" >
-                        <table className="admin-table" style={{  width:'fit-content' }}>
-                            <thead>
-                                <tr>
-                                    <th>I.P Address</th>
-                                    <th>Name</th>
-                                    <th>User Name</th>
-                                    <th style={{ width:'10rem' }}>Type</th>
-                                    <th>Area</th>
-                                    <th>Permission</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    userList && userList.data && Object.entries(userList.data).map(([key,value])=>{
-                                        const first = value.first_name ?? 'x'
-                                        const last = value.last_name ?? 'x'
-                                        const fullname = last +" , "+ first
-                                        return(
-                                            <tr className="model-td">
-                                                <td style={{ width:'10rem' }}>{value.ip_address}</td>
-                                                <td style={{ width:'15rem' }}>{fullname}</td>
-                                                <td style={{ width:'10rem' }}>{value.user_name}</td>
-                                                <td>{value.machine_type}</td>
-                                                <td>{value.area}</td>
-                                                <td>{value.permission}</td>
-                                                <td>
-                                                    <div className="button-container">
-                                                        <button className="udpate-button" onClick={()=>handleUpdateModel(key,'user')}>Update</button>
-                                                        <button className="delete-button" onClick={(e)=>handleDelete(e,key,'user')}>Delete</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )
+                    {/*User*/}
+                    <div className="details-container-white-fit">
+                        <div >
+                            <h1>User Manager</h1>
+                        </div>
+                        <div >
+                            <p>Admin can Add, Update and User Details.</p>
+                        </div>
+                        <div className="modal-between">
+                            <div className="modal-row" style={{ margin:'1rem 0' }}>
+                                <p>Add User</p>
+                                <button  className="add-btn" onClick={()=>setModal('user')}>
+                                    <AddBoxIcon/>
+                                </button>
+                            </div>
+                            <div className="modal-search">
+                                <input placeholder="Search I.P or I.D" value={searchQuery && searchQuery.model === 'user' ? searchQuery.value:null} onChange={(e)=>handleSearch(e.target.value,'search_user','user')}/>
+                            </div>
+                        </div>
+                        <div className="admin-container" >
+                            <table className="admin-table" style={{  width:'fit-content' }}>
+                                <thead>
+                                    <tr>
+                                        <th>I.P Address</th>
+                                        <th>Name</th>
+                                        <th>User Name</th>
+                                        <th style={{ width:'10rem' }}>Type</th>
+                                        <th>Area</th>
+                                        <th>Permission</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        userList && userList.data && Object.entries(userList.data).map(([key,value])=>{
+                                            const first = value.first_name ?? 'x'
+                                            const last = value.last_name ?? 'x'
+                                            const fullname = last +" , "+ first
+                                            return(
+                                                <tr className="model-td">
+                                                    <td style={{ width:'10rem' }}>{value.ip_address}</td>
+                                                    <td style={{ width:'15rem' }}>{fullname}</td>
+                                                    <td style={{ width:'10rem' }}>{value.user_name}</td>
+                                                    <td>{value.machine_type}</td>
+                                                    <td>{value.area}</td>
+                                                    <td>{value.permission}</td>
+                                                    <td>
+                                                        <div className="button-container">
+                                                            <button className="udpate-button" onClick={()=>handleUpdateModel(key,'user')}>Update</button>
+                                                            <button className="delete-button" onClick={(e)=>handleDelete(e,key,'user')}>Delete</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )
 
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="page-container">
-                        {userList && userList.links.map((link, index) => (
-                            <span key={index}>
-                            {link.url ? (
-                                <Link
-                                href={link.url}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                className={link.active ? 'page-button-active' : 'page-button'}
-                                />
-                            ) : (
-                                <span className='page-button'  dangerouslySetInnerHTML={{ __html: link.label }} />
-                            )}
-                            </span>
-                        ))}
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="page-container">
+                            {userList && userList.links.map((link, index) => (
+                                <span key={index}>
+                                {link.url ? (
+                                    <Link
+                                    href={link.url}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    className={link.active ? 'page-button-active' : 'page-button'}
+                                    />
+                                ) : (
+                                    <span className='page-button'  dangerouslySetInnerHTML={{ __html: link.label }} />
+                                )}
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </>:<NotAdmin details={clientIp}/>
+            }
          </section>
 
 

@@ -1,7 +1,7 @@
 import { Link, router } from "@inertiajs/react"
 import { useState } from "react"
 import Loading from "./Loading"
-export default function AllProcess({data}){
+export default function AllProcess({data , clientIp}){
     console.log('All process: ',data)
     const [loading,setLoading] = useState(false);
     const handleGoToData=async(lot,process, id,model)=>{
@@ -51,8 +51,8 @@ export default function AllProcess({data}){
                 <h1>All Records</h1>
                 <p>This record is sorted from newest to oldest</p>
             </div>
-            <div style={{ height: '30rem' }}>
-                <div className="container-center"  >
+            <div >
+                <div className="dashboard-table-container"  >
                     <table className="dashboard-table">
                         <thead>
                             <tr>
@@ -60,7 +60,9 @@ export default function AllProcess({data}){
                                 <th style={{ width:'10rem' }}>Lot Number</th>
                                 <th>Shift</th>
                                 <th  style={{ width:'16rem' }}>Process </th>
-                                <th>Action</th>
+                                {
+                                    clientIp &&<th>Action</th>
+                                }
                             </tr>
                         </thead>
                         <tbody>
@@ -76,14 +78,18 @@ export default function AllProcess({data}){
                                                         value.preparing && Object.values(value.preparing).map((items)=>(<button className="process-btn" onClick={()=>handleGoToData(value.lot_number,items,value.id,value.model)}>{items}</button>))
                                                     }
                                                 </td>
-                                                 <td >
-                                                    <div className="button-container">
-                                                        {
-                                                            value.preparing && Object.values(value.preparing).map((items)=>(<button className="delete-button" onClick={()=>handleDelete(value.id,items)}>delete&nbsp;{items}</button>))
-                                                        }
-                                                        <button className="delete-button" onClick={()=>handleDelete(value.id,'datalist')}>Delete All</button>
-                                                    </div>
-                                                </td>
+                                                {
+                                                    clientIp &&
+                                                    <td >
+                                                        <div className="button-container">
+                                                            {
+                                                                value.preparing && Object.values(value.preparing).map((items)=>(<button className="delete-button" onClick={()=>handleDelete(value.id,items)}>delete&nbsp;{items}</button>))
+                                                            }
+                                                            <button className="delete-button" onClick={()=>handleDelete(value.id,'datalist')}>Delete All</button>
+                                                        </div>
+                                                    </td>
+                                                }
+                                                 
                                             </tr>
                                         )
                                     }

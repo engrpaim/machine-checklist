@@ -43,7 +43,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
 
         let worst = 0;
         let maximum = 0;
-        let minimum = 0;
+        let minimum = 9999;
         let diffmax = 0;
         let diffmin = 0;
         let average = 0;
@@ -53,7 +53,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
             countCount = value > 0 ? countCount +=1 :countCount
             average += value ;
             value > maximum ? maximum = value : maximum;
-            value < minimum || minimum === 0 ? minimum = value : minimum;
+            value < minimum  && value !== 0 ? minimum = value :null;
             diffmax = specsBank[process]["model"].target - maximum;
             diffmin = specsBank[process]["model"].target - minimum;
         })
@@ -298,7 +298,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                                                             }
                                                             value={magnetPoints['magnet_' + items]['p' + 1] ? magnetPoints['magnet_' + items]['p' + 1] : ''}
                                                             onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)}
+                                                           disabled={((status === 'approved' || status === 'measured') && !(edit)) || !(model.point >= 1 ? true:false )}
                                                         />
                                                     </td>
                                                     <td>
@@ -317,7 +317,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                                                             }
                                                             value={magnetPoints['magnet_' + items]['p' + 2] ? magnetPoints['magnet_' + items]['p' + 2] : ''}
                                                             onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)} />
+                                                            disabled={((status === 'approved' || status === 'measured') && !(edit)) || !(model.point >= 2 ? true:false )} />
                                                     </td>
                                                     <td>
                                                         <input
@@ -335,12 +335,13 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                                                             }
                                                             value={magnetPoints['magnet_' + items]['p' + 3] ? magnetPoints['magnet_' + items]['p' + 3] : ''}
                                                             onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)} />
+                                                            disabled={((status === 'approved' || status === 'measured') && !(edit)) || !(model.point >= 3 ? true:false )} />
                                                     </td>
                                                     <td>
                                                         <input
 
                                                             type="number"
+                                                            
                                                             onChange={
                                                                 (e) =>
                                                                     setMagnetPoints(prev => ({
@@ -353,7 +354,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                                                             }
                                                             value={magnetPoints['magnet_' + items]['p' + 4] ? magnetPoints['magnet_' + items]['p' + 4] : ''}
                                                             onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)} />
+                                                            disabled={((status === 'approved' || status === 'measured') && !(edit)) || !(model.point >= 4 ? true:false )} />
                                                     </td>
                                                     <td>
                                                         <input
@@ -371,7 +372,7 @@ export default function MeasuringData({ goToNextInput, setMagnetPoints, magnetPo
                                                             }
                                                             value={magnetPoints['magnet_' + items]['p' + 5] ? magnetPoints['magnet_' + items]['p' + 5] : ''}
                                                             onKeyDown={(e) => e.key === 'Enter' ? goToNextInput(e) : null}
-                                                            disabled={(status === 'approved' || status === 'measured') && !(edit)} />
+                                                            disabled={((status === 'approved' || status === 'measured') && !(edit)) || !(model.point >= 5 ? true:false )} />
                                                     </td>
                                                     <td style={{ background: '#FFDCB8' }}>{JudgementPoints[items].maximum ?? null}</td>
                                                     <td style={{ color: JudgementPoints[items].maximum > specsBank[process]["model"].min && JudgementPoints[items].maximum < specsBank[process]["model"].max ? null : 'red' }}>{JudgementPoints[items].maximum ?? null}</td>

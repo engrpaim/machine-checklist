@@ -1,8 +1,10 @@
 import { usePage } from "@inertiajs/react"
+import { useState } from "react"
 import MainLayout from "../Layouts/MainLayout"
 import AllProcess from "../Components/AllProcess"
 export default function Dashboard(){
-    const {flash , allLot } = usePage().props
+    const {flash , allLot , ip_client } = usePage().props
+    const [clientIp,setClientIp] = useState(ip_client);
     console.log(allLot,flash);
     return(
           <section>
@@ -10,7 +12,7 @@ export default function Dashboard(){
                 <h1>Dashboard - Machining Checklist</h1>
             </div>
             <div>
-                <AllProcess data={allLot}/>
+                <AllProcess data={allLot} clientIp={clientIp}/>
             </div>
           </section>
     )
