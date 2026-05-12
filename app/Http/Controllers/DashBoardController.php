@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Barelling;
 use App\Models\cghModel;
 use App\Models\Datalist;
+use Carbon\Carbon;
 use Exception;
 
 class DashBoardController extends Controller
@@ -98,3 +99,4 @@ class DashBoardController extends Controller
         if ($deleted) return redirect()->back()->with('sucess', $currentData["lot_number"] . 'successfully deleted');
     }
 }
+

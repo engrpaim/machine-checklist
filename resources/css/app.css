@@ -1230,7 +1230,7 @@ button:disabled:hover {
     text-align: center;
     padding: 0.5rem;
     border: none;
-    width: 3rem;
+    width: 5rem;
     background: #c3ddf3;
 }
 
@@ -1773,12 +1773,14 @@ td {
     flex-direction: column;
     width: 50vw;
     min-width: 60vw;
+    max-width: 90vw;
     min-height: fit-content;
     max-height: fit-content;
     background: #f5f5f5;
     padding: 1rem;
     border-radius: 1rem;
     gap:1rem;
+    overflow: auto;
 }
 
 .dashboard-container h1 {
@@ -1833,4 +1835,45 @@ td {
 
 .unauthorized h1{
     color:#A30000;
+}
+.filter-container {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap:1rem;
+}
+
+.filter-container {
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap:1rem;
+}
+
+.filter-container select , .filter-container input  {
+    font-family: "Poppins", sans-serif;
+    border:1px solid #E6F6FF;
+    padding:0.4rem;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.filter-container select:focus ,.filter-container input:focus  {
+    outline:1px solid #E6F6FF;
+}
+
+.filter-container input:focus{
+     text-align: center;
+}
+.filter-container button{
+    border:none;
+    padding:0.5rem;
+    border-radius: 0.5rem;
+    color:#E6F6FF;
+    background:#0269A1;
+    cursor: pointer;
+   
+}
+.filter-container button:hover{
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
 }

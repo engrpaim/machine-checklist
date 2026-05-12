@@ -1,9 +1,19 @@
-import { Link, router } from "@inertiajs/react"
+import { Link, router ,useForm,usePage } from "@inertiajs/react"
 import { useState } from "react"
 import Loading from "./Loading"
-export default function AllProcess({data , clientIp}){
-    console.log('All process: ',data)
+import { SearchIcon } from "../Icons/SVG"
+export default function AllProcess({data , clientIp , model}){
+    console.log('All process: ',data,' MODEL:',model)
     const [loading,setLoading] = useState(false);
+    const { url } = usePage();
+    const params = new URLSearchParams(url.split("?")[1]);
+
+    //url paramas inpagination
+    const startDate = params.get("start_date");
+    const endDate = params.get("end_date");
+    const modelUrl = params.get("model");
+    const lotUrl = params.get("lot_number");
+
     const handleGoToData=async(lot,process, id,model)=>{
         setLoading(true);
         if(!lot || !process || !id || !model) return
@@ -30,6 +40,18 @@ export default function AllProcess({data , clientIp}){
         }
 
     }
+    const today = new Date().toISOString().split("T")[0];
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate()-1);
+    const yesterday =  yesterdayDate.toISOString().split("T")[0];
+    
+     const { data:filterDetails , setData:setFilterDetails, post:postFilter, processing:processingFilter, errors:errorFilter , reset:resetFilterDetails} =useForm({
+        model:modelUrl?modelUrl:'',
+        start_date:startDate?startDate:'',
+        end_date:endDate?endDate:'',
+        lot_number:lotUrl?lotUrl:'',
+        table:lotUrl?lotUrl:'',
+    })
 
     const handleDelete =(id,page)=>{
         console.log('Lot number: ', id,page);
@@ -42,6 +64,41 @@ export default function AllProcess({data , clientIp}){
                     preserveScroll:true
                 })
     }
+
+    
+
+    const handleFilterSearch =()=>{
+        console.log('Filter Search: ', filterDetails);
+        router.get('/machining-checklist/home',{data:filterDetails})
+    }
+    const submit=async(e,process)=>{
+        console.log('Submitting: ' , process)
+        e.preventDefault()
+        switch(process){
+            case "filter":
+                try{
+                    await router.get('/machining-checklist/home/',filterDetails,
+                    {
+                        preserveScroll:true,
+                        preserveState:true,
+                        onSuccess:()=>{
+                            
+                        }
+                    });
+                }catch(err){
+                    console.log(err)
+                }
+               
+                break;
+            default:
+                break;
+
+        }
+
+    }
+    const formatDate = (dateString) => {
+  return dateString ? dateString.split('T')[0] : '';
+};
     return(
         <div className="dashboard-container">
             {
@@ -52,13 +109,37 @@ export default function AllProcess({data , clientIp}){
                 <p>This record is sorted from newest to oldest</p>
             </div>
             <div >
+                <form className="filter-container" onSubmit={(e)=>{
+                                        
+                                        
+
+                                        submit(e,'filter')
+                                        }}>
+                    <p>Filter</p>
+                    <SearchIcon/>
+                    <input type="date" onChange={(e)=>setFilterDetails('start_date',e.target.value)} value={filterDetails.start_date}/>
+                    <input type="date" onChange={(e)=>setFilterDetails('end_date',e.target.value)} value={filterDetails.end_date} />
+                    <input type="text" onChange={(e)=>setFilterDetails('lot_number',e.target.value)}/>
+                    <select onChange={(e)=>setFilterDetails('model',e.target.value)}   value={filterDetails.model}>
+                            <option  selected={true}></option>
+                        {
+                            model.map((models)=>{
+                                return(<option>{models}</option>)
+                            })
+                        }
+                    </select>
+                    <button type="submit" onClick={(e)=>setFilterDetails('table','datalist')}>Search</button>
+                </form>
+            </div>
+            <div >
                 <div className="dashboard-table-container"  >
                     <table className="dashboard-table">
                         <thead>
                             <tr>
-                                <th style={{ width:'15rem' }}>Model</th>
-                                <th style={{ width:'10rem' }}>Lot Number</th>
+                                <th style={{ width:'9rem' }}>Model</th>
+                                <th style={{ width:'9rem' }}>Lot Number</th>
                                 <th>Shift</th>
+                                <th>Shift Date</th>
                                 <th  style={{ width:'16rem' }}>Process </th>
                                 {
                                     clientIp &&<th>Action</th>
@@ -73,6 +154,7 @@ export default function AllProcess({data , clientIp}){
                                                 <td style={{ textAlign:'start'  }}>{value.model}</td>
                                                 <td>{value.lot_number}</td>
                                                 <td>{value.shift}</td>
+                                                <td>{value.created_at.split("T")[0]}</td>
                                                 <td >
                                                     {
                                                         value.preparing && Object.values(value.preparing).map((items)=>(<button className="process-btn" onClick={()=>handleGoToData(value.lot_number,items,value.id,value.model)}>{items}</button>))

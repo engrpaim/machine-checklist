@@ -9,7 +9,7 @@ use App\Models\ModelDetails;
 use App\Models\Datalist;
 use App\Models\UserArea;
 use Illuminate\Http\Request;
-
+use Carbon\Carbon;
 //Current is getting the route then pass the data
 // bad pracctice it can cause data overload URL must be changing
 // Route::get('/machining-checklist', function () {
@@ -62,15 +62,65 @@ Route::get('/', function () {
     return redirect('/machining-checklist/home');
 });
 Route::get('/machining-checklist/home', function (Request $request) {
-     $clientIp = $request->ip();
+
+    //default filtering
+    $clientIp = $request->ip();
     $isExistUser = false;
+    
+    $current_time = Carbon::now()->endOfDay();
+    $yesterday_time = Carbon::yesterday()->startOfDay();
     
     if($clientIp){
          $isExistUser = UserArea::where('ip_address',$clientIp)->where('permission','Admin')->first();
     }
+
+    $models = ModelDetails::select('model')->orderBy('id')->get();
+    $modelOnly =[];
+    foreach($models as $key => $value){
+        array_push($modelOnly,$value["model"]);
+    }
+
+    //filtered by user
+
+    $start = $request->get('start_date') ? Carbon::parse($request->get('start_date')):null;
+    $end = $request->get('end_date') ? Carbon::parse($request->get('end_date'))->endOfDay():null;
+    $lot = $request->get('lot_number')??null;
+    $table = $request->get('table')??null;
+    $model = $request->get('model') ? urldecode($request->get('model')):null;
+
+    $modelList = false;
+    $dataQuery =  
+        [
+          'start' =>  $start , 
+          'end' => $end , 
+          'lot_number' => $lot , 
+          'model' =>$model 
+        ];
+     if($table){ 
+        
+        $filterData = Datalist::query();
+
+        foreach($dataQuery as $key => $value){
+            if($key === 'start'){
+                $filtStart =  $start ?  $start : $end ;
+                $filtEnd =  $end ?  $end : $start ;
+                if($filtStart || $filtEnd){
+                    $filterData->whereBetween('created_at',[$filtStart,$filtEnd]);
+                }
+            }else if( $value !== null && $key !== 'end'){
+                    $filterData->where($key,$value);
+                }
+        }
+        
+      
+        $modelList = $filterData->orderBy('id', 'desc')->paginate(10, ['*'], 'page-filtered') ->withQueryString();
+     }
+   
+   
     return Inertia::render('Dashboard', [
+        'modelsList' =>  $modelOnly,
         'ip_client' => $isExistUser ? $isExistUser->toArray():null,
-        'allLot' => $allLotNumber = Datalist::orderBy('id', 'desc')->paginate(10, ['*'], 'page'),
+        'allLot' =>  $modelList ? $modelList : Datalist::whereBetween('created_at',[$yesterday_time,$current_time])->orderBy('id', 'desc')->paginate(10, ['*'], 'page'),
     ]);
 });
 
