@@ -117,10 +117,10 @@ export default function AllProcess({data , clientIp , model}){
                                         }}>
                     <p>Filter</p>
                     <SearchIcon/>
-                    <input type="date" onChange={(e)=>setFilterDetails('start_date',e.target.value)} value={filterDetails.start_date}/>
-                    <input type="date" onChange={(e)=>setFilterDetails('end_date',e.target.value)} value={filterDetails.end_date} />
-                    <input type="text" onChange={(e)=>setFilterDetails('lot_number',e.target.value)}/>
-                    <select onChange={(e)=>setFilterDetails('model',e.target.value)}   value={filterDetails.model}>
+                    <p>Start</p><input type="date" onChange={(e)=>setFilterDetails('start_date',e.target.value)} value={filterDetails.start_date}/>
+                    <p>End</p><input type="date" onChange={(e)=>setFilterDetails('end_date',e.target.value)} value={filterDetails.end_date} />
+                    <p>Lot Number</p><input type="text" onChange={(e)=>setFilterDetails('lot_number',e.target.value)}/>
+                    <p>Model</p><select onChange={(e)=>setFilterDetails('model',e.target.value)}   value={filterDetails.model}>
                             <option  selected={true}></option>
                         {
                             model.map((models)=>{
