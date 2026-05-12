@@ -108,7 +108,7 @@ Route::get('/machining-checklist/home', function (Request $request) {
                     $filterData->whereBetween('created_at',[$filtStart,$filtEnd]);
                 }
             }else if( $value !== null && $key !== 'end'){
-                    $filterData->where($key,$value);
+                   $filterData->where($key, 'like', "%{$value}%");
                 }
         }
         
